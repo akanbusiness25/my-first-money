@@ -1,6 +1,6 @@
 # PATCH-0 — contour, compatibility, and first work packet
 
-Status: in progress
+Status: local implementation complete; final verification and external launch evidence in progress
 
 ## Scope
 
@@ -11,24 +11,26 @@ Establish the implementation root, one canonical roadmap, Build Week evidence tr
 - Root operating docs: `AGENTS.md`, `BOOT.md`, `STATUS.md`, `ROADMAP.md`.
 - Competition: `docs/BUILD_WEEK.md`.
 - Architecture/domain/security: `docs/ARCHITECTURE.md`, `docs/DOMAIN_MODEL.md`, `docs/SECURITY_PRIVACY.md`, `docs/launch/BETA_GATE.md`.
-- Next implementation wave: root workspace config, `apps/web`, domain/application/provider modules, same-origin `/api/v1/*`, tests, PWA shell, migrations, and container config.
+- Implemented surface: root workspace config, `apps/web`, domain/application/provider modules, same-origin `/api/v1/*`, tests, static-only PWA shell, migrations, container config, README, and deployment/design documentation.
 
 ## Accepted decisions
 
 - Root is `D:\app myfirstmoney`; no duplicate task or project folder.
 - Build Week uses synthetic data only and is not a real-family beta.
 - Browser/PWA vertical slice precedes Telegram/n8n/Plus work.
-- The judge path is isolated, rate-limited, auto-reset, and does not require OTP.
-- Money Moment is provider-based with strict structured input/output and deterministic fallback; live credentials are deferred until the adapter is ready.
+- The judge path is isolated, bounded to 500 active 30-minute sessions, resettable, and does not require OTP.
+- Money Moment is provider-based with strict allowlisted input/card-ID selection, curated schema-valid output, a reset-resistant three-call session allowance, a 12/minute process-wide live-provider budget, and deterministic fallback. Live credentials remain deferred by explicit protocol.
 - Grow bonus posts directly to Grow as a separate parent-funded ledger entry.
 
 ## Compatibility gate
 
 Candidate exact versions: Node `24.18.0`, pnpm `11.15.0`, TypeScript `7.0.2`, Next.js `16.2.10`, React/React DOM `19.2.7`, Tailwind CSS `4.3.3`, Drizzle ORM `0.45.2`, Drizzle Kit `0.31.10`, Zod `4.4.3`, PostgreSQL `18.x`, and an exactly pinned official OpenAI JavaScript SDK version verified at scaffold time.
 
+Compatibility evidence: registry lookup confirmed every candidate version exists. The clean peer gate then failed because `typescript-eslint 8.64.0` requires TypeScript `>=4.8.4 <6.1.0`, while the candidate was `7.0.2`; React/import/a11y ESLint plugins required ESLint `<=9`, while registry-current ESLint was `10.7.0`. TypeScript `6.0.3`, `5.9.3`, and Drizzle's own `5.6.3` baseline all exposed incompatible Drizzle declarations under `skipLibCheck:false`; Drizzle `0.44.7` produced the same errors, so an ORM downgrade was rejected. The Build Week program therefore uses TypeScript `6.0.3`, ESLint `9.39.5`, and approved Drizzle `0.45.2`; the currently unused beta DB source/config are outside the Next TypeScript program and are separately runtime/schema-validated by migration generation plus `drizzle-kit check`. Application/UI/domain code remains `strict:true`, `skipLibCheck:false`, with `noUncheckedIndexedAccess:true`. This is not beta persistence approval: compiling Drizzle runtime repository code without `skipLibCheck` remains an explicit beta blocker. No broad `any`, peer override, or silent suppression is used.
+
 Required checks: registry/advisory verification, frozen install, strict typecheck, lint, unit smoke, production build, Drizzle schema/migration check against disposable PostgreSQL 18 when available, and production container build/smoke when Docker is available. Do not use `skipLibCheck`, broad `any`, suppressions, or a silent downgrade.
 
-Local preflight at 2026-07-19 15:37 +05:00: Git `2.52.0.windows.1`, Node `24.18.0`, npm `11.16.0`, globally available pnpm `11.9.0`, Docker not found. Project Corepack will pin pnpm `11.15.0`; container smoke is expected to remain externally blocked unless a compatible local builder is available.
+Local preflight at 2026-07-19 15:37 +05:00: Git `2.52.0.windows.1`, Node `24.18.0`, npm `11.16.0`, globally available pnpm `11.9.0`, Docker not found. Project Corepack pins pnpm `11.15.0`. pnpm 11 removed `onlyBuiltDependencies`; reviewed native/build dependencies are explicitly approved through `allowBuilds` (`esbuild`, `sharp`, `unrs-resolver`) while all unlisted install scripts fail closed. Container smoke is expected to remain externally blocked unless a compatible local builder is available.
 
 ## Security/legal gates
 
@@ -36,14 +38,16 @@ No real-family data or beta claim until `docs/launch/BETA_GATE.md` is fully evid
 
 ## Tests and expected results
 
-- All configured checks exit 0.
-- The complete synthetic judge flow can run twice without cross-session data leakage or duplicate payday/allocation.
-- Money Moment fallback always returns schema-valid neutral content and the core loop completes with the provider disabled.
-- Browser storage contains no session, family draft/data, amount history, API response, or mutation queue.
+- Frozen install, formatting, strict typecheck, lint, 18 unit tests, Next production build, Drizzle migration check, secret/client-bundle scans, clean dependency audit, production health smoke, and 12 Playwright tests exit 0.
+- The complete synthetic judge flow passes at 320px, 390px, 428px, and desktop without cross-session data leakage or duplicate payday/allocation.
+- Money Moment fallback always returns schema-valid curated content and the core loop completes with the provider disabled.
+- Browser local/session storage and IndexedDB contain no family/session state; Cache Storage entries are restricted to `/_next/static/*` and `/icon.svg`.
+- Docker/PostgreSQL 18 runtime/container smoke was not run because Docker is unavailable on the verified workstation.
+
+Scoped security scan covered 44/44 changed source files. Its two medium abuse-control findings (unbounded anonymous session admission and reset-multipliable provider allowance) were reproduced, fixed, and covered by focused tests. The semantic model-output boundary was additionally hardened to accept only curated IDs before any live verification.
 
 ## Next 1–3 items
 
-1. Create the first pre-feature Git commit, then scaffold/pin the compatibility surface.
-2. Generate the complete mobile UI concept and extract tokens/component rules.
-3. Implement and test BW1 plus the non-live BW2 contract.
-
+1. Finish the fresh full verification matrix and production screenshot pass.
+2. Create the honest implementation milestone commit and keep the working tree clean.
+3. Hand off stable HTTPS deployment, repository access, narrated video, `/feedback`, and Devpost submission to Akan.

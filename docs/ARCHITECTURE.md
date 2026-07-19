@@ -27,10 +27,10 @@ Later Telegram WebView
 ## Data and trust boundaries
 
 - Browser receives code-native screen data but never credentials, raw Telegram init data, OpenAI keys, provider prompts, or cross-parent records.
-- A host-only `HttpOnly`, `Secure`, `SameSite=Lax` cookie identifies a parent/demo session. State-changing routes require same-origin/CSRF checks.
+- A host-only `HttpOnly`, `Secure`, `SameSite=Lax` cookie identifies a parent/demo session. The synthetic store expires sessions after 30 minutes, caps admission at 500 active sessions, and preserves valid sessions when the cap is reached. State-changing routes require same-origin/CSRF checks.
 - Every persistent query/mutation scopes by authenticated `parent_id`; public IDs/UUIDs never authorize.
 - Private/auth responses are `Cache-Control: no-store, private`. The service worker caches public versioned shell assets only.
-- Money Moment receives only age band, locale, learning objective, four percentages, and boolean/enum progress signals. No identifiers, names, exact amounts, or free text cross the provider boundary.
+- Money Moment receives only age band, locale, learning objective, four percentages, and boolean/enum progress signals. No identifiers, names, exact amounts, or free text cross the provider boundary. A live provider can select only a strict allowlisted card ID; all displayed RU/KK copy is curated and validated server-side. The three-call session allowance survives state reset, and live calls share a process-wide 12/minute budget.
 
 ## Kazakhstan topology decision
 
@@ -41,4 +41,3 @@ Competition implementation and deployment use synthetic data only. The real-fami
 - Separate local/staging/production identities, data, providers, credentials, logs, and backups.
 - Production deploys are immutable and version-pinned with migration, health, rollback, and restore evidence.
 - n8n/Telegram reminders are post-submission adapters; backend owns eligibility and canonical actions.
-

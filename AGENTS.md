@@ -77,4 +77,3 @@ For UI changes also verify the complete judge flow in browser at 390px and 320px
 Track: `Apps for Your Life`. Official deadline: `2026-07-21 17:00 PDT` / `2026-07-22 05:00 Asia/Qyzylorda`; internal complete-submission cutoff: `2026-07-21 22:00 Asia/Qyzylorda`.
 
 Use synthetic data only. Keep the majority of core implementation in the primary task `firstmoney main` using GPT-5.6 Sol. Akan runs `/feedback` in this task near submission and copies the exact Session ID into `docs/BUILD_WEEK.md` and Devpost. The public demo video must be on YouTube, include audio, be no longer than three minutes, and explain concrete Codex/GPT-5.6 use.
-

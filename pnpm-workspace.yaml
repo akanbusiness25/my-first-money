@@ -1,0 +1,15 @@
+packages:
+  - apps/*
+
+nodeVersion: 24.18.0
+engineStrict: true
+strictPeerDependencies: true
+
+overrides:
+  "@esbuild-kit/core-utils>esbuild": 0.25.12
+  "next>postcss": 8.5.19
+
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

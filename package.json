@@ -1,0 +1,32 @@
+{
+  "name": "my-first-money",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.15.0",
+  "engines": {
+    "node": "24.18.0",
+    "pnpm": "11.15.0"
+  },
+  "scripts": {
+    "dev": "corepack pnpm@11.15.0 --filter @my-first-money/web dev",
+    "format": "prettier --write . --ignore-unknown",
+    "format:check": "prettier --check . --ignore-unknown",
+    "typecheck": "corepack pnpm@11.15.0 --filter @my-first-money/web typecheck",
+    "lint": "corepack pnpm@11.15.0 --filter @my-first-money/web lint",
+    "test": "corepack pnpm@11.15.0 --filter @my-first-money/web test",
+    "test:coverage": "corepack pnpm@11.15.0 --filter @my-first-money/web test:coverage",
+    "build": "corepack pnpm@11.15.0 --filter @my-first-money/web build",
+    "start": "corepack pnpm@11.15.0 --filter @my-first-money/web start",
+    "db:generate": "corepack pnpm@11.15.0 --filter @my-first-money/web db:generate",
+    "db:check": "corepack pnpm@11.15.0 --filter @my-first-money/web db:check",
+    "security:secrets": "node scripts/check-secrets.mjs",
+    "security:client": "node scripts/check-client-bundle.mjs",
+    "capture:evidence": "corepack pnpm@11.15.0 --filter @my-first-money/web capture:evidence",
+    "test:e2e": "corepack pnpm@11.15.0 --filter @my-first-money/web test:e2e",
+    "check": "corepack pnpm@11.15.0 format:check && corepack pnpm@11.15.0 typecheck && corepack pnpm@11.15.0 lint && corepack pnpm@11.15.0 test && corepack pnpm@11.15.0 build && corepack pnpm@11.15.0 db:check && corepack pnpm@11.15.0 security:secrets && corepack pnpm@11.15.0 security:client"
+  },
+  "devDependencies": {
+    "prettier": "3.9.5",
+    "prettier-plugin-tailwindcss": "0.8.1"
+  }
+}

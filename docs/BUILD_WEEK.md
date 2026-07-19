@@ -21,33 +21,38 @@ New during the submission period: this repository, application code, tests, synt
 
 ## Append-only build log
 
-| Time (Asia/Qyzylorda) | Objective/model | Produced | Checks/evidence | Commit |
-|---|---|---|---|---|
-| 2026-07-19 15:37 | Start `firstmoney main` in Execute mode on GPT-5.6 Sol | Confirmed empty root; began mandatory docs/security/domain contour | Root/Git/runtime preflight; sanitized start screenshot still requires Akan | pending first commit |
+| Time (Asia/Qyzylorda) | Objective/model                                        | Produced                                                                                                                                | Checks/evidence                                                                               | Commit                        |
+| --------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------- |
+| 2026-07-19 15:37      | Start `firstmoney main` in Execute mode on GPT-5.6 Sol | Confirmed empty root; began mandatory docs/security/domain contour                                                                      | Root/Git/runtime preflight; sanitized start screenshot still requires Akan                    | pending first commit          |
+| 2026-07-19 15:40      | Honest pre-feature BW0 baseline                        | Required operating, roadmap, competition, architecture, domain, security, and beta-gate documents                                       | Commit exists before feature implementation                                                   | `ed194bd`                     |
+| 2026-07-19 17:34      | BW1–BW3 local implementation checkpoint on GPT-5.6 Sol | Complete synthetic family-week loop, PWA, Money Moment fallback/live adapter, tests, deployment contour, and local security remediation | Focused security tests 14/14; fresh full verification in progress                             | pending implementation commit |
+| 2026-07-19 17:47      | Production verification and curated evidence           | Dependency overrides, four reproducible 390px screenshots, 320/390/428/desktop judge and boundary tests                                 | Frozen install; format/type/lint; 18 unit; build; Drizzle; secret/client; clean audit; 12 E2E | pending implementation commit |
 
 Append new rows; never rewrite prior evidence or invent results.
 
 ## Codex and GPT-5.6 narrative
 
-Codex/GPT-5.6 Sol is being used in the primary task to turn the approved pipeline into a working modular Next.js/PWA vertical slice, encode integer-money/idempotency/privacy invariants, generate and implement the visual system, write automated tests, and prepare deployment/submission evidence.
+Codex/GPT-5.6 Sol in this primary task turned the approved pipeline into a working modular Next.js/PWA vertical slice, encoded integer-money/idempotency/privacy invariants, generated and implemented the visual system, wrote automated tests, diagnosed compatibility and browser/security issues, and prepared deployment/submission evidence.
 
-The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, the parent may request a two-minute Money Moment. Server input is an allowlisted non-identifying structure; output is strict, parent-facing, schema/safety validated, and replaceable by a deterministic fallback. The weekly loop never depends on AI. Live adapter verification remains pending until the server adapter is ready and Akan supplies a server-only credential.
+The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, the parent may request a two-minute Money Moment. Server input is an allowlisted non-identifying structure. The live model may select only one reviewed card ID through a strict Zod Structured Output contract; the server maps it to curated RU/KK copy and validates the final card. A deterministic fallback covers the complete flow, so the weekly loop never depends on AI. The server adapter is implemented, but no key was requested or created and no live call is claimed; that external verification remains deferred by the current credential protocol.
 
 ## Judging scorecard
 
-| Criterion | Evidence target | Current gap |
-|---|---|---|
-| Technological Implementation | primary Codex task, Git trail, complete vertical loop, Money Moment provider/fallback/live adapter, tests, architecture/security/deploy evidence, `/feedback` | implementation and evidence pending |
-| Design | coherent mobile family-week flow, polished states, 320–428px, keyboard/a11y/reduced motion, visual fidelity | concept and implementation pending |
-| Potential Impact | concrete 7–12 parent/caregiver problem and weekly ritual shown without invented traction | submission copy/demo pending |
-| Quality of Idea | unpaid vs paid distinction, four buckets, parent-funded Grow, safe post-choice reflection; clearly not bank/chore tracker/token/AI tutor | working demo narrative pending |
+| Criterion                    | Evidence target                                                                                                                                               | Current gap                                                          |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Technological Implementation | primary Codex task, Git trail, complete vertical loop, Money Moment provider/fallback/live adapter, tests, architecture/security/deploy evidence, `/feedback` | local implementation complete; live provider/deploy/feedback pending |
+| Design                       | coherent mobile family-week flow, polished states, 320–428px, keyboard/a11y/reduced motion, visual fidelity                                                   | concept implemented; final screenshots/external demo pending         |
+| Potential Impact             | concrete 7–12 parent/caregiver problem and weekly ritual shown without invented traction                                                                      | product narrative ready; submission/demo proof pending               |
+| Quality of Idea              | unpaid vs paid distinction, four buckets, parent-funded Grow, safe post-choice reflection; clearly not bank/chore tracker/token/AI tutor                      | working local demo ready; recorded demo pending                      |
 
 ## Evidence index
 
 - Sanitized start screenshot: pending Akan capture. Show task `firstmoney main`, date, `D:\app myfirstmoney`, and GPT-5.6 Sol; hide email/account/usage/unrelated chats/secrets.
-- Git milestones: pending.
-- Accepted UI concept: pending.
-- Browser screenshots and Playwright report: pending.
+- Git milestones: pre-feature baseline `ed194bd`; implementation milestone pending final verification.
+- Accepted UI concepts: `docs/design/concept-week.png` and `docs/design/concept-payday.png`.
+- Browser screenshots: `docs/design/implementation-week.png`, `implementation-payday.png`, `implementation-closed.png`, and `implementation-money-moment.png`; generated from the production build with synthetic data only.
+- Playwright verification: 12/12 production E2E across 320px, 390px, 428px, and desktop, including axe, session isolation, CSP/CSRF/no-store, browser-storage, and static-only PWA cache assertions.
+- Scoped security review: 44/44 changed files covered; two medium abuse-control findings locally remediated and regression-tested before the implementation commit.
 - Live demo/repository/video/Devpost: pending.
 - Primary `/feedback` Session ID: `PENDING — Akan must run /feedback in firstmoney main`.
 
@@ -71,14 +76,14 @@ Use public YouTube visibility, narration/audio, English or English translation, 
 
 ## Final submission checklist
 
-- [ ] Working free synthetic demo path requires no OTP/private credential and auto-resets.
-- [ ] Frozen install, format, strict typecheck, lint, unit/integration, production build, migration, E2E/a11y, cache/header/security, and deployment smoke evidence recorded.
-- [ ] Money Moment provider/fallback/safety/rate-limit tests pass; one live `gpt-5.6-sol` verification is recorded without exposing the key.
-- [ ] README covers setup/run/test, synthetic data, architecture, security/privacy, before/new disclosure, concrete Codex/GPT-5.6 use, license/dependencies, demo access.
+- [x] Working free synthetic demo path requires no OTP/private credential and resets synthetic family state.
+- [x] Frozen install, format, strict typecheck, lint, 18 unit tests, production build, migration structure, dependency/secret/client scans, 12 E2E/a11y/cache/header/storage/security tests, and local production health smoke are recorded; Docker/PostgreSQL 18 container smoke is explicitly unavailable locally.
+- [x] Money Moment provider/fallback/strict-selection/safety/budget tests pass without credentials.
+- [ ] One live `gpt-5.6-sol` verification is recorded without exposing a manually supplied server secret.
+- [x] README covers setup/run/test, synthetic data, architecture, security/privacy, before/new disclosure, concrete Codex/GPT-5.6 use, license/dependencies, and demo access status.
 - [ ] Repository access and license are correct through judging.
 - [ ] Stable HTTPS demo passes incognito judge flow.
-- [ ] Curated screenshots contain no private data or secrets.
+- [x] Curated production screenshots contain synthetic data only and no private data or secrets.
 - [ ] Public YouTube video is <=3:00, has audio, shows the working app, and explains Codex/GPT-5.6 use.
 - [ ] Akan runs `/feedback` in `firstmoney main` and copies the exact Session ID here and to Devpost.
 - [ ] Devpost fields/links/video/demo/repository are verified incognito and submitted before internal cutoff.
-

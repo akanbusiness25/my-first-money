@@ -4,42 +4,43 @@ Updated: 2026-07-19
 
 ## Deadline-first Build Week lane
 
-### BW0 — Evidence / compatibility (in progress)
+### BW0 — Evidence / compatibility (local gate complete)
 
 - [x] Confirm `D:\app myfirstmoney` as the established empty implementation root.
 - [x] Create the minimal project/security/domain documentation layer.
-- [ ] Initialize Git and create the first dated commit before feature implementation.
+- [x] Initialize Git and create the first dated commit before feature implementation (`ed194bd`, 2026-07-19 15:40 +05:00).
 - [ ] Akan captures the sanitized start screenshot with task, date, project path, and GPT-5.6 Sol selection.
-- [ ] Pin and verify Node 24.18.0, pnpm 11.15.0, TypeScript 7.0.2, Next 16.2.10, React 19.2.7, Tailwind 4.3.3, Drizzle 0.45.2/Kit 0.31.10, Zod 4.4.3, PostgreSQL 18, and the official OpenAI SDK.
-- [ ] Pass frozen install, strict typecheck, lint, unit smoke, production build, migration check, and container smoke or record the exact local blocker.
+- [x] Verify the candidate registry versions; record the TypeScript 7/ESLint 10 and Drizzle declaration incompatibilities without suppressions; isolate unused beta DB source while preserving migration checks.
+- [x] Verify Node 24.18.0, pnpm 11.15.0, Next 16.2.10, React 19.2.7, Tailwind 4.3.3, Drizzle 0.45.2/Kit 0.31.10, Zod 4.4.3, and OpenAI SDK 6.48.0 through the local gate; PostgreSQL 18 runtime remains a beta/external gate.
+- [x] Pass frozen install, strict typecheck, lint, unit smoke, production build, and migration structure check; record Docker/PostgreSQL container smoke as unavailable locally.
 
 ### BW1 — Working vertical slice
 
-- [ ] Isolated auto-reset synthetic judge session with no OTP or real credentials.
-- [ ] Child setup -> mission builder -> family agreement -> active week.
-- [ ] Tri-state Quick Check -> exact payday preview -> idempotent confirm.
-- [ ] Spend / Save / Give / Grow allocation -> closed-week review/history.
-- [ ] One Save goal, Grow explanation, basic corrections, recent history, and no pre-payday paywall.
-- [ ] Typed Kazakh/Russian dictionaries and mobile-first PWA shell.
+- [x] Isolated auto-reset synthetic judge session with no OTP or real credentials.
+- [x] Child setup -> mission builder -> family agreement -> active week.
+- [x] Tri-state Quick Check -> exact payday preview -> idempotent confirm.
+- [x] Spend / Save / Give / Grow allocation -> closed-week review/history.
+- [x] One Save goal, Grow explanation, basic append-only correction, recent history, and no pre-payday paywall.
+- [x] Typed Kazakh/Russian copy and mobile-first PWA shell.
 
 ### BW2 — GPT-5.6 Money Moment
 
-- [ ] Provider interface, allowlisted structured input, strict Zod output, safety checks, deterministic fallback, rate limit, timeout, and tests without credentials.
-- [ ] Server-only OpenAI Responses adapter using `gpt-5.6-sol`, `store: false`, no tools/background/persistence.
+- [x] Provider interface, allowlisted structured input, strict Zod selection/output, curated cards, deterministic fallback, abuse budgets, timeout, and tests without credentials.
+- [x] Server-only OpenAI Responses adapter using `gpt-5.6-sol`, `store: false`, no tools/background/persistence; it selects only a reviewed card ID.
 - [ ] Only after adapter readiness: manually supplied server secret and one live verification.
-- [ ] Document model use, fallback evidence, redacted logs, and non-exposure check.
+- [x] Document model use and fallback boundary; automated secret/client-bundle non-exposure checks are configured.
 
 ### BW3 — Product quality / deploy
 
-- [ ] Complete loading/validation/session/offline-limitation/pending/recovery states.
-- [ ] Browser verification at 320px, 390px, 428px, and desktop; keyboard, focus, reduced motion, safe area, and automated accessibility checks.
-- [ ] Playwright full judge flow plus PWA/cache/header/security checks.
-- [ ] Scoped security review and stable HTTPS synthetic deployment.
-- [ ] Incognito judge-path verification.
+- [x] Complete loading/validation/session/offline-limitation/pending/recovery states for the synthetic loop.
+- [x] Browser verification at 320px, 390px, 428px, and desktop; semantic keyboard/focus controls, reduced-motion/safe-area CSS, and automated axe checks.
+- [x] Playwright full judge flow plus PWA/cache/header/storage/CSRF/session-isolation checks (12/12 production E2E).
+- [x] Scoped security review and remediation; stable HTTPS synthetic deployment remains external.
+- [x] Local fresh-context judge-path verification; stable HTTPS incognito verification remains external.
 
 ### BW4 — Submission
 
-- [ ] Competition-ready README and final `docs/BUILD_WEEK.md` scorecard/evidence.
+- [x] Competition-ready README and maintained `docs/BUILD_WEEK.md` scorecard/evidence.
 - [ ] Public licensed repository or private repository shared with both required Devpost addresses.
 - [ ] Live demo, Devpost description, curated screenshots, and repository access verified.
 - [ ] Public narrated YouTube video <=3:00 verified for audio/visibility.
@@ -72,4 +73,3 @@ Updated: 2026-07-19
 ### Phase 5 — Controlled beta readiness
 
 - [ ] Accessibility/security suites, cross-parent IDOR coverage, deletion replay, isolated Kazakhstan backup restore, Telegram/PWA smoke, legal/infra approval, and release evidence.
-

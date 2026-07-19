@@ -13,6 +13,7 @@ Each item needs owner, dated evidence link, result, residual risk, and next revi
 
 ## Identity, authorization, abuse
 
+- [ ] Resolve Drizzle runtime declaration compatibility under project `strict:true` and `skipLibCheck:false`; compile the real PostgreSQL repository layer in CI.
 - [ ] Email OTP/session/CSRF/logout/sign-out-all tests pass; keyed digests, TTL, attempt and rate limits are evidenced.
 - [ ] Telegram raw init-data validation, freshness, replay, intent, and identity-linking tests pass.
 - [ ] Cross-parent IDOR tests cover every child/week/task/payday/bucket/goal/history/correction/export/deletion route family.
@@ -38,4 +39,3 @@ Each item needs owner, dated evidence link, result, residual risk, and next revi
 - [ ] WCAG 2.2 AA, keyboard/screen-reader, 320–428px, text scaling, reduced motion, safe area, Telegram BackButton/WebView, PWA cache, and slow/offline limitation checks pass.
 - [ ] The parent/child boundary, no-bank/no-transfer/no-custody copy, Grow parent-funded explanation, no shame/debt/penalty, and no pre-first-payday paywall are validated.
 - [ ] No high/critical security finding, threat-model gap, untested critical action, or unapproved provider/location remains.
-

@@ -33,4 +33,3 @@ The `Week` root derives exactly one dominant parent action from lifecycle state:
 ## Entitlement boundary
 
 Free completes one child's first week/payday/allocation, one Save goal, Grow explanation, corrections, reminders, and useful recent history. Plus is checked only when a parent attempts an approved Plus action and never blocks the first payday.
-

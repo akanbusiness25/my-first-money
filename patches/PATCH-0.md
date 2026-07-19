@@ -48,6 +48,6 @@ Scoped security scan covered 44/44 changed source files. Its two medium abuse-co
 
 ## Next 1–3 items
 
-1. Finish the fresh full verification matrix and production screenshot pass.
-2. Create the honest implementation milestone commit and keep the working tree clean.
-3. Hand off stable HTTPS deployment, repository access, narrated video, `/feedback`, and Devpost submission to Akan.
+1. Deploy the verified commit to stable HTTPS and repeat the judge path in an incognito browser.
+2. Publish/share the repository and record the final URL/access evidence.
+3. Record/upload the narrated video, run `/feedback`, and complete Devpost submission; live provider verification remains separate and must use a manually supplied server secret.

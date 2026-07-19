@@ -27,6 +27,7 @@ New during the submission period: this repository, application code, tests, synt
 | 2026-07-19 15:40      | Honest pre-feature BW0 baseline                        | Required operating, roadmap, competition, architecture, domain, security, and beta-gate documents                                       | Commit exists before feature implementation                                                   | `ed194bd`                     |
 | 2026-07-19 17:34      | BW1–BW3 local implementation checkpoint on GPT-5.6 Sol | Complete synthetic family-week loop, PWA, Money Moment fallback/live adapter, tests, deployment contour, and local security remediation | Focused security tests 14/14; fresh full verification in progress                             | pending implementation commit |
 | 2026-07-19 17:47      | Production verification and curated evidence           | Dependency overrides, four reproducible 390px screenshots, 320/390/428/desktop judge and boundary tests                                 | Frozen install; format/type/lint; 18 unit; build; Drizzle; secret/client; clean audit; 12 E2E | pending implementation commit |
+| 2026-07-19 17:52      | BW1–BW4 local implementation milestone                 | Committed the verified application, tests, security fixes, PWA/deployment contour, docs, and curated evidence                           | Clean staged diff and secret scan passed                                                      | `1ceee06`                     |
 
 Append new rows; never rewrite prior evidence or invent results.
 
@@ -41,14 +42,14 @@ The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, 
 | Criterion                    | Evidence target                                                                                                                                               | Current gap                                                          |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | Technological Implementation | primary Codex task, Git trail, complete vertical loop, Money Moment provider/fallback/live adapter, tests, architecture/security/deploy evidence, `/feedback` | local implementation complete; live provider/deploy/feedback pending |
-| Design                       | coherent mobile family-week flow, polished states, 320–428px, keyboard/a11y/reduced motion, visual fidelity                                                   | concept implemented; final screenshots/external demo pending         |
+| Design                       | coherent mobile family-week flow, polished states, 320–428px, keyboard/a11y/reduced motion, visual fidelity                                                   | concept and curated screenshots complete; external demo pending      |
 | Potential Impact             | concrete 7–12 parent/caregiver problem and weekly ritual shown without invented traction                                                                      | product narrative ready; submission/demo proof pending               |
 | Quality of Idea              | unpaid vs paid distinction, four buckets, parent-funded Grow, safe post-choice reflection; clearly not bank/chore tracker/token/AI tutor                      | working local demo ready; recorded demo pending                      |
 
 ## Evidence index
 
 - Sanitized start screenshot: pending Akan capture. Show task `firstmoney main`, date, `D:\app myfirstmoney`, and GPT-5.6 Sol; hide email/account/usage/unrelated chats/secrets.
-- Git milestones: pre-feature baseline `ed194bd`; implementation milestone pending final verification.
+- Git milestones: pre-feature baseline `ed194bd`; verified implementation milestone `1ceee06`.
 - Accepted UI concepts: `docs/design/concept-week.png` and `docs/design/concept-payday.png`.
 - Browser screenshots: `docs/design/implementation-week.png`, `implementation-payday.png`, `implementation-closed.png`, and `implementation-money-moment.png`; generated from the production build with synthetic data only.
 - Playwright verification: 12/12 production E2E across 320px, 390px, 428px, and desktop, including axe, session isolation, CSP/CSRF/no-store, browser-storage, and static-only PWA cache assertions.

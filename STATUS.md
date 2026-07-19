@@ -9,6 +9,7 @@ Updated: 2026-07-19 17:47 Asia/Qyzylorda
 - Current task: `firstmoney main`, GPT-5.6 Sol; majority core implementation stays here.
 - Current patch: `patches/PATCH-0.md`.
 - Git baseline: honest pre-feature commit `ed194bd8089b87f2734b4aba8d6a8c8e00f74a90` at 2026-07-19 15:40 +05:00.
+- Git implementation milestone: `1ceee06cd0bcb5b64d553edf1c8b4513f7d38b20` at 2026-07-19 17:52 +05:00.
 - Compatibility: application gate uses exact Node `24.18.0`, pnpm `11.15.0`, TypeScript `6.0.3`, Next `16.2.10`, React `19.2.7`, Tailwind `4.3.3`, Drizzle `0.45.2`/Kit `0.31.10`, Zod `4.4.3`, and OpenAI SDK `6.48.0`; TypeScript 7/Drizzle evidence is in `PATCH-0.md`.
 - Money Moment: provider interface, strict selection/output schemas, curated RU/KK cards, deterministic fallback, server-only OpenAI adapter, session allowance, and process-wide live-provider budget are implemented without a key. Live provider verification is not claimed.
 - Security: scoped scan reviewed 44/44 changed files; two medium abuse-control findings were fixed with a 500-session admission cap, reset-resistant allowance, 12/min process-wide provider budget, and curated-ID fail-closed output.

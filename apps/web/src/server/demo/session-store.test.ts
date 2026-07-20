@@ -4,6 +4,7 @@ import {
   bucketBalance,
   getOrCreateDemoSession,
   getOrCreateDemoSessionInStore,
+  MAX_DEMO_LEDGER_EVENTS,
 } from "./session-store";
 
 function advanceToPayday() {
@@ -78,7 +79,7 @@ describe("isolated demo session lifecycle", () => {
     expect(first.id).not.toBe(second.id);
   });
 
-  it("closes payday idempotently and keeps an append-only correction", () => {
+  it("closes payday idempotently and appends idempotent ledger actions", () => {
     const session = advanceToPayday();
     applyDemoCommand(session, {
       action: "confirm_payday",
@@ -89,14 +90,122 @@ describe("isolated demo session lifecycle", () => {
       action: "confirm_payday",
       idempotencyKey: "e6988215-02cd-472e-8679-818f2127addb",
     });
-    applyDemoCommand(session, { action: "apply_demo_correction" });
-    applyDemoCommand(session, { action: "apply_demo_correction" });
+    const bonusId = "1bf5ebea-87fd-475d-9f4d-0903a86ab0bf";
+    applyDemoCommand(session, {
+      action: "add_parent_bonus",
+      idempotencyKey: bonusId,
+      bucket: "save",
+      amountMinor: 100,
+    });
+    applyDemoCommand(session, {
+      action: "add_parent_bonus",
+      idempotencyKey: bonusId,
+      bucket: "save",
+      amountMinor: 100,
+    });
+    applyDemoCommand(session, {
+      action: "move_money",
+      idempotencyKey: "1ce28295-123e-4f77-91eb-7f31b08a2f03",
+      fromBucket: "save",
+      toBucket: "give",
+      amountMinor: 40,
+    });
 
     expect(session.state.payday).toEqual(firstPayday);
     expect(session.state.payday?.totalMinor).toBe(1_800);
-    expect(session.state.corrections).toHaveLength(1);
-    expect(bucketBalance(session.state, "save")).toBe(280);
+    expect(session.state.ledgerEvents).toHaveLength(2);
+    expect(bucketBalance(session.state, "save")).toBe(240);
+    expect(bucketBalance(session.state, "give")).toBe(220);
     expect(bucketBalance(session.state, "grow")).toBe(280);
+  });
+
+  it("rejects ledger actions before payday and moves over the balance", () => {
+    const fresh = getOrCreateDemoSession().session;
+    expect(() =>
+      applyDemoCommand(fresh, {
+        action: "add_parent_bonus",
+        idempotencyKey: "f0d42d35-4a8e-4e57-a278-fe699175d354",
+        bucket: "save",
+        amountMinor: 100,
+      }),
+    ).toThrow("STAGE_CONFLICT");
+
+    const session = advanceToPayday();
+    applyDemoCommand(session, {
+      action: "confirm_payday",
+      idempotencyKey: "b46904b0-942b-4346-ab2d-75877788d36e",
+    });
+    expect(() =>
+      applyDemoCommand(session, {
+        action: "move_money",
+        idempotencyKey: "092bdb13-d083-47aa-b3c5-bbb8b1b77ba7",
+        fromBucket: "save",
+        toBucket: "give",
+        amountMinor: 10_000,
+      }),
+    ).toThrow("INSUFFICIENT_BUCKET_BALANCE");
+    expect(session.state.ledgerEvents).toHaveLength(0);
+  });
+
+  it("bounds append-only demo ledger growth without breaking idempotency", () => {
+    const session = advanceToPayday();
+    applyDemoCommand(session, {
+      action: "confirm_payday",
+      idempotencyKey: "7dc145b2-eeab-4784-9f85-76e997760305",
+    });
+    session.state.ledgerEvents = Array.from(
+      { length: MAX_DEMO_LEDGER_EVENTS },
+      (_, index) => ({
+        id: `00000000-0000-4000-8000-${index.toString().padStart(12, "0")}`,
+        kind: "parent_bonus" as const,
+        bucket: "save" as const,
+        amountMinor: 1,
+        createdAt: new Date(0).toISOString(),
+      }),
+    );
+
+    expect(() =>
+      applyDemoCommand(session, {
+        action: "add_parent_bonus",
+        idempotencyKey: "00000000-0000-4000-8000-000000000000",
+        bucket: "save",
+        amountMinor: 1,
+      }),
+    ).not.toThrow();
+    expect(() =>
+      applyDemoCommand(session, {
+        action: "add_parent_bonus",
+        idempotencyKey: "fbe537c8-df57-4942-b974-18de53e0e673",
+        bucket: "save",
+        amountMinor: 1,
+      }),
+    ).toThrow("DEMO_LEDGER_CAPACITY_REACHED");
+  });
+
+  it("updates server-session preferences and a trimmed Save goal", () => {
+    const { session } = getOrCreateDemoSession();
+
+    applyDemoCommand(session, {
+      action: "update_preferences",
+      locale: "kk",
+      soundEnabled: false,
+      motionEnabled: false,
+    });
+    applyDemoCommand(session, {
+      action: "update_save_goal",
+      title: "  First bike  ",
+      targetMinor: 12_500,
+    });
+
+    expect(session.state.locale).toBe("kk");
+    expect(session.state.preferences).toEqual({
+      soundEnabled: false,
+      motionEnabled: false,
+    });
+    expect(session.state.saveGoal).toEqual({
+      title: "First bike",
+      targetMinor: 12_500,
+    });
   });
 
   it("requires an explicit status for every task", () => {

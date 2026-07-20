@@ -93,6 +93,17 @@ describe("Money Moment safety boundary", () => {
     expect(ConversationCardSchema.parse(first)).toEqual(first);
   });
 
+  it("supports the English-default fallback", async () => {
+    const provider = new DeterministicMoneyMomentProvider();
+    const card = await provider.generate(
+      { ...input, locale: "en" },
+      new AbortController().signal,
+    );
+
+    expect(card.title).toBe("Two minutes about your choices");
+    expect(ConversationCardSchema.parse(card)).toEqual(card);
+  });
+
   it("rejects identifiers and free text at the input boundary", () => {
     expect(() =>
       MoneyMomentInputSchema.parse({ ...input, childName: "Аян" }),

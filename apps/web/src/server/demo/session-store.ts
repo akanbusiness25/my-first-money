@@ -5,10 +5,13 @@ import {
   createInitialDemoState,
   type DemoState,
 } from "@/domain/demo";
+import { projectLedgerBalances } from "@/domain/ledger";
 import { allocateByBasisPoints, calculatePaydayMinor } from "@/domain/money";
+import type { BucketKey } from "@/domain/money";
 
 const SESSION_TTL_MS = 30 * 60 * 1_000;
 export const MAX_DEMO_SESSIONS = 500;
+export const MAX_DEMO_LEDGER_EVENTS = 100;
 
 export interface DemoSession {
   id: string;
@@ -82,6 +85,29 @@ function requireMission(state: DemoState) {
   return state.mission;
 }
 
+function requireClosedPayday(state: DemoState) {
+  if (state.stage !== "closed" || !state.payday) {
+    throw new Error("STAGE_CONFLICT");
+  }
+  return state.payday;
+}
+
+function assertLedgerAmount(amountMinor: number): void {
+  if (
+    !Number.isSafeInteger(amountMinor) ||
+    amountMinor < 1 ||
+    amountMinor > 10_000
+  ) {
+    throw new Error("INVALID_LEDGER_AMOUNT");
+  }
+}
+
+function assertLedgerCapacity(state: DemoState): void {
+  if (state.ledgerEvents.length >= MAX_DEMO_LEDGER_EVENTS) {
+    throw new Error("DEMO_LEDGER_CAPACITY_REACHED");
+  }
+}
+
 export function applyDemoCommand(
   session: DemoSession,
   command: DemoCommand,
@@ -96,13 +122,80 @@ export function applyDemoCommand(
     case "set_locale":
       state.locale = command.locale;
       return;
+    case "update_preferences":
+      state.locale = command.locale;
+      state.preferences = {
+        soundEnabled: command.soundEnabled,
+        motionEnabled: command.motionEnabled,
+      };
+      return;
+    case "update_save_goal":
+      if (
+        !Number.isSafeInteger(command.targetMinor) ||
+        command.targetMinor < 100 ||
+        command.targetMinor > 1_000_000
+      ) {
+        throw new Error("INVALID_GOAL_TARGET_MINOR");
+      }
+      state.saveGoal = {
+        title: command.title.trim(),
+        targetMinor: command.targetMinor,
+      };
+      return;
+    case "add_parent_bonus":
+      requireClosedPayday(state);
+      assertLedgerAmount(command.amountMinor);
+      if (
+        state.ledgerEvents.some((event) => event.id === command.idempotencyKey)
+      ) {
+        return;
+      }
+      assertLedgerCapacity(state);
+      state.ledgerEvents.push({
+        id: command.idempotencyKey,
+        kind: "parent_bonus",
+        bucket: command.bucket,
+        amountMinor: command.amountMinor,
+        createdAt: new Date().toISOString(),
+      });
+      return;
+    case "move_money": {
+      const payday = requireClosedPayday(state);
+      assertLedgerAmount(command.amountMinor);
+      if (command.fromBucket === command.toBucket) {
+        throw new Error("SAME_BUCKET_MOVE");
+      }
+      if (
+        state.ledgerEvents.some((event) => event.id === command.idempotencyKey)
+      ) {
+        return;
+      }
+      assertLedgerCapacity(state);
+      const balances = projectLedgerBalances({
+        payday: payday.allocation,
+        growBonusMinor: payday.growBonusMinor,
+        events: state.ledgerEvents,
+      });
+      if (balances[command.fromBucket] < command.amountMinor) {
+        throw new Error("INSUFFICIENT_BUCKET_BALANCE");
+      }
+      state.ledgerEvents.push({
+        id: command.idempotencyKey,
+        kind: "bucket_move",
+        fromBucket: command.fromBucket,
+        toBucket: command.toBucket,
+        amountMinor: command.amountMinor,
+        createdAt: new Date().toISOString(),
+      });
+      return;
+    }
     case "create_child":
       if (state.stage !== "child_setup") throw new Error("STAGE_CONFLICT");
       state.child = {
         displayName: command.displayName,
         ageBand: command.ageBand,
         presentationToken: "leaf",
-        currency: "KZT",
+        currency: "USD",
       };
       state.stage = "mission_builder";
       return;
@@ -172,32 +265,15 @@ export function applyDemoCommand(
       state.stage = "closed";
       return;
     }
-    case "apply_demo_correction":
-      if (state.stage !== "closed" || !state.payday)
-        throw new Error("STAGE_CONFLICT");
-      if (state.corrections.length === 0) {
-        state.corrections.push({
-          id: randomUUID(),
-          bucket: "save",
-          amountMinor: 100,
-          reason: "parent_confirmed_extra",
-          createdAt: new Date().toISOString(),
-        });
-      }
-      return;
     case "request_money_moment":
       throw new Error("MONEY_MOMENT_REQUIRES_PROVIDER");
   }
 }
 
-export function bucketBalance(
-  state: DemoState,
-  bucket: "spend" | "save" | "give" | "grow",
-) {
-  const allocation = state.payday?.allocation[bucket] ?? 0;
-  const growBonus = bucket === "grow" ? (state.payday?.growBonusMinor ?? 0) : 0;
-  const corrections = state.corrections
-    .filter((entry) => entry.bucket === bucket)
-    .reduce((sum, entry) => sum + entry.amountMinor, 0);
-  return allocation + growBonus + corrections;
+export function bucketBalance(state: DemoState, bucket: BucketKey) {
+  return projectLedgerBalances({
+    payday: state.payday?.allocation ?? null,
+    growBonusMinor: state.payday?.growBonusMinor ?? 0,
+    events: state.ledgerEvents,
+  })[bucket];
 }

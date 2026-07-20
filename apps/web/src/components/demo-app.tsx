@@ -2,43 +2,35 @@
 
 import {
   ArrowLeft,
-  BookOpen,
   Check,
+  CheckCircle2,
   ChevronRight,
   CircleDollarSign,
-  Clock3,
-  Coins,
-  HandHeart,
-  History,
-  House,
-  Leaf,
   LoaderCircle,
-  LockKeyhole,
-  PiggyBank,
-  RotateCcw,
   ShieldCheck,
   Sparkles,
-  Sprout,
   Target,
-  WalletCards,
-  X,
+  UsersRound,
 } from "lucide-react";
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type FormEvent,
-  type ReactNode,
-} from "react";
-import type { DemoCommand } from "@/domain/demo-contract";
+import { useEffect, useState, type FormEvent } from "react";
+import { AppShell } from "@/components/demo/app-shell";
+import { ClosedWeek, type RootTab } from "@/components/demo/closed-week";
+import { bucketCopy, copy, taskCopy } from "@/components/demo/copy";
+import { JarVisual } from "@/components/demo/jar-visual";
+import { formatUsdMinor } from "@/domain/currency";
 import type {
+  AgeBand,
   DemoState,
-  DemoTask,
   LearningObjective,
-  Locale,
   TaskStatus,
 } from "@/domain/demo";
-import type { BucketKey } from "@/domain/money";
+import type { DemoCommand } from "@/domain/demo-contract";
+import {
+  allocateByBasisPoints,
+  calculatePaydayMinor,
+  StarterSplit,
+  type BucketKey,
+} from "@/domain/money";
 import { PwaRegister } from "./pwa-register";
 
 interface DemoSnapshot {
@@ -47,1298 +39,480 @@ interface DemoSnapshot {
   expiresAt: string;
 }
 
-type RootTab = "week" | "buckets" | "history";
-
-const copy = {
-  ru: {
-    tagline: "Тренируем денежные привычки вместе",
-    secure: "Семейное демо · без банковских счетов",
-    loading: "Готовим семейную неделю…",
-    loadError: "Не удалось открыть демо.",
-    retry: "Попробовать снова",
-    offline:
-      "Вы офлайн. Просмотр открыт, но новые действия подождут подключения.",
-    childTitle: "Кто начинает первую неделю?",
-    childBody:
-      "Только имя для показа в этой демо-сессии. Никаких телефонов и счетов.",
-    name: "Имя ребёнка",
-    nameHint: "Например, Аян",
-    age: "Возрастная группа",
-    continue: "Продолжить",
-    missionTitle: "Выберите цель недели",
-    missionBody: "Одна понятная идея, которую семья потренирует вместе.",
-    objectives: {
-      first_choices: [
-        "Первые осознанные выборы",
-        "Замечать: потратить сейчас или оставить на цель",
-      ],
-      saving_patience: [
-        "Копить с терпением",
-        "Видеть маленький прогресс каждую неделю",
-      ],
-      balanced_sharing: [
-        "Баланс и забота",
-        "Оставлять место для себя, цели и помощи другим",
-      ],
-    },
-    buildMission: "Собрать миссию",
-    agreementTitle: "Семейное соглашение",
-    agreementBody:
-      "Проговорите правила вслух. Здесь нет оценок и соревнования.",
-    base: "Базовая сумма недели",
-    responsibilities: "Семейные обязанности",
-    paidTasks: "Дополнительные платные дела",
-    responsibilityNote: "Не оплачиваются — это вклад в семью",
-    bothMarked: "Родитель и ребёнок согласны",
-    startWeek: "Начать неделю",
-    weekEyebrow: "ЭТА НЕДЕЛЯ",
-    weekTitle: "Первая денежная миссия",
-    weekBody:
-      "Сначала ответственность, затем выбор. Проверка займёт меньше минуты.",
-    progress: "Прогресс недели",
-    readyCheck: "Готовы к быстрой проверке?",
-    checkNow: "Проверить неделю",
-    notChecked: "Не проверено",
-    completed: "Готово",
-    notCompleted: "Не сделано",
-    quickTitle: "Быстрая проверка",
-    quickBody: "Отметьте каждое дело. Ответственность не меняет выплату.",
-    allRequired: "Нужен выбор для каждого пункта",
-    calculate: "Посчитать выплату",
-    paydayEyebrow: "ДЕНЬ ВЫПЛАТЫ",
-    paydayTitle: "Всё сходится",
-    paydayBody: "Проверьте расчёт вместе до того, как закрыть неделю.",
-    baseLine: "База недели",
-    extraLine: "Выполненные платные дела",
-    total: "Итого",
-    splitTitle: "Разделение по четырём копилкам",
-    closeWeek: "Подтвердить и разделить",
-    closedTitle: "Неделя закрыта",
-    closedBody: "Первый цикл завершён. Все суммы — учебные и синтетические.",
-    weekTab: "Неделя",
-    bucketsTab: "Копилки",
-    historyTab: "История",
-    bucketsTitle: "Четыре копилки",
-    bucketsBody: "Каждая сумма получила своё назначение.",
-    historyTitle: "История недели",
-    calculation: "Проверяемый расчёт",
-    correction: "Поправка родителя",
-    correctionBody:
-      "+100 ₸ в «Копить» — отдельная запись, исходная выплата не переписана.",
-    addCorrection: "Показать безопасную поправку",
-    corrected: "Поправка уже записана",
-    momentTitle: "Money Moment",
-    momentBody:
-      "Двухминутная беседа по итогам недели — только после подтверждения родителем.",
-    createMoment: "Подготовить разговор",
-    fallback: "Локальная безопасная карточка",
-    live: "Серверная карточка OpenAI",
-    familyAction: "Маленькое действие",
-    parentReview: "Покажите карточку родителю перед разговором.",
-    reset: "Начать демо заново",
-    saveGoal: "Цель: Самокат",
-    learningBonus: "Учебный бонус",
-    resetConfirm: "Текущая синтетическая неделя будет очищена.",
-  },
-  kk: {
-    tagline: "Ақша әдеттерін бірге үйренеміз",
-    secure: "Отбасылық демо · банк шоттары жоқ",
-    loading: "Отбасылық аптаны дайындап жатырмыз…",
-    loadError: "Демоны ашу мүмкін болмады.",
-    retry: "Қайта көру",
-    offline: "Сіз офлайнсыз. Көруге болады, жаңа әрекеттер интернетті күтеді.",
-    childTitle: "Алғашқы аптаны кім бастайды?",
-    childBody:
-      "Тек осы демо-сессияда көрсетілетін есім. Телефондар мен шоттар жоқ.",
-    name: "Баланың есімі",
-    nameHint: "Мысалы, Аян",
-    age: "Жас тобы",
-    continue: "Жалғастыру",
-    missionTitle: "Апта мақсатын таңдаңыз",
-    missionBody: "Отбасы бірге жаттықтыратын бір түсінікті ой.",
-    objectives: {
-      first_choices: [
-        "Алғашқы саналы таңдау",
-        "Қазір жұмсау немесе мақсатқа сақтау",
-      ],
-      saving_patience: ["Сабырмен жинау", "Әр аптадағы шағын ілгерілеуді көру"],
-      balanced_sharing: [
-        "Теңгерім және қамқорлық",
-        "Өзіңе, мақсатқа және өзгеге орын қалдыру",
-      ],
-    },
-    buildMission: "Миссия құру",
-    agreementTitle: "Отбасылық келісім",
-    agreementBody: "Ережелерді дауыстап айтыңыз. Мұнда баға мен жарыс жоқ.",
-    base: "Аптаның негізгі сомасы",
-    responsibilities: "Отбасылық міндеттер",
-    paidTasks: "Қосымша ақылы істер",
-    responsibilityNote: "Төленбейді — бұл отбасыға қосқан үлес",
-    bothMarked: "Ата-ана мен бала келісті",
-    startWeek: "Аптаны бастау",
-    weekEyebrow: "ОСЫ АПТА",
-    weekTitle: "Алғашқы ақша миссиясы",
-    weekBody:
-      "Алдымен жауапкершілік, содан кейін таңдау. Тексеру бір минуттан аз.",
-    progress: "Апта барысы",
-    readyCheck: "Жылдам тексеруге дайынсыз ба?",
-    checkNow: "Аптаны тексеру",
-    notChecked: "Тексерілмеді",
-    completed: "Дайын",
-    notCompleted: "Орындалмады",
-    quickTitle: "Жылдам тексеру",
-    quickBody: "Әр істі белгілеңіз. Міндет төлемді өзгертпейді.",
-    allRequired: "Әр тармаққа таңдау керек",
-    calculate: "Төлемді есептеу",
-    paydayEyebrow: "ТӨЛЕМ КҮНІ",
-    paydayTitle: "Барлығы сәйкес",
-    paydayBody: "Аптаны жаппас бұрын есепті бірге тексеріңіз.",
-    baseLine: "Апта негізі",
-    extraLine: "Орындалған ақылы істер",
-    total: "Барлығы",
-    splitTitle: "Төрт құтыға бөлу",
-    closeWeek: "Растау және бөлу",
-    closedTitle: "Апта жабылды",
-    closedBody: "Алғашқы цикл аяқталды. Барлық сома оқу үшін жасалған.",
-    weekTab: "Апта",
-    bucketsTab: "Құтылар",
-    historyTab: "Тарих",
-    bucketsTitle: "Төрт құты",
-    bucketsBody: "Әр сома өз мақсатына ие болды.",
-    historyTitle: "Апта тарихы",
-    calculation: "Тексерілетін есеп",
-    correction: "Ата-ана түзетуі",
-    correctionBody: "+100 ₸ «Жинау» құтысына — бастапқы төлем өзгермеді.",
-    addCorrection: "Қауіпсіз түзетуді көрсету",
-    corrected: "Түзету жазылды",
-    momentTitle: "Money Moment",
-    momentBody:
-      "Апта қорытындысы бойынша екі минуттық әңгіме — ата-ана растағаннан кейін.",
-    createMoment: "Әңгіме дайындау",
-    fallback: "Жергілікті қауіпсіз карточка",
-    live: "OpenAI серверлік карточкасы",
-    familyAction: "Шағын әрекет",
-    parentReview: "Әңгіме алдында карточканы ата-анаға көрсетіңіз.",
-    reset: "Демоны қайта бастау",
-    saveGoal: "Мақсат: Самокат",
-    learningBonus: "Оқу бонусы",
-    resetConfirm: "Қазіргі синтетикалық апта тазартылады.",
-  },
-} as const;
-
-const taskCopy = {
-  ru: {
-    clear_table: ["Убрать со стола", "Семейная обязанность"],
-    water_plants: ["Полить растения", "+500 ₸"],
-    sort_books: ["Разложить книги", "+300 ₸"],
-  },
-  kk: {
-    clear_table: ["Үстелді жинау", "Отбасылық міндет"],
-    water_plants: ["Өсімдіктерді суару", "+500 ₸"],
-    sort_books: ["Кітаптарды реттеу", "+300 ₸"],
-  },
-} as const;
-
-const bucketCopy = {
-  ru: {
-    spend: ["Тратить", "На выбор сейчас"],
-    save: ["Копить", "На ближайшую цель"],
-    give: ["Делиться", "На заботу о других"],
-    grow: ["Расти", "На обучение и любопытство"],
-  },
-  kk: {
-    spend: ["Жұмсау", "Қазіргі таңдау үшін"],
-    save: ["Жинау", "Жақын мақсат үшін"],
-    give: ["Бөлісу", "Басқаларға қамқорлық"],
-    grow: ["Өсу", "Оқу мен қызығушылыққа"],
-  },
-} as const;
-
-const bucketMeta: Record<
-  BucketKey,
-  { Icon: typeof WalletCards; percent: number }
-> = {
-  spend: { Icon: WalletCards, percent: 70 },
-  save: { Icon: PiggyBank, percent: 10 },
-  give: { Icon: HandHeart, percent: 10 },
-  grow: { Icon: Sprout, percent: 10 },
-};
-
-function money(value: number, locale: Locale) {
-  return new Intl.NumberFormat(locale === "kk" ? "kk-KZ" : "ru-KZ", {
-    style: "currency",
-    currency: "KZT",
-    maximumFractionDigits: 0,
-  }).format(value);
+interface ErrorPayload {
+  error?: { code?: string };
 }
 
-function Brand({ locale }: { locale: Locale }) {
-  return (
-    <div className="brand-lockup" aria-label="My First Money">
-      <span className="brand-mark" aria-hidden="true">
-        <Coins size={21} strokeWidth={2.4} />
-        <Leaf size={12} strokeWidth={2.6} />
-      </span>
-      <span>
-        <strong>My First Money</strong>
-        <small>{copy[locale].tagline}</small>
-      </span>
-    </div>
-  );
-}
-
-function LanguageSwitch({
-  locale,
-  onChange,
-  disabled,
-}: {
-  locale: Locale;
-  onChange: (locale: Locale) => void;
-  disabled: boolean;
-}) {
-  return (
-    <div className="language-switch" aria-label="Language">
-      {(["ru", "kk"] as const).map((item) => (
-        <button
-          key={item}
-          type="button"
-          className={locale === item ? "active" : ""}
-          onClick={() => onChange(item)}
-          disabled={disabled}
-        >
-          {item.toUpperCase()}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function AppHeader({
-  locale,
-  onLocale,
-  busy,
-}: {
-  locale: Locale;
-  onLocale: (locale: Locale) => void;
-  busy: boolean;
-}) {
-  return (
-    <header className="app-header">
-      <Brand locale={locale} />
-      <LanguageSwitch locale={locale} onChange={onLocale} disabled={busy} />
-    </header>
-  );
-}
-
-function PrimaryButton({
-  children,
-  disabled,
-  onClick,
-  type = "button",
-  variant = "primary",
-  testId,
-}: {
-  children: ReactNode;
-  disabled?: boolean;
-  onClick?: () => void;
-  type?: "button" | "submit";
-  variant?: "primary" | "quiet";
-  testId?: string;
-}) {
-  return (
-    <button
-      className={`primary-button ${variant}`}
-      type={type}
-      disabled={disabled}
-      onClick={onClick}
-      data-testid={testId}
-    >
-      <span>{children}</span>
-      {variant === "primary" ? (
-        <ChevronRight size={18} aria-hidden="true" />
-      ) : null}
-    </button>
-  );
-}
-
-function BackButton({
-  onClick,
-  label,
-}: {
-  onClick: () => void;
-  label: string;
-}) {
-  return (
-    <button className="back-button" type="button" onClick={onClick}>
-      <ArrowLeft size={18} />
-      {label}
-    </button>
-  );
-}
-
-function StatusLine({ locale }: { locale: Locale }) {
-  return (
-    <footer className="security-note">
-      <ShieldCheck size={16} />
-      {copy[locale].secure}
-    </footer>
-  );
-}
-
-function BucketRow({
-  bucket,
-  amount,
-  locale,
-  detail,
-}: {
-  bucket: BucketKey;
-  amount: number;
-  locale: Locale;
-  detail?: string;
-}) {
-  const { Icon, percent } = bucketMeta[bucket];
-  const labels = bucketCopy[locale][bucket];
-  return (
-    <article className={`bucket-row bucket-${bucket}`}>
-      <span className="bucket-icon">
-        <Icon size={21} />
-      </span>
-      <div>
-        <strong>{labels[0]}</strong>
-        <small>{detail ?? labels[1]}</small>
-      </div>
-      <div className="bucket-amount">
-        <strong>{money(amount, locale)}</strong>
-        <small>{percent}%</small>
-      </div>
-    </article>
-  );
-}
-
-function TaskRow({
-  task,
-  locale,
-  controls,
-  onStatus,
-  busy,
-}: {
-  task: DemoTask;
-  locale: Locale;
-  controls?: boolean;
-  onStatus?: (status: TaskStatus) => void;
-  busy?: boolean;
-}) {
-  const labels = taskCopy[locale][task.id];
-  return (
-    <article className={`task-row ${task.kind}`}>
-      <span className="task-icon">
-        {task.kind === "responsibility" ? (
-          <House size={19} />
-        ) : (
-          <Sparkles size={19} />
-        )}
-      </span>
-      <div className="task-copy">
-        <strong>{labels[0]}</strong>
-        <small>{labels[1]}</small>
-      </div>
-      {controls ? (
-        <div className="task-actions" aria-label={`${labels[0]} status`}>
-          <button
-            type="button"
-            className={task.status === "completed" ? "yes selected" : "yes"}
-            onClick={() => onStatus?.("completed")}
-            disabled={busy}
-            aria-label={`${copy[locale].completed}: ${labels[0]}`}
-          >
-            <Check size={18} />
-          </button>
-          <button
-            type="button"
-            className={task.status === "not_completed" ? "no selected" : "no"}
-            onClick={() => onStatus?.("not_completed")}
-            disabled={busy}
-            aria-label={`${copy[locale].notCompleted}: ${labels[0]}`}
-          >
-            <X size={18} />
-          </button>
-        </div>
-      ) : (
-        <span className={`task-status ${task.status}`}>
-          {task.status === "completed" ? (
-            <Check size={15} />
-          ) : (
-            <Clock3 size={15} />
-          )}
-          {
-            copy[locale][
-              task.status === "completed" ? "completed" : "notChecked"
-            ]
-          }
-        </span>
-      )}
-    </article>
-  );
-}
-
-function StageShell({
-  children,
-  state,
-  locale,
-  onLocale,
-  busy,
-}: {
-  children: ReactNode;
-  state: DemoState;
-  locale: Locale;
-  onLocale: (locale: Locale) => void;
-  busy: boolean;
-}) {
-  return (
-    <div className="app-frame">
-      <AppHeader locale={locale} onLocale={onLocale} busy={busy} />
-      <main key={state.stage} className="screen-enter">
-        {children}
-      </main>
-      <StatusLine locale={locale} />
-    </div>
-  );
+async function parseSnapshot(response: Response): Promise<DemoSnapshot> {
+  const body = (await response.json()) as DemoSnapshot | ErrorPayload;
+  if (!response.ok || !("state" in body)) {
+    const code = "error" in body ? body.error?.code : undefined;
+    throw new Error(code ?? "REQUEST_REJECTED");
+  }
+  return body;
 }
 
 export function DemoApp() {
   const [snapshot, setSnapshot] = useState<DemoSnapshot | null>(null);
+  const [loadingError, setLoadingError] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [online, setOnline] = useState(() =>
-    typeof navigator === "undefined" ? true : navigator.onLine,
-  );
   const [tab, setTab] = useState<RootTab>("week");
 
-  async function bootstrap() {
-    setError(null);
+  async function load() {
+    setLoadingError(false);
     try {
-      const response = await fetch("/api/v1/demo", { cache: "no-store" });
-      if (!response.ok) throw new Error("BOOTSTRAP_FAILED");
-      setSnapshot((await response.json()) as DemoSnapshot);
+      const response = await fetch("/api/v1/demo", {
+        credentials: "same-origin",
+        cache: "no-store",
+      });
+      setSnapshot(await parseSnapshot(response));
     } catch {
-      setError("BOOTSTRAP_FAILED");
+      setLoadingError(true);
     }
   }
 
   useEffect(() => {
-    const goOnline = () => setOnline(true);
-    const goOffline = () => setOnline(false);
-    window.addEventListener("online", goOnline);
-    window.addEventListener("offline", goOffline);
-    queueMicrotask(() => void bootstrap());
+    const controller = new AbortController();
+    let active = true;
+    void fetch("/api/v1/demo", {
+      credentials: "same-origin",
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(parseSnapshot)
+      .then((next) => {
+        if (active) setSnapshot(next);
+      })
+      .catch(() => {
+        if (active && !controller.signal.aborted) setLoadingError(true);
+      });
     return () => {
-      window.removeEventListener("online", goOnline);
-      window.removeEventListener("offline", goOffline);
+      active = false;
+      controller.abort();
     };
   }, []);
 
-  async function send(command: DemoCommand) {
-    if (!snapshot || busy || !online) return;
+  async function send(command: DemoCommand): Promise<void> {
+    if (!snapshot || busy) throw new Error("REQUEST_BUSY");
     setBusy(true);
-    setError(null);
     try {
       const response = await fetch("/api/v1/demo", {
         method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "x-csrf-token": snapshot.csrfToken,
+          "X-CSRF-Token": snapshot.csrfToken,
         },
         body: JSON.stringify(command),
       });
-      if (!response.ok) {
-        const payload = (await response.json()) as {
-          error?: { code?: string };
-        };
-        throw new Error(payload.error?.code ?? "REQUEST_REJECTED");
-      }
-      setSnapshot((await response.json()) as DemoSnapshot);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "REQUEST_REJECTED");
+      const next = await parseSnapshot(response);
+      setSnapshot(next);
+      if (command.action === "reset") setTab("week");
     } finally {
       setBusy(false);
     }
   }
 
   if (!snapshot) {
-    const locale: Locale = "ru";
     return (
-      <div className="app-frame loading-frame">
-        <Brand locale={locale} />
-        {error ? (
-          <div className="empty-state">
-            <CircleDollarSign size={36} />
-            <h1>{copy[locale].loadError}</h1>
-            <PrimaryButton onClick={() => void bootstrap()}>
-              {copy[locale].retry}
-            </PrimaryButton>
-          </div>
-        ) : (
-          <div className="loading-state">
-            <LoaderCircle className="spin" size={32} />
-            <p>{copy[locale].loading}</p>
-          </div>
-        )}
+      <div className="app-frame app-state-screen">
+        <div className="state-mark">
+          {loadingError ? (
+            <CircleDollarSign aria-hidden="true" />
+          ) : (
+            <LoaderCircle className="spin" aria-hidden="true" />
+          )}
+        </div>
+        <h1>{loadingError ? copy.en.loadError : copy.en.loading}</h1>
+        {loadingError ? (
+          <button className="button" onClick={() => void load()}>
+            {copy.en.retry}
+          </button>
+        ) : null}
       </div>
     );
   }
 
   const { state } = snapshot;
-  const locale = state.locale;
-  const t = copy[locale];
-  const onLocale = (next: Locale) =>
-    void send({ action: "set_locale", locale: next });
-  let content: ReactNode;
-
-  if (state.stage === "child_setup")
-    content = (
-      <ChildSetup
-        locale={locale}
-        busy={busy}
-        onSubmit={(displayName, ageBand) =>
-          void send({ action: "create_child", displayName, ageBand })
-        }
-      />
-    );
-  else if (state.stage === "mission_builder")
-    content = (
-      <MissionBuilder
-        locale={locale}
-        busy={busy}
-        onSubmit={(objective) =>
-          void send({
-            action: "create_mission",
-            objective,
-            baseAmountMinor: 1_000,
-          })
-        }
-      />
-    );
-  else if (state.stage === "agreement" && state.mission)
-    content = (
-      <Agreement
-        state={state}
-        locale={locale}
-        busy={busy}
-        onStart={() => void send({ action: "confirm_agreement" })}
-      />
-    );
-  else if (state.stage === "week" && state.mission)
-    content = (
-      <Week
-        state={state}
-        locale={locale}
-        busy={busy}
-        onCheck={() => void send({ action: "open_quick_check" })}
-      />
-    );
-  else if (state.stage === "quick_check" && state.mission)
-    content = (
-      <QuickCheck
-        state={state}
-        locale={locale}
-        busy={busy}
-        onBack={() => void send({ action: "back_to_week" })}
-        onStatus={(taskId, status) =>
-          void send({ action: "set_task_status", taskId, status })
-        }
-        onFinish={() => void send({ action: "finish_check" })}
-      />
-    );
-  else if (state.stage === "payday" && state.mission)
-    content = (
-      <Payday
-        state={state}
-        locale={locale}
-        busy={busy}
-        onClose={() =>
-          void send({
-            action: "confirm_payday",
-            idempotencyKey: crypto.randomUUID(),
-          })
-        }
-      />
-    );
-  else
-    content = (
-      <ClosedRoot
-        state={state}
-        locale={locale}
-        tab={tab}
-        setTab={setTab}
-        busy={busy}
-        onMoment={() => void send({ action: "request_money_moment" })}
-        onCorrection={() => void send({ action: "apply_demo_correction" })}
-        onReset={() => {
-          if (window.confirm(t.resetConfirm)) {
-            setTab("week");
-            void send({ action: "reset" });
-          }
-        }}
-      />
-    );
-
   return (
-    <>
+    <AppShell
+      state={state}
+      busy={busy}
+      tab={state.stage === "closed" ? tab : undefined}
+      onTabChange={state.stage === "closed" ? setTab : undefined}
+      onCommand={send}
+    >
+      {state.stage === "closed" ? (
+        <ClosedWeek
+          state={state}
+          tab={tab}
+          busy={busy}
+          onTabChange={setTab}
+          onCommand={send}
+        />
+      ) : (
+        <JourneyScreen state={state} busy={busy} onCommand={send} />
+      )}
       <PwaRegister />
-      {!online ? (
-        <div className="offline-banner" role="status">
-          {t.offline}
-        </div>
-      ) : null}
-      {error ? (
-        <div className="error-banner" role="alert">
-          {error}
-        </div>
-      ) : null}
-      <StageShell state={state} locale={locale} onLocale={onLocale} busy={busy}>
-        {content}
-      </StageShell>
-    </>
+    </AppShell>
   );
 }
 
-function ChildSetup({
-  locale,
+function JourneyScreen({
+  state,
   busy,
-  onSubmit,
+  onCommand,
 }: {
-  locale: Locale;
+  state: DemoState;
   busy: boolean;
-  onSubmit: (name: string, age: "4-7" | "8-12" | "13+") => void;
+  onCommand: (command: DemoCommand) => Promise<void>;
 }) {
-  const t = copy[locale];
-  const [name, setName] = useState("Аян");
-  const [age, setAge] = useState<"4-7" | "8-12" | "13+">("8-12");
+  switch (state.stage) {
+    case "child_setup":
+      return <ChildSetup state={state} busy={busy} onCommand={onCommand} />;
+    case "mission_builder":
+      return <MissionBuilder state={state} busy={busy} onCommand={onCommand} />;
+    case "agreement":
+      return <Agreement state={state} busy={busy} onCommand={onCommand} />;
+    case "week":
+      return <ActiveWeek state={state} busy={busy} onCommand={onCommand} />;
+    case "quick_check":
+      return <QuickCheck state={state} busy={busy} onCommand={onCommand} />;
+    case "payday":
+      return <Payday state={state} busy={busy} onCommand={onCommand} />;
+    default:
+      return null;
+  }
+}
+
+function StepHeader({
+  title,
+  body,
+  step,
+}: {
+  title: string;
+  body: string;
+  step: number;
+}) {
+  return (
+    <header className="journey-heading">
+      <span className="step-count" aria-label={`Step ${step} of 6`}>
+        {step}/6
+      </span>
+      <h1>{title}</h1>
+      <p>{body}</p>
+    </header>
+  );
+}
+
+function ChildSetup({ state, busy, onCommand }: JourneyProps) {
+  const c = copy[state.locale];
+  const [displayName, setDisplayName] = useState("");
+  const [ageBand, setAgeBand] = useState<AgeBand>("8-12");
+
   function submit(event: FormEvent) {
     event.preventDefault();
-    onSubmit(name.trim(), age);
+    if (!displayName.trim()) return;
+    void onCommand({
+      action: "create_child",
+      displayName: displayName.trim(),
+      ageBand,
+    });
   }
+
   return (
-    <section className="narrow-screen setup-screen">
-      <div className="hero-symbol coral">
-        <Leaf size={28} />
-      </div>
-      <p className="eyebrow">01 · FAMILY SETUP</p>
-      <h1>{t.childTitle}</h1>
-      <p className="lead">{t.childBody}</p>
-      <form className="stack-form" onSubmit={submit}>
-        <label>
-          {t.name}
+    <section className="journey-screen">
+      <StepHeader title={c.startTitle} body={c.startBody} step={1} />
+      <form className="journey-form" onSubmit={submit}>
+        <label className="field">
+          <span>{c.childNickname}</span>
           <input
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder={t.nameHint}
-            maxLength={24}
             autoComplete="off"
-            required
+            maxLength={24}
+            placeholder={c.nicknamePlaceholder}
+            value={displayName}
+            onChange={(event) => setDisplayName(event.target.value)}
           />
         </label>
-        <fieldset>
-          <legend>{t.age}</legend>
-          <div className="segmented">
-            {(["4-7", "8-12", "13+"] as const).map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setAge(item)}
-                className={age === item ? "selected" : ""}
-                aria-pressed={age === item}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </fieldset>
-        <PrimaryButton type="submit" disabled={busy || !name.trim()}>
-          {busy ? <LoaderCircle className="spin" size={18} /> : t.continue}
-        </PrimaryButton>
+        <label className="field">
+          <span>{c.ageBand}</span>
+          <select
+            value={ageBand}
+            onChange={(event) => setAgeBand(event.target.value as AgeBand)}
+          >
+            <option value="4-7">4–7</option>
+            <option value="8-12">8–12</option>
+            <option value="13+">13+</option>
+          </select>
+        </label>
+        <button
+          className="button"
+          disabled={busy || !displayName.trim()}
+          type="submit"
+        >
+          {c.continue}
+          <ChevronRight aria-hidden="true" />
+        </button>
       </form>
     </section>
   );
 }
 
-function MissionBuilder({
-  locale,
-  busy,
-  onSubmit,
-}: {
-  locale: Locale;
+interface JourneyProps {
+  state: DemoState;
   busy: boolean;
-  onSubmit: (objective: LearningObjective) => void;
-}) {
-  const t = copy[locale];
+  onCommand: (command: DemoCommand) => Promise<void>;
+}
+
+function MissionBuilder({ state, busy, onCommand }: JourneyProps) {
+  const c = copy[state.locale];
   const [objective, setObjective] =
     useState<LearningObjective>("first_choices");
-  const icons = {
-    first_choices: WalletCards,
-    saving_patience: Target,
-    balanced_sharing: HandHeart,
-  };
-  return (
-    <section className="narrow-screen">
-      <p className="eyebrow">02 · WEEK MISSION</p>
-      <h1>{t.missionTitle}</h1>
-      <p className="lead">{t.missionBody}</p>
-      <div className="choice-list">
-        {(Object.keys(t.objectives) as LearningObjective[]).map((item) => {
-          const Icon = icons[item];
-          const labels = t.objectives[item];
-          return (
-            <button
-              type="button"
-              className={
-                objective === item ? "choice-card selected" : "choice-card"
-              }
-              onClick={() => setObjective(item)}
-              key={item}
-            >
-              <span>
-                <Icon size={21} />
-              </span>
-              <div>
-                <strong>{labels[0]}</strong>
-                <small>{labels[1]}</small>
-              </div>
-              <span className="radio-dot" />
-            </button>
-          );
-        })}
-      </div>
-      <div className="amount-card">
-        <span>
-          <Coins size={20} />
-          {t.base}
-        </span>
-        <strong>{money(1_000, locale)}</strong>
-      </div>
-      <PrimaryButton onClick={() => onSubmit(objective)} disabled={busy}>
-        {t.buildMission}
-      </PrimaryButton>
-    </section>
-  );
-}
+  const objectives: Array<{
+    id: LearningObjective;
+    label: string;
+  }> = [
+    { id: "first_choices", label: c.objectiveFirstChoices },
+    { id: "saving_patience", label: c.objectiveSavingPatience },
+    { id: "balanced_sharing", label: c.objectiveBalancedSharing },
+  ];
 
-function Agreement({
-  state,
-  locale,
-  busy,
-  onStart,
-}: {
-  state: DemoState;
-  locale: Locale;
-  busy: boolean;
-  onStart: () => void;
-}) {
-  const t = copy[locale];
-  const mission = state.mission!;
   return (
-    <section className="narrow-screen">
-      <p className="eyebrow">03 · AGREEMENT</p>
-      <h1>{t.agreementTitle}</h1>
-      <p className="lead">{t.agreementBody}</p>
-      <div className="paper-card">
-        <div className="agreement-person">
-          <span className="avatar">
-            {state.child?.displayName.slice(0, 1).toUpperCase()}
-          </span>
-          <div>
-            <strong>{state.child?.displayName}</strong>
-            <small>{t.objectives[mission.objective][0]}</small>
-          </div>
-        </div>
-        <div className="summary-row">
-          <span>{t.base}</span>
-          <strong>{money(mission.baseAmountMinor, locale)}</strong>
-        </div>
-        <div className="summary-row">
-          <span>{t.responsibilities}</span>
-          <strong>1</strong>
-        </div>
-        <div className="summary-row">
-          <span>{t.paidTasks}</span>
-          <strong>2</strong>
-        </div>
-        <p className="responsibility-note">
-          <House size={17} />
-          {t.responsibilityNote}
-        </p>
-      </div>
-      <div className="agreement-check">
-        <span>
-          <Check size={19} />
-        </span>
-        <strong>{t.bothMarked}</strong>
-      </div>
-      <PrimaryButton onClick={onStart} disabled={busy}>
-        {t.startWeek}
-      </PrimaryButton>
-    </section>
-  );
-}
-
-function Week({
-  state,
-  locale,
-  busy,
-  onCheck,
-}: {
-  state: DemoState;
-  locale: Locale;
-  busy: boolean;
-  onCheck: () => void;
-}) {
-  const t = copy[locale];
-  const mission = state.mission!;
-  const completed = mission.tasks.filter(
-    (task) => task.status === "completed",
-  ).length;
-  return (
-    <section className="root-screen">
-      <div className="week-hero">
-        <div>
-          <p className="eyebrow">{t.weekEyebrow}</p>
-          <h1>{t.weekTitle}</h1>
-          <p>{t.weekBody}</p>
-        </div>
-        <span className="avatar large">
-          {state.child?.displayName.slice(0, 1).toUpperCase()}
-        </span>
-      </div>
-      <div className="mission-band">
-        <div>
-          <small>{state.child?.displayName}</small>
-          <strong>{t.objectives[mission.objective][0]}</strong>
-        </div>
-        <div>
-          <small>{t.base}</small>
-          <strong>{money(mission.baseAmountMinor, locale)}</strong>
-        </div>
-      </div>
-      <section className="section-block">
-        <div className="section-heading">
-          <h2>{t.progress}</h2>
-          <span>{completed}/3</span>
-        </div>
-        <div className="progress-track">
-          <span style={{ width: `${Math.max(8, (completed / 3) * 100)}%` }} />
-        </div>
-        {mission.tasks.map((task) => (
-          <TaskRow key={task.id} task={task} locale={locale} />
+    <section className="journey-screen">
+      <StepHeader title={c.missionTitle} body={c.missionBody} step={2} />
+      <div
+        className="choice-list"
+        role="radiogroup"
+        aria-label={c.missionTitle}
+      >
+        {objectives.map((item) => (
+          <label key={item.id} className="choice-row">
+            <input
+              type="radio"
+              name="objective"
+              checked={objective === item.id}
+              onChange={() => setObjective(item.id)}
+            />
+            <Target aria-hidden="true" />
+            <span>{item.label}</span>
+            <Check aria-hidden="true" />
+          </label>
         ))}
-      </section>
-      <div className="callout-card">
-        <span>
-          <Clock3 size={24} />
-        </span>
-        <div>
-          <strong>{t.readyCheck}</strong>
-          <small>{t.quickBody}</small>
-        </div>
       </div>
-      <PrimaryButton
-        onClick={onCheck}
+      <div className="amount-preview">
+        <span>{c.weeklyBase}</span>
+        <strong>{formatUsdMinor(1_000)}</strong>
+      </div>
+      <button
+        className="button"
         disabled={busy}
-        testId="open-quick-check"
+        onClick={() =>
+          void onCommand({
+            action: "create_mission",
+            objective,
+            baseAmountMinor: 1_000,
+          })
+        }
       >
-        {t.checkNow}
-      </PrimaryButton>
+        {c.buildMission}
+        <ChevronRight aria-hidden="true" />
+      </button>
     </section>
   );
 }
 
-function QuickCheck({
-  state,
-  locale,
-  busy,
-  onBack,
-  onStatus,
-  onFinish,
-}: {
-  state: DemoState;
-  locale: Locale;
-  busy: boolean;
-  onBack: () => void;
-  onStatus: (id: DemoTask["id"], status: TaskStatus) => void;
-  onFinish: () => void;
-}) {
-  const t = copy[locale];
-  const tasks = state.mission!.tasks;
+function Agreement({ state, busy, onCommand }: JourneyProps) {
+  const c = copy[state.locale];
+  return (
+    <section className="journey-screen">
+      <StepHeader title={c.agreementTitle} body={c.agreementBody} step={3} />
+      <div className="agreement-people">
+        <span>
+          <UsersRound aria-hidden="true" />
+          {c.parentMarked}
+          <CheckCircle2 aria-hidden="true" />
+        </span>
+        <span>
+          <ShieldCheck aria-hidden="true" />
+          {c.childMarked}
+          <CheckCircle2 aria-hidden="true" />
+        </span>
+      </div>
+      <TaskList state={state} />
+      <button
+        className="button"
+        disabled={busy}
+        onClick={() => void onCommand({ action: "confirm_agreement" })}
+      >
+        {c.startWeek}
+        <Sparkles aria-hidden="true" />
+      </button>
+    </section>
+  );
+}
+
+function ActiveWeek({ state, busy, onCommand }: JourneyProps) {
+  const c = copy[state.locale];
+  return (
+    <section className="journey-screen active-week-screen">
+      <StepHeader title={c.thisWeek} body={c.weekReady} step={4} />
+      <div className="mission-banner">
+        <Target aria-hidden="true" />
+        <span>{c.objectiveFirstChoices}</span>
+        <strong>{formatUsdMinor(state.mission?.baseAmountMinor ?? 0)}</strong>
+      </div>
+      <TaskList state={state} />
+      <button
+        className="button"
+        disabled={busy}
+        onClick={() => void onCommand({ action: "open_quick_check" })}
+      >
+        {c.quickCheck}
+        <ChevronRight aria-hidden="true" />
+      </button>
+    </section>
+  );
+}
+
+function TaskList({ state }: { state: DemoState }) {
+  const tasks = state.mission?.tasks ?? [];
+  const labels = taskCopy[state.locale];
+  return (
+    <ul className="task-list">
+      {tasks.map((task) => (
+        <li key={task.id}>
+          <span className="task-list__check">
+            <Check aria-hidden="true" />
+          </span>
+          <span>
+            <strong>{labels[task.id].label}</strong>
+            <small>{labels[task.id].detail}</small>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function QuickCheck({ state, busy, onCommand }: JourneyProps) {
+  const c = copy[state.locale];
+  const labels = taskCopy[state.locale];
+  const tasks = state.mission?.tasks ?? [];
   const complete = tasks.every((task) => task.status !== "not_checked");
+
+  function setStatus(taskId: (typeof tasks)[number]["id"], status: TaskStatus) {
+    void onCommand({ action: "set_task_status", taskId, status });
+  }
+
   return (
-    <section className="narrow-screen">
-      <BackButton onClick={onBack} label={t.weekTab} />
-      <p className="eyebrow">04 · QUICK CHECK</p>
-      <h1>{t.quickTitle}</h1>
-      <p className="lead">{t.quickBody}</p>
-      <div className="legend-row">
-        <span>
-          <Check size={15} />
-          {t.completed}
-        </span>
-        <span>
-          <X size={15} />
-          {t.notCompleted}
-        </span>
-      </div>
-      <div className="task-check-list">
-        {tasks.map((task) => (
-          <TaskRow
-            key={task.id}
-            task={task}
-            locale={locale}
-            controls
-            busy={busy}
-            onStatus={(status) => onStatus(task.id, status)}
-          />
-        ))}
-      </div>
-      {!complete ? (
-        <p className="validation-hint">
-          <Clock3 size={16} />
-          {t.allRequired}
-        </p>
-      ) : null}
-      <PrimaryButton
-        onClick={onFinish}
-        disabled={busy || !complete}
-        testId="finish-check"
+    <section className="journey-screen">
+      <button
+        className="back-link"
+        disabled={busy}
+        onClick={() => void onCommand({ action: "back_to_week" })}
       >
-        {t.calculate}
-      </PrimaryButton>
-    </section>
-  );
-}
-
-function Payday({
-  state,
-  locale,
-  busy,
-  onClose,
-}: {
-  state: DemoState;
-  locale: Locale;
-  busy: boolean;
-  onClose: () => void;
-}) {
-  const t = copy[locale];
-  const mission = state.mission!;
-  const paid = mission.tasks
-    .filter((task) => task.kind === "paid" && task.status === "completed")
-    .reduce((sum, task) => sum + task.amountMinor, 0);
-  const total = mission.baseAmountMinor + paid;
-  const allocation = useMemo(
-    () => ({
-      spend: Math.floor(total * 0.7),
-      save: Math.floor(total * 0.1),
-      give: Math.floor(total * 0.1),
-      grow: total - Math.floor(total * 0.7) - Math.floor(total * 0.1) * 2,
-    }),
-    [total],
-  );
-  return (
-    <section className="narrow-screen payday-screen">
-      <div className="celebration-mark">
-        <Sparkles size={26} />
-      </div>
-      <p className="eyebrow">{t.paydayEyebrow}</p>
-      <h1>{t.paydayTitle}</h1>
-      <p className="lead">{t.paydayBody}</p>
-      <div className="calculation-card">
-        <div>
-          <span>{t.baseLine}</span>
-          <strong>{money(mission.baseAmountMinor, locale)}</strong>
-        </div>
-        <div>
-          <span>{t.extraLine}</span>
-          <strong>+ {money(paid, locale)}</strong>
-        </div>
-        <div className="calculation-total">
-          <span>{t.total}</span>
-          <strong>{money(total, locale)}</strong>
-        </div>
-      </div>
-      <h2 className="subhead">{t.splitTitle}</h2>
-      <div className="bucket-list">
-        {(["spend", "save", "give", "grow"] as const).map((bucket) => (
-          <BucketRow
-            key={bucket}
-            bucket={bucket}
-            amount={allocation[bucket]}
-            locale={locale}
-          />
-        ))}
-      </div>
-      <PrimaryButton onClick={onClose} disabled={busy} testId="confirm-payday">
-        {t.closeWeek}
-      </PrimaryButton>
-    </section>
-  );
-}
-
-function ClosedRoot({
-  state,
-  locale,
-  tab,
-  setTab,
-  busy,
-  onMoment,
-  onCorrection,
-  onReset,
-}: {
-  state: DemoState;
-  locale: Locale;
-  tab: RootTab;
-  setTab: (tab: RootTab) => void;
-  busy: boolean;
-  onMoment: () => void;
-  onCorrection: () => void;
-  onReset: () => void;
-}) {
-  const t = copy[locale];
-  const payday = state.payday!;
-  const balances = {
-    ...payday.allocation,
-    grow: payday.allocation.grow + payday.growBonusMinor,
-    save:
-      payday.allocation.save +
-      state.corrections.reduce((sum, item) => sum + item.amountMinor, 0),
-  };
-  return (
-    <section className="root-screen closed-root">
-      {tab === "week" ? (
-        <div className="closed-week">
-          <div className="success-seal">
-            <Check size={28} />
-          </div>
-          <p className="eyebrow">{t.weekEyebrow}</p>
-          <h1>{t.closedTitle}</h1>
-          <p className="lead">{t.closedBody}</p>
-          <div className="closed-total">
-            <span>{t.total}</span>
-            <strong>{money(payday.totalMinor, locale)}</strong>
-            <small>
-              {new Intl.DateTimeFormat(locale === "kk" ? "kk-KZ" : "ru-KZ", {
-                dateStyle: "long",
-              }).format(new Date(payday.closedAt))}
-            </small>
-          </div>
-          <div className="bucket-mini-grid">
-            {(["spend", "save", "give", "grow"] as const).map((bucket) => {
-              const Icon = bucketMeta[bucket].Icon;
-              return (
-                <button
-                  key={bucket}
-                  type="button"
-                  className={`bucket-mini bucket-${bucket}`}
-                  onClick={() => setTab("buckets")}
-                >
-                  <Icon size={20} />
-                  <span>{bucketCopy[locale][bucket][0]}</span>
-                  <strong>{money(balances[bucket], locale)}</strong>
-                </button>
-              );
-            })}
-          </div>
-          <MoneyMoment
-            state={state}
-            locale={locale}
-            busy={busy}
-            onMoment={onMoment}
-          />
-          <PrimaryButton variant="quiet" onClick={onReset} disabled={busy}>
-            <RotateCcw size={17} />
-            {t.reset}
-          </PrimaryButton>
-        </div>
-      ) : null}
-      {tab === "buckets" ? (
-        <div>
-          <p className="eyebrow">FOUR JARS</p>
-          <h1>{t.bucketsTitle}</h1>
-          <p className="lead">{t.bucketsBody}</p>
-          <div className="bucket-list expanded">
-            {(["spend", "save", "give", "grow"] as const).map((bucket) => (
-              <BucketRow
-                key={bucket}
-                bucket={bucket}
-                amount={balances[bucket]}
-                locale={locale}
-                detail={
-                  bucket === "grow"
-                    ? `${bucketCopy[locale][bucket][1]} · +${money(payday.growBonusMinor, locale)} ${t.learningBonus.toLowerCase()}`
-                    : undefined
-                }
-              />
-            ))}
-          </div>
-          <div className="goal-card">
-            <div>
-              <span>
-                <Target size={18} />
-                {t.saveGoal}
-              </span>
-              <strong>
-                {money(balances.save, locale)} /{" "}
-                {money(state.saveGoal.targetMinor, locale)}
-              </strong>
+        <ArrowLeft aria-hidden="true" />
+        {c.back}
+      </button>
+      <StepHeader title={c.quickCheckTitle} body={c.weekReady} step={5} />
+      <div className="check-list">
+        {tasks.map((task) => (
+          <fieldset key={task.id}>
+            <legend>
+              <strong>{labels[task.id].label}</strong>
+              <small>{labels[task.id].detail}</small>
+            </legend>
+            <div className="status-choice">
+              <button
+                type="button"
+                aria-pressed={task.status === "completed"}
+                disabled={busy}
+                onClick={() => setStatus(task.id, "completed")}
+              >
+                <Check aria-hidden="true" />
+                {c.completed}
+              </button>
+              <button
+                type="button"
+                aria-pressed={task.status === "not_completed"}
+                disabled={busy}
+                onClick={() => setStatus(task.id, "not_completed")}
+              >
+                {c.notCompleted}
+              </button>
             </div>
-            <progress value={balances.save} max={state.saveGoal.targetMinor} />
-          </div>
-          <MoneyMoment
-            state={state}
-            locale={locale}
-            busy={busy}
-            onMoment={onMoment}
-          />
-        </div>
-      ) : null}
-      {tab === "history" ? (
-        <div>
-          <p className="eyebrow">AUDITABLE HISTORY</p>
-          <h1>{t.historyTitle}</h1>
-          <div className="timeline">
-            <article>
-              <span className="timeline-dot">
-                <Check size={16} />
-              </span>
-              <div>
-                <small>{t.calculation}</small>
-                <h2>{t.closedTitle}</h2>
-                <div className="history-math">
-                  <span>{money(payday.baseAmountMinor, locale)}</span>
-                  <span>+ {money(payday.paidTaskMinor, locale)}</span>
-                  <strong>= {money(payday.totalMinor, locale)}</strong>
-                </div>
-                <p>
-                  {new Date(payday.closedAt).toLocaleString(
-                    locale === "kk" ? "kk-KZ" : "ru-KZ",
-                  )}
-                </p>
-              </div>
-            </article>
-            {state.corrections.map((correction) => (
-              <article key={correction.id}>
-                <span className="timeline-dot correction">
-                  <BookOpen size={15} />
-                </span>
-                <div>
-                  <small>{t.correction}</small>
-                  <h2>
-                    + {money(correction.amountMinor, locale)} ·{" "}
-                    {bucketCopy[locale].save[0]}
-                  </h2>
-                  <p>{t.correctionBody}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-          <PrimaryButton
-            variant="quiet"
-            onClick={onCorrection}
-            disabled={busy || state.corrections.length > 0}
-          >
-            {state.corrections.length ? t.corrected : t.addCorrection}
-          </PrimaryButton>
-          <PrimaryButton variant="quiet" onClick={onReset} disabled={busy}>
-            <RotateCcw size={17} />
-            {t.reset}
-          </PrimaryButton>
-        </div>
-      ) : null}
-      <nav className="bottom-nav" aria-label="Primary">
-        <button
-          type="button"
-          className={tab === "week" ? "active" : ""}
-          onClick={() => setTab("week")}
-        >
-          <House size={20} />
-          <span>{t.weekTab}</span>
-        </button>
-        <button
-          type="button"
-          className={tab === "buckets" ? "active" : ""}
-          onClick={() => setTab("buckets")}
-        >
-          <WalletCards size={20} />
-          <span>{t.bucketsTab}</span>
-        </button>
-        <button
-          type="button"
-          className={tab === "history" ? "active" : ""}
-          onClick={() => setTab("history")}
-        >
-          <History size={20} />
-          <span>{t.historyTab}</span>
-        </button>
-      </nav>
+          </fieldset>
+        ))}
+      </div>
+      <button
+        className="button"
+        disabled={busy || !complete}
+        onClick={() => void onCommand({ action: "finish_check" })}
+      >
+        {c.finishCheck}
+        <ChevronRight aria-hidden="true" />
+      </button>
     </section>
   );
 }
 
-function MoneyMoment({
-  state,
-  locale,
-  busy,
-  onMoment,
-}: {
-  state: DemoState;
-  locale: Locale;
-  busy: boolean;
-  onMoment: () => void;
-}) {
-  const t = copy[locale];
-  const moment = state.moneyMoment;
-  if (!moment)
-    return (
-      <section className="moment-card pending">
-        <span className="moment-icon">
-          <Sparkles size={22} />
-        </span>
-        <div>
-          <h2>{t.momentTitle}</h2>
-          <p>{t.momentBody}</p>
-          <PrimaryButton onClick={onMoment} disabled={busy}>
-            {busy ? (
-              <LoaderCircle className="spin" size={18} />
-            ) : (
-              t.createMoment
-            )}
-          </PrimaryButton>
-        </div>
-      </section>
-    );
+function Payday({ state, busy, onCommand }: JourneyProps) {
+  const c = copy[state.locale];
+  const mission = state.mission;
+  const totalMinor = mission
+    ? calculatePaydayMinor(mission.baseAmountMinor, mission.tasks)
+    : 0;
+  const allocation = allocateByBasisPoints(totalMinor);
+  const labels = bucketCopy[state.locale];
+  const paidExtras = totalMinor - (mission?.baseAmountMinor ?? 0);
+
   return (
-    <section className="moment-card ready">
-      <div className="moment-heading">
-        <span className="moment-icon">
-          <Sparkles size={21} />
+    <section className="journey-screen payday-screen">
+      <StepHeader title={c.paydayTitle} body={c.paydayBody} step={6} />
+      <div className="payday-total">
+        <CircleDollarSign aria-hidden="true" />
+        <span>
+          <small>{c.familyReviewed}</small>
+          <strong>{formatUsdMinor(totalMinor)}</strong>
         </span>
-        <div>
-          <small>{moment.source === "openai" ? t.live : t.fallback}</small>
-          <h2>{moment.card.title}</h2>
-        </div>
       </div>
-      <p>{moment.card.explanation}</p>
-      <ol>
-        {moment.card.questions.map((question) => (
-          <li key={question}>{question}</li>
-        ))}
-      </ol>
-      {moment.card.familyAction ? (
-        <div className="family-action">
-          <strong>{t.familyAction}</strong>
-          <span>{moment.card.familyAction}</span>
+      <dl className="payday-breakdown">
+        <div>
+          <dt>{c.baseAmount}</dt>
+          <dd>{formatUsdMinor(mission?.baseAmountMinor ?? 0)}</dd>
         </div>
-      ) : null}
-      <p className="parent-review">
-        <LockKeyhole size={15} />
-        {t.parentReview}
-      </p>
+        <div>
+          <dt>{c.paidExtras}</dt>
+          <dd>+{formatUsdMinor(paidExtras)}</dd>
+        </div>
+      </dl>
+      <div className="payday-jars">
+        {(Object.keys(allocation) as BucketKey[]).map((bucket) => (
+          <div key={bucket}>
+            <JarVisual
+              bucket={bucket}
+              fillBasisPoints={StarterSplit[bucket]}
+              label={`${labels[bucket].label} jar`}
+            />
+            <strong>{labels[bucket].label}</strong>
+            <span>{formatUsdMinor(allocation[bucket])}</span>
+          </div>
+        ))}
+      </div>
+      <button
+        className="button"
+        disabled={busy}
+        onClick={() =>
+          void onCommand({
+            action: "confirm_payday",
+            idempotencyKey: crypto.randomUUID(),
+          })
+        }
+      >
+        {c.confirmPayday}
+        <Sparkles aria-hidden="true" />
+      </button>
     </section>
   );
 }

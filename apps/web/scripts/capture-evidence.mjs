@@ -14,35 +14,55 @@ const context = await browser.newContext({
 });
 const page = await context.newPage();
 
+async function completeWeek() {
+  await page.getByLabel("Child nickname").fill("Ari");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Review family agreement" }).click();
+  await page.getByRole("button", { name: "Start this week" }).click();
+  await page.getByRole("button", { name: "Review the week" }).click();
+
+  for (const groupName of [
+    "Clear the table Family responsibility",
+    "Water the plants +$5.00",
+    "Put books in order +$3.00",
+  ]) {
+    await page
+      .getByRole("group", { name: groupName })
+      .getByRole("button", { name: "Completed", exact: true })
+      .click();
+  }
+
+  await page.getByRole("button", { name: "Calculate payday" }).click();
+  await page.getByRole("button", { name: "Confirm and fill jars" }).click();
+  await page.getByRole("heading", { name: "Week complete" }).waitFor();
+}
+
+async function settleImages() {
+  await page.waitForFunction(() =>
+    [...document.images].every(
+      (image) => image.complete && image.naturalWidth > 0,
+    ),
+  );
+}
+
 try {
   await page.goto("http://127.0.0.1:3000/", {
     waitUntil: "networkidle",
   });
-  await page.getByLabel("Имя ребёнка").fill("Аян");
-  await page.getByRole("button", { name: "Продолжить" }).click();
-  await page.getByRole("button", { name: "Собрать миссию" }).click();
-  await page.getByRole("button", { name: "Начать неделю" }).click();
-  await page.screenshot({ path: evidencePath("week"), fullPage: true });
+  await completeWeek();
+  await settleImages();
+  await page.getByRole("heading", { name: "Week complete" }).click();
+  await page.screenshot({ path: evidencePath("week") });
 
-  await page.getByTestId("open-quick-check").click();
-  for (const task of [
-    "Готово: Убрать со стола",
-    "Готово: Полить растения",
-    "Готово: Разложить книги",
-  ]) {
-    await page.getByRole("button", { name: task }).click();
-  }
-  await page.getByTestId("finish-check").click();
-  await page.screenshot({ path: evidencePath("payday"), fullPage: true });
+  await page.getByRole("button", { name: "Jars", exact: true }).click();
+  await settleImages();
+  await page.getByRole("heading", { name: "Four jars" }).click();
+  await page.screenshot({ path: evidencePath("jars") });
 
-  await page.getByTestId("confirm-payday").click();
-  await page.screenshot({ path: evidencePath("closed"), fullPage: true });
-  await page.getByRole("button", { name: "Подготовить разговор" }).click();
-  await page.getByText("Локальная безопасная карточка").waitFor();
-  await page.screenshot({
-    path: evidencePath("money-moment"),
-    fullPage: true,
-  });
+  await page.getByRole("button", { name: "Save jar" }).click();
+  await settleImages();
+  await page.getByRole("heading", { name: "Scooter goal" }).click();
+  await page.screenshot({ path: evidencePath("jar-detail") });
 } finally {
   await context.close();
   await browser.close();

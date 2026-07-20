@@ -4,7 +4,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "My First Money",
-  description: "Семейный тренажёр первых денежных привычек.",
+  description:
+    "Money habits kids can practice through one weekly family ritual.",
   applicationName: "My First Money",
   manifest: "/manifest.webmanifest",
 };
@@ -20,7 +21,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="ru">
+    <html lang="en">
       <body>{children}</body>
     </html>
   );

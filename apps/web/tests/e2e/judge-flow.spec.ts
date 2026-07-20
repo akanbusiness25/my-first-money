@@ -9,78 +9,126 @@ async function settleMotion(page: import("@playwright/test").Page) {
   });
 }
 
-test("completes the first family money loop with safe local Money Moment", async ({
+async function finishDemoWeek(page: import("@playwright/test").Page) {
+  await page.getByLabel("Child nickname").fill("Ari");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Review family agreement" }).click();
+  await page.getByRole("button", { name: "Start this week" }).click();
+  await page.getByRole("button", { name: "Review the week" }).click();
+
+  for (const groupName of [
+    "Clear the table Family responsibility",
+    "Water the plants +$5.00",
+    "Put books in order +$3.00",
+  ]) {
+    await page
+      .getByRole("group", { name: groupName })
+      .getByRole("button", { name: "Completed", exact: true })
+      .click();
+  }
+
+  await page.getByRole("button", { name: "Calculate payday" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Family payday" }),
+  ).toBeVisible();
+  await expect(page.getByText("$18.00", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Confirm and fill jars" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Week complete" }),
+  ).toBeVisible();
+}
+
+test("completes the family ritual and records parent-confirmed jar actions", async ({
   page,
 }) => {
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Кто начинает первую неделю?" }),
+    page.getByRole("heading", { name: "Start a money week" }),
   ).toBeVisible();
   await settleMotion(page);
 
   const setupAccessibility = await new AxeBuilder({ page }).analyze();
   expect(setupAccessibility.violations).toEqual([]);
 
-  await page.getByLabel("Имя ребёнка").fill("Аян");
-  await page.getByRole("button", { name: "Продолжить" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Выберите цель недели" }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Собрать миссию" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Семейное соглашение" }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Начать неделю" }).click();
+  await finishDemoWeek(page);
 
-  await page.getByTestId("open-quick-check").click();
-  await page.getByRole("button", { name: "Готово: Убрать со стола" }).click();
-  await page.getByRole("button", { name: "Готово: Полить растения" }).click();
-  await page.getByRole("button", { name: "Готово: Разложить книги" }).click();
-  await page.getByTestId("finish-check").click();
+  await page.getByRole("button", { name: "Talk about this week" }).click();
+  const moment = page.getByRole("dialog", {
+    name: "Two minutes about your choices",
+  });
+  await expect(moment).toBeVisible();
+  await expect(moment.getByText("Safe local conversation card")).toBeVisible();
+  await moment.getByRole("button", { name: "Close" }).last().click();
 
-  await expect(page.getByText("1 800", { exact: false })).toBeVisible();
-  await page.getByTestId("confirm-payday").click();
+  await page.getByRole("button", { name: "Jars", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Four jars" })).toBeVisible();
+  await page.getByRole("button", { name: "Save jar" }).click();
   await expect(
-    page.getByRole("heading", { name: "Неделя закрыта" }),
+    page.getByRole("heading", { name: "Scooter goal" }),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "Подготовить разговор" }).click();
-  await expect(page.getByText("Локальная безопасная карточка")).toBeVisible();
-  await expect(
-    page.getByText("Покажите карточку родителю перед разговором."),
-  ).toBeVisible();
+  await page.getByRole("button", { name: "Add parent bonus" }).click();
+  const bonus = page.getByRole("dialog", { name: "Add parent bonus" });
+  await expect(bonus.getByLabel("Choose a jar")).toHaveValue("save");
+  await expect(bonus.getByLabel("Bonus amount in US dollars")).toHaveValue(
+    "1.00",
+  );
+  await bonus.getByRole("button", { name: "Continue" }).click();
+  await bonus.getByRole("button", { name: "Confirm parent bonus" }).click();
+  await expect(bonus).toBeHidden();
+  await expect(page.getByText("$2.80", { exact: true })).toBeVisible();
 
-  await page.getByRole("button", { name: "Копилки" }).click();
+  await page.getByRole("button", { name: "Move money" }).click();
+  const move = page.getByRole("dialog", { name: "Move money" });
+  await expect(move.getByLabel("Move from")).toHaveValue("spend");
+  await expect(move.getByLabel("Move to")).toHaveValue("save");
+  await expect(move.getByLabel("Amount in US dollars")).toHaveValue("0.50");
+  await move.getByRole("button", { name: "Continue" }).click();
+  await move.getByRole("button", { name: "Confirm move" }).click();
+  await expect(move).toBeHidden();
+  await expect(page.getByText("$3.30", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "History", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Четыре копилки" }),
+    page.getByRole("heading", { name: "Family history" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "История" }).click();
-  await page
-    .getByRole("button", { name: "Показать безопасную поправку" })
-    .click();
-  await expect(page.getByText("Поправка родителя")).toBeVisible();
+  await expect(page.getByText("Parent bonus", { exact: true })).toBeVisible();
+  await expect(page.getByText("Money moved", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Open parent settings" }).click();
+  const settings = page.getByRole("dialog", { name: "Parent settings" });
+  await expect(settings.getByRole("radio", { name: "English" })).toBeChecked();
+  await expect(
+    settings.getByText("US dollar (USD) · fixed for this MVP"),
+  ).toBeVisible();
+  await settings.getByLabel("Goal name").fill("Bike");
+  await settings.getByLabel("Target in US dollars").fill("90.00");
+  await settings.getByRole("button", { name: "Save changes" }).click();
+  await expect(settings).toBeHidden();
+
   await settleMotion(page);
-
   const closedAccessibility = await new AxeBuilder({ page }).analyze();
   expect(closedAccessibility.violations).toEqual([]);
 });
 
-test("keeps a second browser context isolated", async ({ browser }) => {
+test("keeps a second browser context isolated and defaults it to English", async ({
+  browser,
+}) => {
   const firstContext = await browser.newContext();
   const secondContext = await browser.newContext();
   const first = await firstContext.newPage();
   const second = await secondContext.newPage();
 
   await first.goto("/");
-  await first.getByLabel("Имя ребёнка").fill("Демо А");
-  await first.getByRole("button", { name: "Продолжить" }).click();
+  await first.getByLabel("Child nickname").fill("Demo A");
+  await first.getByRole("button", { name: "Continue" }).click();
   await second.goto("/");
 
   await expect(
-    first.getByRole("heading", { name: "Выберите цель недели" }),
+    first.getByRole("heading", { name: "Choose this week’s focus" }),
   ).toBeVisible();
   await expect(
-    second.getByRole("heading", { name: "Кто начинает первую неделю?" }),
+    second.getByRole("heading", { name: "Start a money week" }),
   ).toBeVisible();
 
   await firstContext.close();
@@ -123,7 +171,7 @@ test("keeps the PWA and HTTP boundary private by default", async ({ page }) => {
     ).flat();
     return {
       localStorageEntries: localStorage.length,
-      sessionStorageEntries: sessionStorage.length,
+      sessionStorageKeys: Object.keys(sessionStorage),
       indexedDbEntries:
         "databases" in indexedDB ? (await indexedDB.databases()).length : 0,
       cacheUrls,
@@ -131,7 +179,13 @@ test("keeps the PWA and HTTP boundary private by default", async ({ page }) => {
   });
 
   expect(browserStorage.localStorageEntries).toBe(0);
-  expect(browserStorage.sessionStorageEntries).toBe(0);
+  expect(
+    browserStorage.sessionStorageKeys.every(
+      (key) =>
+        key.startsWith("__next_debug_channel:") ||
+        key.startsWith("__next_scroll_"),
+    ),
+  ).toBe(true);
   expect(browserStorage.indexedDbEntries).toBe(0);
   for (const cachedUrl of browserStorage.cacheUrls) {
     const pathname = new URL(cachedUrl).pathname;

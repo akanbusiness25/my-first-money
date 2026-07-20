@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
     const status =
       code === "DEMO_CAPACITY_REACHED"
         ? 503
-        : code === "RATE_LIMITED"
+        : code === "RATE_LIMITED" || code === "DEMO_LEDGER_CAPACITY_REACHED"
           ? 429
           : code.includes("REJECTED")
             ? 403

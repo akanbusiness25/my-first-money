@@ -1,7 +1,9 @@
 import { z } from "zod";
+import type { Currency } from "./currency";
+import type { DemoLedgerEvent } from "./ledger";
 import type { BucketKey } from "./money";
 
-export const LocaleSchema = z.enum(["ru", "kk"]);
+export const LocaleSchema = z.enum(["en", "ru", "kk"]);
 export type Locale = z.infer<typeof LocaleSchema>;
 
 export const AgeBandSchema = z.enum(["4-7", "8-12", "13+"]);
@@ -34,7 +36,7 @@ export interface DemoChild {
   displayName: string;
   ageBand: AgeBand;
   presentationToken: "leaf";
-  currency: "KZT";
+  currency: Currency;
 }
 
 export interface DemoTask {
@@ -63,14 +65,6 @@ export interface DemoPayday {
   closedAt: string;
 }
 
-export interface DemoCorrection {
-  id: string;
-  bucket: "save";
-  amountMinor: 100;
-  reason: "parent_confirmed_extra";
-  createdAt: string;
-}
-
 export interface ConversationCard {
   title: string;
   explanation: string;
@@ -90,24 +84,32 @@ export interface DemoState {
   child: DemoChild | null;
   mission: DemoMission | null;
   payday: DemoPayday | null;
-  corrections: DemoCorrection[];
+  preferences: {
+    soundEnabled: boolean;
+    motionEnabled: boolean;
+  };
+  ledgerEvents: DemoLedgerEvent[];
   moneyMoment: DemoMoneyMoment | null;
   saveGoal: {
-    title: "Самокат";
-    targetMinor: 8_000;
+    title: string;
+    targetMinor: number;
   };
 }
 
 export function createInitialDemoState(): DemoState {
   return {
     stage: "child_setup",
-    locale: "ru",
+    locale: "en",
     child: null,
     mission: null,
     payday: null,
-    corrections: [],
+    preferences: {
+      soundEnabled: true,
+      motionEnabled: true,
+    },
+    ledgerEvents: [],
     moneyMoment: null,
-    saveGoal: { title: "Самокат", targetMinor: 8_000 },
+    saveGoal: { title: "Scooter", targetMinor: 8_000 },
   };
 }
 

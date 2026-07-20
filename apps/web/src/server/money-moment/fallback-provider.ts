@@ -7,6 +7,17 @@ import {
 } from "./schema";
 
 const cards: Record<MoneyMomentInput["locale"], ConversationCard> = {
+  en: {
+    title: "Two minutes about your choices",
+    explanation:
+      "Today one amount found four different jobs. Each choice now has a clear place.",
+    questions: [
+      "Which jar was easiest to choose, and why?",
+      "What might change if you think about your goal first next time?",
+      "How can you help someone else while keeping your own plan in mind?",
+    ],
+    familyAction: "Choose one jar and name its next small step together.",
+  },
   ru: {
     title: "Две минуты о вашем выборе",
     explanation:
@@ -32,6 +43,16 @@ const cards: Record<MoneyMomentInput["locale"], ConversationCard> = {
 };
 
 const goalCards: Record<MoneyMomentInput["locale"], ConversationCard> = {
+  en: {
+    title: "Two minutes about a small step",
+    explanation:
+      "A goal feels clearer when a family notices one step already made and chooses the next one.",
+    questions: [
+      "Which small step has already happened?",
+      "Which next step would your family like to notice?",
+    ],
+    familyAction: "Name one next step to notice this week.",
+  },
   ru: {
     title: "Две минуты о маленьком шаге",
     explanation:

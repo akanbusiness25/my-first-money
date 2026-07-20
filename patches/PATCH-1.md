@@ -1,6 +1,6 @@
 # PATCH-1 — managed product redesign and supervised jar actions
 
-Status: approved design specification; implementation planning pending written-spec review
+Status: implemented and locally verified in `6ae7058`
 
 ## Scope
 
@@ -23,4 +23,13 @@ Synthetic/demo data only. No key, secret, live provider verification, real-famil
 
 ## Verification target
 
-Unit, type, lint, build, migration, security, and production E2E gates remain required. UI fidelity is checked at 390×844 against the approved concepts and stressed at 320px, 428px, desktop, keyboard, reduced motion, and long RU/KK labels.
+Unit, type, lint, build, migration, security, E2E, and production health/evidence gates remain required. UI fidelity is checked at 390×844 against the approved concepts and stressed at 320px, 428px, desktop, keyboard, reduced motion, and long RU/KK labels.
+
+## Delivered evidence
+
+- Implementation commit: `6ae7058`.
+- Unit suite: 41/41 passed.
+- Judge/boundary E2E: 12/12 passed across 320px, 390px, 428px, and desktop.
+- Production build, Drizzle check, secret scan, client-bundle scan, and dependency audit passed.
+- Same-input visual comparisons and the browser QA record live in `docs/design/design-qa.md` and `docs/design/comparison-*.png`.
+- Security hardening bounds each synthetic append-only ledger at 100 events; duplicate idempotency keys remain safe no-ops.

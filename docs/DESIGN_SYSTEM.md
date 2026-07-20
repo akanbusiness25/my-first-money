@@ -1,88 +1,82 @@
 # Family Table / Four Jars design system
 
-Accepted internal implementation references (generated with the built-in Image Gen path, no API key):
+Active references generated through the built-in image path, with no API key:
 
-- `docs/design/concept-week.png` — 853×1844 source for the active Week root.
-- `docs/design/concept-payday.png` — 853×1844 source for Payday Review and allocation.
-- `docs/design/redesign-week-approved.png` — approved closed-week redesign.
-- `docs/design/redesign-jars-approved.png` — approved Four Jars redesign.
-- `docs/design/redesign-jar-detail-approved.png` — approved focused-jar redesign.
+- `docs/design/redesign-week-approved.png` — approved closed-week direction.
+- `docs/design/redesign-jars-approved.png` — approved Four Jars direction.
+- `docs/design/redesign-jar-detail-approved.png` — approved focused-jar direction.
+- `docs/design/comparison-*.png` — same-viewport concept/implementation QA.
 
-The three `redesign-*-approved.png` files are the active visual targets. The earlier concepts remain lifecycle references. App text and controls remain code-native; the approved tactile jar artwork must be implemented as real generated assets rather than CSS drawings. The later user-approved currency amendment is USD-only, so KZT amounts visible in generated references are replaced by state-derived USD copy.
+The earlier `concept-week.png` and `concept-payday.png` remain lifecycle references. App text and controls are code-native; tactile jars and the scooter are real generated transparent assets under `apps/web/public/jars/`. The approved currency amendment is USD-only, so KZT visible in early references is replaced by state-derived USD copy.
 
 ## Visual point of view
 
-The screen feels like a clear family worksheet laid on a bright table: true white base, dark navy ink, small areas of useful color, open lists separated by rules, and four recognizable jars. It must feel trustworthy to a parent and inviting to a child without becoming childish, fintech-like, or gamified.
+The screen feels like a clear family worksheet on a bright table: true white base, dark navy ink, small areas of useful color, open lists, and four recognizable jars. It should feel trustworthy to a parent and inviting to a child without becoming childish, fintech-like, or visually noisy.
 
 ## Locked tokens
 
-| Token        | Value / rule                                                                               |
-| ------------ | ------------------------------------------------------------------------------------------ |
-| Background   | true white `#ffffff`; never cream/beige                                                    |
-| Soft surface | cool blue-white `#f4f6ff`                                                                  |
-| Ink          | `#08123f`                                                                                  |
-| Muted ink    | `#5b6177`                                                                                  |
-| Border       | `#d9dce8`                                                                                  |
-| Primary      | deep indigo `#1837b7`; hover `#102a94`; focus `#2f6df6`                                    |
-| Spend        | coral `#f25452`                                                                            |
-| Save         | blue `#2f61d5`                                                                             |
-| Give         | accessible gold `#d28a00`                                                                  |
-| Grow         | leaf green `#4d9d48`                                                                       |
-| Radius       | 6px controls/rows, 8px major bands; jars may use their native outline shape                |
-| Shadow       | none on rows; one subtle `0 8px 24px rgba(8,18,63,.08)` only where elevation is meaningful |
-| Motion       | 160–220ms state transitions; instant equivalent under reduced motion                       |
+| Token        | Value / rule                                                            |
+| ------------ | ----------------------------------------------------------------------- |
+| Background   | true white `#ffffff`; never cream/beige                                 |
+| Soft surface | cool blue-white `#f5f7fd`                                               |
+| Ink          | `#08123f`                                                               |
+| Muted ink    | `#68718d`                                                               |
+| Border       | `#dfe4f0`                                                               |
+| Primary      | deep indigo `#2148d8`; hover `#1837b7`; visible focus `#8ba7ff`         |
+| Spend        | coral `#f25452`                                                         |
+| Save         | blue `#2f61d5`                                                          |
+| Give         | accessible gold `#d28a00`                                               |
+| Grow         | leaf green `#4d9d48`                                                    |
+| Radius       | 6–8px controls and bands; jars keep their native outline shape          |
+| Shadow       | none on rows; one subtle elevation shadow only where hierarchy needs it |
+| Motion       | 160–220ms restrained feedback; instant equivalent under reduced motion  |
 
 ## Typography
 
-- Family: `Aptos`, `Segoe UI`, system sans-serif; warm/humanist and Cyrillic-safe.
-- Display: 36–44px desktop/mobile concept equivalent, 750–800 weight, 1.05–1.12 line height.
-- Screen heading: 30–36px, 750, compact tracking.
-- Section heading: 18–21px, 700.
-- Body/task: 16–18px, 450–600, 1.4–1.55.
-- UI controls: 15–17px, 650–750; never browser-default styling.
-- Amounts: tabular numerals, 700; KZT formatting uses spaces and `₸`.
+- Family: Inter/Aptos/Segoe UI/system sans-serif; warm, compact, and Cyrillic-safe.
+- Display: 34–48px, 780–840 weight, compact tracking and line height.
+- Section heading: 18–21px, 700–780.
+- Body/task: 14–17px, 500–650, 1.4–1.55 line height.
+- UI controls: 14–16px, 700–760; never browser-default styling.
+- Amounts: tabular numerals, 700; format from integer cents as `$12.60`.
 
 ## Container and component rules
 
-- One centered app shell, max 480px for the shared mobile experience; desktop uses quiet surrounding whitespace, not a dashboard.
-- Open lists with dividers are preferred to card stacks. One mission band may use the soft surface.
-- Header: compact four-jar brand mark, text brand, locale switch, and parent token/menu.
-- Bottom navigation appears only on the three persistent roots. Contextual setup/check/payday/Money Moment flows use a back control and no bottom nav.
-- Primary CTA is full-width, >=52px high, deep indigo, 6–8px radius, obvious focus ring, and one per lifecycle screen.
-- Task rows communicate type/status through icon, label, and amount/status text; color is supplementary.
-- Jar rows use a consistent outline jar, semantic accent rail/icon, label, integer amount, and percentage.
+- One centered app shell, maximum 428px; desktop uses quiet surrounding whitespace, not a dashboard.
+- Header: compact four-jar brand mark and one parent-profile Settings control. Languages never occupy header space.
+- Bottom navigation has exactly Week / Jars / History on the three persistent roots.
+- Primary CTA is full width, at least 48px high, deep indigo, 8px radius, with one clear action per state.
+- Task rows communicate kind/status through icon, label, and amount/status text; color is supplementary.
+- Four-jar rows use the generated asset, semantic color, live fill, label, amount, and percentage.
+- The focused jar is at least twice the small-jar visual size and keeps goal progress, gesture cue, bonus, and move actions reachable.
+- Dialog sheets trap focus, close with Escape, and separate editing from the explicit review/confirm step.
 
 ## Icon inventory
 
-Use one consistent rounded outline family at approximately 1.8–2px stroke, `currentColor`, with filled semantic status only when the concept uses it.
+Use Lucide's rounded outline family at approximately 1.8–2px stroke, `currentColor`, with filled semantic status only where approved.
 
-- Brand: four compact jar outlines; Grow jar includes a leaf.
-- Header/menu: user token and downward chevron.
-- Mission: target.
-- Unpaid responsibility: house/plate; explicit `Без оплаты`.
-- Paid work: briefcase; task examples use plant/books icons.
-- Status: square unchecked, checked square, incomplete minus.
-- Estimate and buckets: jar.
-- Safety boundary: lock/shield.
-- Navigation: calendar/week, jar/buckets, clock/history.
-- Contextual flow: arrow-left/back and check-circle/confirm.
+- Brand/navigation: jar imagery, calendar, jar, history clock, parent profile.
+- Money meaning: shopping bag, shield, helping hand, sprout.
+- State/actions: check circle, gift, horizontal move, lock, volume, back arrow.
+- No emoji, handcrafted SVG, crypto/market imagery, or stock child photography.
 
-## Allowed primary-screen copy
+## Active copy contract
 
-No extra above-the-fold hero, eyebrow, badge, metric, or marketing claim may be added.
-
-Week reference: `My First Money`, `RU / KZ`, `Аян`, `Эта неделя`, `Учимся выбирать`, `3 из 5 проверено`, `Семейные обязанности`, `Убрать со стола`, `Без оплаты`, `Оплачиваемая работа`, `Полить растения`, `Разобрать книги`, `Ожидается:`, `Быстрая проверка`, `Не банк. Без переводов. Решения принимает родитель.`, `Неделя`, `Копилки`, `История`.
-
-Payday reference: `Назад`, `My First Money`, `День выплаты`, `Проверьте вместе до подтверждения`, calculation rows and exact integer amounts, `Итого`, `Семейные обязанности: 0 ₸`, four bucket labels/amounts/percentages, Grow explanation, `Подтвердить и закрыть неделю`, `Назад к проверке`, and the educational-record boundary.
+- English is the default; Russian and Kazakh are complete alternatives selected in parent Settings.
+- Week: `Week complete`, `You made real choices together.`, `Talk about this week`, `Start next week`.
+- Jars: `Four jars`, `Every amount has a job.`, `Add parent bonus`, `Move money`, `Parent confirms every change.`
+- Focused Save: `Scooter goal`, exact USD amount/target, percentage, drag/keyboard cue.
+- History: immutable week close plus separate Grow bonus, parent bonus, and money-move records.
+- Money Moment: `Safe local conversation card`; never imply financial advice, investment, interest, or guaranteed return.
 
 ## Responsive and accessibility contract
 
-- Stress at 320px with long Russian/Kazakh labels and large amounts; no horizontal scroll or clipped CTA.
+- Stress at 320px with long Russian/Kazakh labels and large amounts; no horizontal scroll or clipped required CTA.
 - 44px minimum targets, visible keyboard focus, semantic labels, non-color meaning, 200% text reflow, and safe-area padding.
-- Fixed actions must remain reachable with a mobile keyboard; bottom nav does not cover content.
-- Reduced motion removes travel/celebration while preserving the final four-bucket state instantly.
-- Dark mode is deferred from the competition-critical path; light mode must remain legible inside Telegram dark chrome.
+- Fixed bottom navigation must not cover required actions; content may scroll when the viewport is shorter than the 844px design target.
+- Reduced motion removes travel/celebration while preserving the final state instantly.
+- Dark mode remains deferred; light mode must stay legible inside Telegram dark chrome.
 
-## State extension
+## Scope boundary
 
-Unshown setup/agreement/check/history/Money Moment states must extend the same header, open-list, divider, button, typography, icon, and semantic-color families. New major component families, dashboards, nested cards, charts, badges, or additional root navigation are prohibited.
+New major card families, dashboards, nested analytics, custom jars, marketplace, child login, or extra root navigation are prohibited. The one Save goal is editable; extra goals and editable allocation percentages remain deferred.

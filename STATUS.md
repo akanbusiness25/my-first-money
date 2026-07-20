@@ -1,19 +1,20 @@
 # Status
 
-Updated: 2026-07-19 17:47 Asia/Qyzylorda
+Updated: 2026-07-20 22:25 Asia/Qyzylorda
 
-- Current lane: local `BW3` verification and `BW4` submission assets.
-- Workspace: `D:\app myfirstmoney`; the browser/PWA vertical slice is implemented in this same primary task.
-- Data boundary: synthetic/demo data only.
-- Real-family beta: blocked by legal, Kazakhstan data-location, consent, deletion, backup/restore, incident, auth, and security gates.
-- Current task: `firstmoney main`, GPT-5.6 Sol; majority core implementation stays here.
-- Current patch: `patches/PATCH-0.md`.
-- Git baseline: honest pre-feature commit `ed194bd8089b87f2734b4aba8d6a8c8e00f74a90` at 2026-07-19 15:40 +05:00.
-- Git implementation milestone: `1ceee06cd0bcb5b64d553edf1c8b4513f7d38b20` at 2026-07-19 17:52 +05:00.
-- Compatibility: application gate uses exact Node `24.18.0`, pnpm `11.15.0`, TypeScript `6.0.3`, Next `16.2.10`, React `19.2.7`, Tailwind `4.3.3`, Drizzle `0.45.2`/Kit `0.31.10`, Zod `4.4.3`, and OpenAI SDK `6.48.0`; TypeScript 7/Drizzle evidence is in `PATCH-0.md`.
-- Money Moment: provider interface, strict selection/output schemas, curated RU/KK cards, deterministic fallback, server-only OpenAI adapter, session allowance, and process-wide live-provider budget are implemented without a key. Live provider verification is not claimed.
-- Security: scoped scan reviewed 44/44 changed files; two medium abuse-control findings were fixed with a 500-session admission cap, reset-resistant allowance, 12/min process-wide provider budget, and curated-ID fail-closed output.
-- Verification: frozen install, format, strict typecheck, lint, 18 unit tests, Next production build, Drizzle check, secret/client-bundle scans, dependency audit, health smoke, and 12 production E2E tests pass; dependency audit reports no known vulnerabilities.
-- Curated evidence: four 390px production screenshots are stored under `docs/design/implementation-*.png` and visually inspected.
-- Local blockers: Docker/PostgreSQL 18 disposable-container smoke unavailable on this machine. Stable HTTPS deployment and incognito verification are external.
-- External evidence pending: sanitized start capture, repository/live URL, narrated video, `/feedback`, and Devpost submission.
+- Current lane: verified local `BW3`; `BW4` external submission assets and stable HTTPS remain.
+- Workspace/task: `D:\app myfirstmoney`, primary task `firstmoney main`, GPT-5.6 Sol.
+- Data boundary: synthetic/demo data only. No OpenAI key was requested, created, stored, or needed.
+- Real-family beta: blocked by legal, Kazakhstan data-location, consent, deletion, backup/restore, incident, authentication/authorization, and security gates.
+- Git baseline: honest pre-feature commit `ed194bd`.
+- First vertical-slice milestone: `1ceee06`.
+- Approved design/spec milestone: `ea1f7a0`; implementation plan: `9946cda`.
+- Managed redesign implementation: `6ae7058`.
+- Product state: English-default EN/RU/KK; USD-only; Week / Jars / History roots; Settings behind the parent profile; one editable Save goal; parent-confirmed bonus and bucket move; append-only history.
+- Jar experience: five generated transparent assets, live fill, focused detail, deliberate drag plus Enter/Space activation, distinct optional WebAudio feedback, reduced-motion support.
+- Money Moment: provider interface, strict selection/output schemas, curated EN/RU/KK cards, deterministic fallback, server-only OpenAI adapter, and abuse budgets are implemented without a key. Live provider verification is not claimed.
+- Security: same-origin/CSRF/no-store controls remain; 500-session and 100-ledger-event caps bound the anonymous demo; secret scan, client-bundle scan, and dependency audit pass.
+- Verification: frozen install previously passed; current format, strict typecheck, lint, 41 unit tests, production build, Drizzle check, secret/client scans, clean dependency audit, and 12 E2E tests pass.
+- Browser QA: complete IAB judge flow at 390x844; 320px Russian/Kazakh reflow; 428px and desktop E2E; no console warnings/errors in the inspected flow.
+- Evidence: accepted concepts, production screenshots, same-input comparisons, and the exact QA record live under `docs/design/`.
+- External blockers: Docker/PostgreSQL 18 disposable-container smoke unavailable locally; stable HTTPS deployment, incognito verification, public repository/video, `/feedback`, and Devpost submission remain.

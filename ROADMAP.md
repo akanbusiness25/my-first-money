@@ -1,6 +1,6 @@
 # My First Money roadmap
 
-Updated: 2026-07-19
+Updated: 2026-07-20
 
 ## Deadline-first Build Week lane
 
@@ -20,8 +20,8 @@ Updated: 2026-07-19
 - [x] Child setup -> mission builder -> family agreement -> active week.
 - [x] Tri-state Quick Check -> exact payday preview -> idempotent confirm.
 - [x] Spend / Save / Give / Grow allocation -> closed-week review/history.
-- [x] One Save goal, Grow explanation, basic append-only correction, recent history, and no pre-payday paywall.
-- [x] Typed Kazakh/Russian copy and mobile-first PWA shell.
+- [x] One editable Save goal, Grow explanation, parent-confirmed append-only bonus/move events, recent history, and no pre-payday paywall.
+- [x] English-default typed EN/RU/KK copy, server-session Settings, USD-only display, and mobile-first PWA shell.
 
 ### BW2 — GPT-5.6 Money Moment
 
@@ -34,9 +34,10 @@ Updated: 2026-07-19
 
 - [x] Complete loading/validation/session/offline-limitation/pending/recovery states for the synthetic loop.
 - [x] Browser verification at 320px, 390px, 428px, and desktop; semantic keyboard/focus controls, reduced-motion/safe-area CSS, and automated axe checks.
-- [x] Playwright full judge flow plus PWA/cache/header/storage/CSRF/session-isolation checks (12/12 production E2E).
+- [x] Playwright full judge flow plus PWA/cache/header/storage/CSRF/session-isolation checks (12/12 E2E), plus production-build health/evidence smoke.
 - [x] Scoped security review and remediation; stable HTTPS synthetic deployment remains external.
 - [x] Local fresh-context judge-path verification; stable HTTPS incognito verification remains external.
+- [x] Approved managed product redesign implemented and visually compared at 390x844; long RU/KK copy reflow verified at 320px.
 
 ### BW4 — Submission
 

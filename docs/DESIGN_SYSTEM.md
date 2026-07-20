@@ -4,8 +4,11 @@ Accepted internal implementation references (generated with the built-in Image G
 
 - `docs/design/concept-week.png` — 853×1844 source for the active Week root.
 - `docs/design/concept-payday.png` — 853×1844 source for Payday Review and allocation.
+- `docs/design/redesign-week-approved.png` — approved closed-week redesign.
+- `docs/design/redesign-jars-approved.png` — approved Four Jars redesign.
+- `docs/design/redesign-jar-detail-approved.png` — approved focused-jar redesign.
 
-These concepts preserve the approved pipeline flow and are an implementation specification, not production UI assets. App text, controls, icons, and jar graphics remain code-native.
+The three `redesign-*-approved.png` files are the active visual targets. The earlier concepts remain lifecycle references. App text and controls remain code-native; the approved tactile jar artwork must be implemented as real generated assets rather than CSS drawings. The later user-approved currency amendment is USD-only, so KZT amounts visible in generated references are replaced by state-derived USD copy.
 
 ## Visual point of view
 

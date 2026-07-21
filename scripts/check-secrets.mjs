@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 
 const listed = execFileSync(
   "git",
@@ -28,6 +28,7 @@ const binaryExtensions = /\.(?:png|jpe?g|gif|webp|ico|woff2?|zip|gz|pdf)$/i;
 const findings = [];
 
 for (const file of listed.split("\0").filter(Boolean)) {
+  if (!existsSync(file)) continue;
   if (binaryExtensions.test(file) || file === "pnpm-lock.yaml") continue;
   if (statSync(file).size > 2_000_000) continue;
   const text = readFileSync(file, "utf8");

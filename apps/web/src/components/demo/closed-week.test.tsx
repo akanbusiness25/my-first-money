@@ -138,4 +138,31 @@ describe("approved closed-week experience", () => {
     expect(within(history).getByText("Week allocation · 1")).toBeVisible();
     expect(within(history).getByText("+$1.80 · Give")).toBeVisible();
   });
+
+  it("keeps jar mutations locked until the first payday", () => {
+    const state = closedState();
+    state.stage = "week";
+    state.payday = null;
+    state.ledgerEvents = [];
+
+    render(
+      <ClosedWeek
+        state={state}
+        tab="jars"
+        busy={false}
+        onCommand={vi.fn().mockResolvedValue(undefined)}
+        onTabChange={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText("Jar actions unlock after the first payday."),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("button", { name: "Add parent bonus" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Move money" }),
+    ).not.toBeInTheDocument();
+  });
 });

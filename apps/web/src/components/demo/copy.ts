@@ -78,6 +78,7 @@ export interface CopyContract {
   thisWeek: string;
   weekReady: string;
   activeWeekDemoBody: string;
+  quickCheckBody: string;
   quickCheck: string;
   quickCheckTitle: string;
   completed: string;
@@ -100,6 +101,7 @@ export interface CopyContract {
   moveMoney: string;
   useFromJar: string;
   parentConfirms: string;
+  jarActionsLocked: string;
   scooterGoal: string;
   goalProgress: string;
   goalComplete: string;
@@ -146,6 +148,7 @@ export interface CopyContract {
   goalSaved: string;
   settingsSaved: string;
   requestFailed: string;
+  sessionExpired: string;
 }
 
 export const copy = {
@@ -237,6 +240,8 @@ export const copy = {
     weekReady: "Your family mission is ready.",
     activeWeekDemoBody:
       "This is your active-week home. Return here during the week, then review what was completed together.",
+    quickCheckBody:
+      "Mark each item together. Only completed paid jobs add to payday.",
     quickCheck: "Review the week",
     quickCheckTitle: "What was completed?",
     completed: "Completed",
@@ -259,6 +264,7 @@ export const copy = {
     moveMoney: "Move money",
     useFromJar: "Use money from this jar",
     parentConfirms: "Parent confirms every change.",
+    jarActionsLocked: "Jar actions unlock after the first payday.",
     scooterGoal: "Scooter goal",
     goalProgress: "Goal progress",
     goalComplete: "Goal reached",
@@ -306,6 +312,8 @@ export const copy = {
     goalSaved: "Save goal updated",
     settingsSaved: "Settings updated",
     requestFailed: "That change was not saved. Please try again.",
+    sessionExpired:
+      "This test run expired after a restart or 30 minutes of inactivity. A fresh run is ready.",
   },
   ru: {
     brandTagline: "Денежные привычки, которые дети могут тренировать.",
@@ -393,6 +401,8 @@ export const copy = {
     weekReady: "Семейная миссия готова.",
     activeWeekDemoBody:
       "Это главный экран активной недели. Возвращайтесь сюда в течение недели, а затем вместе отметьте выполненное.",
+    quickCheckBody:
+      "Отметьте каждый пункт вместе. В выплату добавляются только выполненные платные задания.",
     quickCheck: "Подвести итоги",
     quickCheckTitle: "Что получилось выполнить?",
     completed: "Выполнено",
@@ -415,6 +425,7 @@ export const copy = {
     moveMoney: "Переместить деньги",
     useFromJar: "Использовать деньги из копилки",
     parentConfirms: "Каждое изменение подтверждает родитель.",
+    jarActionsLocked: "Действия с копилками откроются после первой выплаты.",
     scooterGoal: "Цель: самокат",
     goalProgress: "Прогресс цели",
     goalComplete: "Цель достигнута",
@@ -462,6 +473,8 @@ export const copy = {
     goalSaved: "Цель накопления обновлена",
     settingsSaved: "Настройки обновлены",
     requestFailed: "Изменение не сохранилось. Попробуйте снова.",
+    sessionExpired:
+      "Тестовый прогон завершился после перезапуска или 30 минут бездействия. Новый прогон уже готов.",
   },
   kk: {
     brandTagline: "Балалар жаттықтыра алатын ақша әдеттері.",
@@ -548,6 +561,8 @@ export const copy = {
     weekReady: "Отбасылық миссия дайын.",
     activeWeekDemoBody:
       "Бұл белсенді аптаның басты экраны. Апта бойы осында оралып, соңында орындалған істерді бірге белгілеңіз.",
+    quickCheckBody:
+      "Әр тармақты бірге белгілеңіз. Төлемге тек орындалған ақылы тапсырмалар қосылады.",
     quickCheck: "Аптаны қорытындылау",
     quickCheckTitle: "Не орындалды?",
     completed: "Орындалды",
@@ -570,6 +585,7 @@ export const copy = {
     moveMoney: "Ақшаны ауыстыру",
     useFromJar: "Құтыдағы ақшаны пайдалану",
     parentConfirms: "Әр өзгерісті ата-ана растайды.",
+    jarActionsLocked: "Құтылармен әрекеттер алғашқы төлемнен кейін ашылады.",
     scooterGoal: "Самокат мақсаты",
     goalProgress: "Мақсат ілгерілеуі",
     goalComplete: "Мақсат орындалды",
@@ -617,6 +633,8 @@ export const copy = {
     goalSaved: "Жинақ мақсаты жаңартылды",
     settingsSaved: "Баптаулар жаңартылды",
     requestFailed: "Өзгеріс сақталмады. Қайталап көріңіз.",
+    sessionExpired:
+      "Тестілік өту қайта іске қосылғаннан немесе 30 минут әрекетсіздіктен кейін аяқталды. Жаңа өту дайын.",
   },
 } satisfies Record<Locale, CopyContract>;
 

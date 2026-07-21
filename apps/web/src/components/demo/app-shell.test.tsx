@@ -32,4 +32,25 @@ describe("AppShell parent settings", () => {
     ).toBeVisible();
     expect(screen.getByRole("radio", { name: "English" })).toBeChecked();
   });
+
+  it("shows the primary product navigation during an active week", () => {
+    const state = createInitialDemoState();
+    state.stage = "week";
+
+    render(
+      <AppShell
+        state={state}
+        busy={false}
+        tab="week"
+        onTabChange={vi.fn()}
+        onCommand={vi.fn().mockResolvedValue(undefined)}
+      >
+        <p>Active week</p>
+      </AppShell>,
+    );
+
+    expect(screen.getByRole("button", { name: "Week" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Jars" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "History" })).toBeVisible();
+  });
 });

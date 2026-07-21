@@ -88,7 +88,9 @@ export function AppShell({
 
       <main className="app-main">{children}</main>
 
-      {state.stage === "closed" && tab && onTabChange ? (
+      {(state.stage === "week" || state.stage === "closed") &&
+      tab &&
+      onTabChange ? (
         <BottomNavigation
           locale={state.locale}
           tab={tab}

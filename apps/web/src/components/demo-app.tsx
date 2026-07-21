@@ -5,6 +5,7 @@ import {
   Check,
   CheckCircle2,
   ChevronRight,
+  Circle,
   CircleDollarSign,
   LoaderCircle,
   PencilLine,
@@ -59,6 +60,7 @@ export function DemoApp() {
   const [loadingError, setLoadingError] = useState(false);
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<RootTab>("week");
+  const [actionError, setActionError] = useState<string | null>(null);
 
   async function load() {
     setLoadingError(false);
@@ -97,6 +99,7 @@ export function DemoApp() {
   async function send(command: DemoCommand): Promise<void> {
     if (!snapshot || busy) throw new Error("REQUEST_BUSY");
     setBusy(true);
+    setActionError(null);
     try {
       const response = await fetch("/api/v1/demo", {
         method: "POST",
@@ -110,7 +113,22 @@ export function DemoApp() {
       });
       const next = await parseSnapshot(response);
       setSnapshot(next);
-      if (command.action === "reset") setTab("week");
+      if (
+        command.action === "reset" ||
+        command.action === "confirm_agreement" ||
+        command.action === "start_next_week"
+      ) {
+        setTab("week");
+      }
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "REQUEST_REJECTED";
+      if (code === "SESSION_EXPIRED" || code === "CSRF_REJECTED") {
+        await load();
+        setActionError(copy[snapshot.state.locale].sessionExpired);
+      } else {
+        setActionError(copy[snapshot.state.locale].requestFailed);
+      }
+      throw error;
     } finally {
       setBusy(false);
     }
@@ -137,14 +155,28 @@ export function DemoApp() {
   }
 
   const { state } = snapshot;
+  const productRoot = state.stage === "week" || state.stage === "closed";
+  const journeyCommand = async (command: DemoCommand) => {
+    try {
+      await send(command);
+    } catch {
+      // The app-level alert already reports the failure and recovers expired
+      // bounded sessions. Journey controls do not need a second error surface.
+    }
+  };
   return (
     <AppShell
       state={state}
       busy={busy}
-      tab={state.stage === "closed" ? tab : undefined}
-      onTabChange={state.stage === "closed" ? setTab : undefined}
+      tab={productRoot ? tab : undefined}
+      onTabChange={productRoot ? setTab : undefined}
       onCommand={send}
     >
+      {actionError ? (
+        <p className="session-notice" role="alert">
+          {actionError}
+        </p>
+      ) : null}
       {state.stage === "closed" ? (
         <ClosedWeek
           state={state}
@@ -153,8 +185,25 @@ export function DemoApp() {
           onTabChange={setTab}
           onCommand={send}
         />
+      ) : state.stage === "week" ? (
+        tab === "week" ? (
+          <ActiveWeek state={state} busy={busy} onCommand={journeyCommand} />
+        ) : (
+          <ClosedWeek
+            state={state}
+            tab={tab}
+            busy={busy}
+            onTabChange={setTab}
+            onCommand={send}
+          />
+        )
       ) : (
-        <JourneyScreen state={state} busy={busy} onCommand={send} />
+        <JourneyScreen
+          key={snapshot.csrfToken}
+          state={state}
+          busy={busy}
+          onCommand={journeyCommand}
+        />
       )}
       <PwaRegister />
     </AppShell>
@@ -195,13 +244,15 @@ function StepHeader({
 }: {
   title: string;
   body: string;
-  step: number;
+  step?: number;
 }) {
   return (
     <header className="journey-heading">
-      <span className="step-count" aria-label={`Step ${step} of 6`}>
-        {step}/6
-      </span>
+      {step ? (
+        <span className="step-count" aria-label={`Step ${step} of 3`}>
+          {step}/3
+        </span>
+      ) : null}
       <h1>{title}</h1>
       <p>{body}</p>
     </header>
@@ -543,16 +594,11 @@ function ActiveWeek({ state, busy, onCommand }: JourneyProps) {
     balanced_sharing: c.objectiveBalancedSharing,
   };
   return (
-    <section className="journey-screen active-week-screen">
-      <button
-        className="back-link"
-        disabled={busy}
-        onClick={() => void onCommand({ action: "back_to_agreement" })}
-      >
-        <ArrowLeft aria-hidden="true" />
-        {c.back}
-      </button>
-      <StepHeader title={c.thisWeek} body={c.activeWeekDemoBody} step={4} />
+    <section className="closed-screen active-week-screen">
+      <header className="hero-heading">
+        <h1>{c.thisWeek}</h1>
+        <p>{c.activeWeekDemoBody}</p>
+      </header>
       <div className="mission-banner">
         <Target aria-hidden="true" />
         <span>
@@ -583,7 +629,7 @@ function TaskList({ state }: { state: DemoState }) {
       {tasks.map((task) => (
         <li key={task.id}>
           <span className="task-list__check">
-            <Check aria-hidden="true" />
+            <Circle aria-hidden="true" />
           </span>
           <span>
             <strong>{labels[task.id].label}</strong>
@@ -615,7 +661,7 @@ function QuickCheck({ state, busy, onCommand }: JourneyProps) {
         <ArrowLeft aria-hidden="true" />
         {c.back}
       </button>
-      <StepHeader title={c.quickCheckTitle} body={c.weekReady} step={5} />
+      <StepHeader title={c.quickCheckTitle} body={c.quickCheckBody} />
       <div className="check-list">
         {tasks.map((task) => (
           <fieldset key={task.id}>
@@ -678,7 +724,7 @@ function Payday({ state, busy, onCommand }: JourneyProps) {
         <ArrowLeft aria-hidden="true" />
         {c.back}
       </button>
-      <StepHeader title={c.paydayTitle} body={c.paydayBody} step={6} />
+      <StepHeader title={c.paydayTitle} body={c.paydayBody} />
       <div className="payday-total">
         <CircleDollarSign aria-hidden="true" />
         <span>

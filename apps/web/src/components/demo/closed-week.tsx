@@ -345,7 +345,9 @@ function WeekScreen({
       <button
         className="text-button"
         disabled={busy}
-        onClick={() => void onCommand({ action: "start_next_week" })}
+        onClick={() =>
+          void onCommand({ action: "start_next_week" }).catch(() => undefined)
+        }
       >
         {c.startNextWeek}
       </button>
@@ -445,13 +447,20 @@ function JarsScreen({
         </div>
         <p className="keyboard-hint">{c.keyboardShake}</p>
 
-        <PrimaryActions
-          locale={state.locale}
-          busy={busy}
-          onBonus={() => setActionMode("bonus")}
-          onMove={() => setActionMode("move")}
-          onUse={() => setActionMode("use")}
-        />
+        {state.payday ? (
+          <PrimaryActions
+            locale={state.locale}
+            busy={busy}
+            onBonus={() => setActionMode("bonus")}
+            onMove={() => setActionMode("move")}
+            onUse={() => setActionMode("use")}
+          />
+        ) : (
+          <p className="parent-note parent-note--locked">
+            <LockKeyhole aria-hidden="true" />
+            {c.jarActionsLocked}
+          </p>
+        )}
 
         {actionMode ? (
           <ParentActions
@@ -497,12 +506,19 @@ function JarsScreen({
         targetMinor={state.saveGoal.targetMinor}
       />
 
-      <PrimaryActions
-        locale={state.locale}
-        busy={busy}
-        onBonus={() => setActionMode("bonus")}
-        onMove={() => setActionMode("move")}
-      />
+      {state.payday ? (
+        <PrimaryActions
+          locale={state.locale}
+          busy={busy}
+          onBonus={() => setActionMode("bonus")}
+          onMove={() => setActionMode("move")}
+        />
+      ) : (
+        <p className="parent-note parent-note--locked">
+          <LockKeyhole aria-hidden="true" />
+          {c.jarActionsLocked}
+        </p>
+      )}
 
       {actionMode ? (
         <ParentActions

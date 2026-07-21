@@ -17,6 +17,30 @@ async function finishDemoWeek(page: import("@playwright/test").Page) {
   await page.getByRole("button", { name: "Parent has reviewed it" }).click();
   await page.getByRole("button", { name: "Child understands it" }).click();
   await page.getByRole("button", { name: "Start this week" }).click();
+
+  await expect(page.getByRole("heading", { name: "This week" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Week", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Jars", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "History", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("4/6", { exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Back" })).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Jars", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Four jars" })).toBeVisible();
+  await expect(
+    page.getByText("Jar actions unlock after the first payday."),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "History", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Family history" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Week", exact: true }).click();
   await page.getByRole("button", { name: "Review the week" }).click();
 
   for (const groupName of [
@@ -40,6 +64,40 @@ async function finishDemoWeek(page: import("@playwright/test").Page) {
     page.getByRole("heading", { name: "Week complete" }),
   ).toBeVisible();
 }
+
+test("recovers visibly when a deployed in-memory session has expired", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "How would you like to begin?" }),
+  ).toBeVisible();
+  const currentCookie = (await context.cookies()).find((cookie) =>
+    cookie.name.endsWith("mfm_demo"),
+  );
+  expect(currentCookie).toBeTruthy();
+
+  await context.addCookies([
+    {
+      ...currentCookie!,
+      value: "00000000-0000-4000-8000-000000000000",
+    },
+  ]);
+  await page.getByRole("button", { name: "Start from scratch" }).click();
+  await page.getByLabel("Child nickname").fill("Ari");
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  await expect(
+    page.getByText(
+      "This test run expired after a restart or 30 minutes of inactivity. A fresh run is ready.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "How would you like to begin?" }),
+  ).toBeVisible();
+});
 
 test("completes the family ritual and records parent-confirmed jar actions", async ({
   page,
@@ -164,6 +222,13 @@ test("completes the family ritual and records parent-confirmed jar actions", asy
   await settleMotion(page);
   const closedAccessibility = await new AxeBuilder({ page }).analyze();
   expect(closedAccessibility.violations).toEqual([]);
+
+  await page.getByRole("button", { name: "Week", exact: true }).click();
+  await page.getByRole("button", { name: "Start next week" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Choose this week’s focus" }),
+  ).toBeVisible();
+  await expect(page.getByText("2/3", { exact: true })).toBeVisible();
 });
 
 test("keeps a second browser context isolated and defaults it to English", async ({

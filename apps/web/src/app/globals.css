@@ -827,6 +827,25 @@ h2 {
   font-weight: 800;
 }
 
+.session-notice {
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  border: 1px solid #aebdff;
+  border-radius: var(--radius);
+  background: var(--primary-soft);
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.parent-note--locked {
+  margin-top: 20px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--soft);
+}
+
 .choice-list {
   display: grid;
   gap: 9px;

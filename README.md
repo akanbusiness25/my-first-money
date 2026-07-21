@@ -77,4 +77,4 @@ The authoritative competition log, scorecard, video storyboard, links, and remai
 
 ## License and dependencies
 
-Project source is available under the [MIT License](LICENSE). Runtime dependencies are pinned exactly in `apps/web/package.json`; their upstream licenses and notices remain those of their respective projects. The main stack is Next.js, React, Tailwind CSS, Zod, Drizzle, PostgreSQL client tooling, Lucide icons, and the official OpenAI JavaScript SDK.
+This private competition repository does not grant a public source-code license. Runtime dependencies are pinned exactly in `apps/web/package.json`; their upstream licenses and notices remain those of their respective projects. The main stack is Next.js, React, Tailwind CSS, Zod, Drizzle, PostgreSQL client tooling, Lucide icons, and the official OpenAI JavaScript SDK.

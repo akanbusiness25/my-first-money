@@ -70,9 +70,16 @@ export async function POST(request: NextRequest) {
   const requestId = randomUUID();
   try {
     assertSameOrigin(request);
-    const { session } = getOrCreateDemoSession(
-      request.cookies.get(COOKIE_NAME)?.value,
-    );
+    const candidateId = request.cookies.get(COOKIE_NAME)?.value;
+    const { session, created } = getOrCreateDemoSession(candidateId);
+    if (candidateId && created) {
+      const response = NextResponse.json(
+        { error: { code: "SESSION_EXPIRED" } },
+        { status: 409, headers: jsonHeaders(requestId) },
+      );
+      setSessionCookie(response, session);
+      return response;
+    }
     assertCsrf(session.csrfToken, request.headers.get("x-csrf-token"));
     const command = DemoCommandSchema.parse(await request.json());
 

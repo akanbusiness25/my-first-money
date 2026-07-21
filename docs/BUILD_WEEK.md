@@ -64,7 +64,7 @@ The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, 
 - Scoped security review: 44/44 changed files covered; two medium abuse-control findings locally remediated and regression-tested before the implementation commit.
 - Private repository: `https://github.com/akanbusiness25/my-first-money`; verified commit is pushed to `main`.
 - Live demo: `https://myfirstmoney.ilmio.space` resolves locally and publicly with trusted TLS/health and passes the current 16/16 browser suite; `https://myfirstmoney.95.216.173.242.sslip.io` remains a temporary fallback. The public YouTube upload is externally playable at exactly 180 seconds; Devpost remains pending.
-- Primary `/feedback` Session ID: `PENDING — Akan must run /feedback in firstmoney main`.
+- Primary `/feedback` Session ID: `019f79dd-cbf9-7ca1-8581-bce95f559b2c` — generated from `firstmoney main` with current ChatGPT session logs included and browser-tab/browser-log sharing excluded.
 
 ## Links and access
 
@@ -95,5 +95,5 @@ Use public YouTube visibility, narration/audio, English or English translation, 
 - [x] Stable HTTPS demo passes the complete fresh-context 16-test judge flow at 320px, 390px, 428px, and desktop.
 - [x] Curated production screenshots contain synthetic data only and no private data or secrets.
 - [ ] Public YouTube video transport is verified public, playable, audio-bearing, and exactly 3:00; Akan still confirms the final narration explicitly covers the working app, Codex, and GPT-5.6 before this item is closed.
-- [ ] Akan runs `/feedback` in `firstmoney main` and copies the exact Session ID here and to Devpost.
+- [x] Akan ran `/feedback` in `firstmoney main`; exact Session ID `019f79dd-cbf9-7ca1-8581-bce95f559b2c` is recorded for Devpost.
 - [ ] Devpost fields/links/video/demo/repository are verified incognito and submitted before internal cutoff.

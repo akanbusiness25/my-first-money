@@ -198,6 +198,11 @@ test("keeps the PWA and HTTP boundary private by default", async ({ page }) => {
   );
   expect(documentResponse?.headers()["x-content-type-options"]).toBe("nosniff");
   expect(documentResponse?.headers()["x-frame-options"]).toBe("DENY");
+  if (documentResponse?.url().startsWith("https://")) {
+    expect(documentResponse.headers()["strict-transport-security"]).toContain(
+      "max-age=31536000",
+    );
+  }
 
   const apiResponse = await page.request.get("/api/v1/demo");
   expect(apiResponse.status()).toBe(200);

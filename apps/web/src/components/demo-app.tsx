@@ -7,6 +7,8 @@ import {
   ChevronRight,
   CircleDollarSign,
   LoaderCircle,
+  PencilLine,
+  PlayCircle,
   ShieldCheck,
   Target,
   UsersRound,
@@ -208,6 +210,7 @@ function StepHeader({
 
 function ChildSetup({ state, busy, onCommand }: JourneyProps) {
   const c = copy[state.locale];
+  const [runMode, setRunMode] = useState<"choice" | "test" | "fresh">("choice");
   const [displayName, setDisplayName] = useState(
     state.child?.displayName ?? "",
   );
@@ -225,8 +228,61 @@ function ChildSetup({ state, busy, onCommand }: JourneyProps) {
     });
   }
 
+  if (runMode === "choice") {
+    return (
+      <section className="journey-screen run-choice-screen">
+        <header className="journey-heading journey-heading--plain">
+          <h1>{c.runChoiceTitle}</h1>
+          <p>{c.runChoiceBody}</p>
+        </header>
+        <div className="run-choice-list">
+          <button
+            type="button"
+            className="run-choice-card run-choice-card--primary"
+            onClick={() => {
+              setDisplayName("Alex");
+              setAgeBand("8-12");
+              setRunMode("test");
+            }}
+          >
+            <PlayCircle aria-hidden="true" />
+            <span>
+              <strong>{c.testRun}</strong>
+              <small>{c.testRunHelp}</small>
+            </span>
+            <ChevronRight aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="run-choice-card"
+            onClick={() => {
+              setDisplayName("");
+              setAgeBand("8-12");
+              setRunMode("fresh");
+            }}
+          >
+            <PencilLine aria-hidden="true" />
+            <span>
+              <strong>{c.startFresh}</strong>
+              <small>{c.startFreshHelp}</small>
+            </span>
+            <ChevronRight aria-hidden="true" />
+          </button>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="journey-screen">
+      <button
+        type="button"
+        className="back-link"
+        onClick={() => setRunMode("choice")}
+      >
+        <ArrowLeft aria-hidden="true" />
+        {c.backToRunChoice}
+      </button>
       <StepHeader title={c.startTitle} body={c.startBody} step={1} />
       <form className="journey-form" onSubmit={submit}>
         <label className="field">

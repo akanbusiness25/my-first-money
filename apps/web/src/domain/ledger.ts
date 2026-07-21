@@ -2,6 +2,34 @@ import type { BucketKey } from "./money";
 
 const bucketOrder: readonly BucketKey[] = ["spend", "save", "give", "grow"];
 
+export const bucketUsePurposes = [
+  "everyday_purchase",
+  "fun_purchase",
+  "save_goal",
+  "planned_purchase",
+  "helped_someone",
+  "gift",
+  "learning_activity",
+  "book",
+] as const;
+export type BucketUsePurpose = (typeof bucketUsePurposes)[number];
+
+export const bucketUsePurposesByBucket: Readonly<
+  Record<BucketKey, readonly [BucketUsePurpose, ...BucketUsePurpose[]]>
+> = {
+  spend: ["everyday_purchase", "fun_purchase"],
+  save: ["save_goal", "planned_purchase"],
+  give: ["helped_someone", "gift"],
+  grow: ["learning_activity", "book"],
+};
+
+export function isPurposeValidForBucket(
+  bucket: BucketKey,
+  purpose: BucketUsePurpose,
+): boolean {
+  return bucketUsePurposesByBucket[bucket].includes(purpose);
+}
+
 export type DemoLedgerEvent =
   | {
       id: string;
@@ -22,7 +50,7 @@ export type DemoLedgerEvent =
       id: string;
       kind: "bucket_use";
       bucket: BucketKey;
-      purpose: "purchase" | "goal" | "gift" | "learning";
+      purpose: BucketUsePurpose;
       amountMinor: number;
       createdAt: string;
     };

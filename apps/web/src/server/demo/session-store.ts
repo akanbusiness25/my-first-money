@@ -5,7 +5,10 @@ import {
   createInitialDemoState,
   type DemoState,
 } from "@/domain/demo";
-import { projectLedgerBalances } from "@/domain/ledger";
+import {
+  isPurposeValidForBucket,
+  projectLedgerBalances,
+} from "@/domain/ledger";
 import { allocateByBasisPoints, calculatePaydayMinor } from "@/domain/money";
 import type { BucketKey } from "@/domain/money";
 
@@ -229,6 +232,9 @@ export function applyDemoCommand(
     case "record_bucket_use": {
       const payday = requireClosedPayday(state);
       assertLedgerAmount(command.amountMinor);
+      if (!isPurposeValidForBucket(command.bucket, command.purpose)) {
+        throw new Error("INVALID_BUCKET_USE_PURPOSE");
+      }
       if (
         state.ledgerEvents.some((event) => event.id === command.idempotencyKey)
       ) {

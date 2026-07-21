@@ -1,10 +1,10 @@
 import type { Locale, TaskId } from "@/domain/demo";
+import type { BucketUsePurpose } from "@/domain/ledger";
 import type { BucketKey } from "@/domain/money";
 
 export interface CopyContract {
   brandTagline: string;
   syntheticDemo: string;
-  demoNotice: string;
   loading: string;
   loadError: string;
   retry: string;
@@ -41,6 +41,13 @@ export interface CopyContract {
   saveChanges: string;
   resetDemo: string;
   resetHelp: string;
+  runChoiceTitle: string;
+  runChoiceBody: string;
+  testRun: string;
+  testRunHelp: string;
+  startFresh: string;
+  startFreshHelp: string;
+  backToRunChoice: string;
   startTitle: string;
   startBody: string;
   childNickname: string;
@@ -109,10 +116,7 @@ export interface CopyContract {
   moveAmount: string;
   useAmount: string;
   usePurpose: string;
-  purposePurchase: string;
-  purposeGoal: string;
-  purposeGift: string;
-  purposeLearning: string;
+  useHelp: string;
   confirmBonus: string;
   confirmMove: string;
   confirmUse: string;
@@ -133,6 +137,8 @@ export interface CopyContract {
   allActivity: string;
   growBonus: string;
   noActivity: string;
+  noMatchingActivity: string;
+  weekAllocation: string;
   moneyMomentTitle: string;
   questions: string;
   familyAction: string;
@@ -146,8 +152,6 @@ export const copy = {
   en: {
     brandTagline: "Money habits kids can practice.",
     syntheticDemo: "Family demo · no bank account",
-    demoNotice:
-      "Interactive synthetic judge demo · changes expire automatically and never use real family data.",
     loading: "Setting the family table…",
     loadError: "The demo could not be opened.",
     retry: "Try again",
@@ -183,8 +187,17 @@ export const copy = {
     iconCustom: "Something else",
     targetAmount: "Target in US dollars",
     saveChanges: "Save changes",
-    resetDemo: "Restart judge demo",
-    resetHelp: "Clears only this temporary synthetic session and starts fresh.",
+    resetDemo: "Restart test run",
+    resetHelp: "Clears this test run and starts again.",
+    runChoiceTitle: "How would you like to begin?",
+    runChoiceBody:
+      "Try the flow with a sample profile or start with a blank one.",
+    testRun: "Try a test run",
+    testRunHelp:
+      "Starts with the sample nickname Alex. You can change every choice.",
+    startFresh: "Start from scratch",
+    startFreshHelp: "Begin with a blank profile and make your own choices.",
+    backToRunChoice: "Back to start options",
     startTitle: "Start a money week",
     startBody:
       "A simple weekly family routine for earning, choosing, and reflecting together.",
@@ -223,7 +236,7 @@ export const copy = {
     thisWeek: "This week",
     weekReady: "Your family mission is ready.",
     activeWeekDemoBody:
-      "This is the active-week home. In real use you return here during the week; for this judge demo, continue to the end-of-week review.",
+      "This is your active-week home. Return here during the week, then review what was completed together.",
     quickCheck: "Review the week",
     quickCheckTitle: "What was completed?",
     completed: "Completed",
@@ -262,10 +275,8 @@ export const copy = {
     moveAmount: "Amount in US dollars",
     useAmount: "Amount used in US dollars",
     usePurpose: "What was it used for?",
-    purposePurchase: "A planned purchase",
-    purposeGoal: "The Save goal",
-    purposeGift: "Giving to someone",
-    purposeLearning: "A learning activity",
+    useHelp:
+      "This records money leaving the jar. To transfer money between jars, use Move money.",
     confirmBonus: "Confirm parent bonus",
     confirmMove: "Confirm move",
     confirmUse: "Confirm jar use",
@@ -286,6 +297,8 @@ export const copy = {
     allActivity: "All activity",
     growBonus: "Grow challenge bonus",
     noActivity: "Complete a week to begin the history.",
+    noMatchingActivity: "No activity matches this filter yet.",
+    weekAllocation: "Week allocation",
     moneyMomentTitle: "Money Moment",
     questions: "Questions to ask",
     familyAction: "Try together",
@@ -297,8 +310,6 @@ export const copy = {
   ru: {
     brandTagline: "Денежные привычки, которые дети могут тренировать.",
     syntheticDemo: "Семейное демо · без банковского счёта",
-    demoNotice:
-      "Интерактивное синтетическое демо для жюри · изменения исчезнут автоматически, реальные семейные данные не используются.",
     loading: "Накрываем семейный стол…",
     loadError: "Не удалось открыть демо.",
     retry: "Попробовать снова",
@@ -333,8 +344,16 @@ export const copy = {
     iconCustom: "Другая цель",
     targetAmount: "Цель в долларах США",
     saveChanges: "Сохранить",
-    resetDemo: "Перезапустить демо для жюри",
-    resetHelp: "Очищает только эту временную синтетическую сессию.",
+    resetDemo: "Перезапустить тестовый прогон",
+    resetHelp: "Очищает этот тестовый прогон и начинает заново.",
+    runChoiceTitle: "Как вы хотите начать?",
+    runChoiceBody: "Пройдите путь с примером или начните с чистого профиля.",
+    testRun: "Тестовый прогон",
+    testRunHelp:
+      "Начинается с тестового имени Алекс. Все решения можно изменить.",
+    startFresh: "Начать с нуля",
+    startFreshHelp: "Создайте чистый профиль и выберите всё самостоятельно.",
+    backToRunChoice: "Назад к выбору старта",
     startTitle: "Начните денежную неделю",
     startBody:
       "Простая еженедельная семейная привычка: заработать, выбрать и обсудить вместе.",
@@ -373,7 +392,7 @@ export const copy = {
     thisWeek: "Эта неделя",
     weekReady: "Семейная миссия готова.",
     activeWeekDemoBody:
-      "Это главный экран активной недели. В реальном использовании семья возвращается сюда в течение недели; в демо для жюри перейдите к итоговой проверке.",
+      "Это главный экран активной недели. Возвращайтесь сюда в течение недели, а затем вместе отметьте выполненное.",
     quickCheck: "Подвести итоги",
     quickCheckTitle: "Что получилось выполнить?",
     completed: "Выполнено",
@@ -412,10 +431,8 @@ export const copy = {
     moveAmount: "Сумма в долларах США",
     useAmount: "Использованная сумма в долларах США",
     usePurpose: "Для чего использовали?",
-    purposePurchase: "Запланированная покупка",
-    purposeGoal: "Цель накопления",
-    purposeGift: "Помощь или подарок",
-    purposeLearning: "Обучение",
+    useHelp:
+      "Это списание из копилки. Для перевода между копилками используйте «Переместить деньги».",
     confirmBonus: "Подтвердить бонус родителя",
     confirmMove: "Подтвердить перемещение",
     confirmUse: "Подтвердить использование",
@@ -436,6 +453,8 @@ export const copy = {
     allActivity: "Все события",
     growBonus: "Учебный бонус «Расти»",
     noActivity: "Завершите неделю, чтобы появилась история.",
+    noMatchingActivity: "По этому фильтру пока нет операций.",
+    weekAllocation: "Распределение недели",
     moneyMomentTitle: "Денежный момент",
     questions: "Вопросы для разговора",
     familyAction: "Попробуйте вместе",
@@ -447,8 +466,6 @@ export const copy = {
   kk: {
     brandTagline: "Балалар жаттықтыра алатын ақша әдеттері.",
     syntheticDemo: "Отбасылық демо · банк шотынсыз",
-    demoNotice:
-      "Қазыларға арналған интерактивті синтетикалық демо · өзгерістер автоматты түрде өшеді, нақты отбасы деректері қолданылмайды.",
     loading: "Отбасылық үстелді дайындап жатырмыз…",
     loadError: "Демоны ашу мүмкін болмады.",
     retry: "Қайталап көру",
@@ -483,8 +500,15 @@ export const copy = {
     iconCustom: "Басқа мақсат",
     targetAmount: "АҚШ долларындағы мақсат",
     saveChanges: "Сақтау",
-    resetDemo: "Қазылар демосын қайта бастау",
-    resetHelp: "Тек осы уақытша синтетикалық сессияны тазалайды.",
+    resetDemo: "Тестік жүрісті қайта бастау",
+    resetHelp: "Осы тестік жүрісті тазалап, қайта бастайды.",
+    runChoiceTitle: "Қалай бастағыңыз келеді?",
+    runChoiceBody: "Үлгі профильмен көріңіз немесе таза профильден бастаңыз.",
+    testRun: "Тестік жүрісті көру",
+    testRunHelp: "Alex үлгі атымен басталады. Әр таңдауды өзгертуге болады.",
+    startFresh: "Басынан бастау",
+    startFreshHelp: "Таза профильден бастап, таңдауларды өзіңіз жасаңыз.",
+    backToRunChoice: "Бастау таңдауына оралу",
     startTitle: "Ақша аптасын бастаңыз",
     startBody:
       "Бірге табу, таңдау және талқылауға арналған қарапайым апталық отбасылық әдет.",
@@ -523,7 +547,7 @@ export const copy = {
     thisWeek: "Осы апта",
     weekReady: "Отбасылық миссия дайын.",
     activeWeekDemoBody:
-      "Бұл белсенді аптаның басты экраны. Нақты қолдануда отбасы апта бойы осында оралады; қазылар демосында апталық қорытындыға өтіңіз.",
+      "Бұл белсенді аптаның басты экраны. Апта бойы осында оралып, соңында орындалған істерді бірге белгілеңіз.",
     quickCheck: "Аптаны қорытындылау",
     quickCheckTitle: "Не орындалды?",
     completed: "Орындалды",
@@ -562,10 +586,8 @@ export const copy = {
     moveAmount: "АҚШ долларындағы сома",
     useAmount: "Пайдаланылған сома, АҚШ доллары",
     usePurpose: "Не үшін пайдаланылды?",
-    purposePurchase: "Жоспарланған сатып алу",
-    purposeGoal: "Жинақ мақсаты",
-    purposeGift: "Көмек немесе сыйлық",
-    purposeLearning: "Оқу әрекеті",
+    useHelp:
+      "Бұл — құтыдан алынған ақша. Құтылар арасында аудару үшін «Ақшаны ауыстыру» әрекетін қолданыңыз.",
     confirmBonus: "Ата-ана бонусын растау",
     confirmMove: "Ауыстыруды растау",
     confirmUse: "Құтыдан пайдалануды растау",
@@ -586,6 +608,8 @@ export const copy = {
     allActivity: "Барлық әрекет",
     growBonus: "«Өсу» оқу бонусы",
     noActivity: "Тарихты бастау үшін аптаны аяқтаңыз.",
+    noMatchingActivity: "Бұл сүзгі бойынша әзірге әрекет жоқ.",
+    weekAllocation: "Апталық бөлу",
     moneyMomentTitle: "Ақша сәті",
     questions: "Әңгіме сұрақтары",
     familyAction: "Бірге байқап көріңіз",
@@ -595,6 +619,39 @@ export const copy = {
     requestFailed: "Өзгеріс сақталмады. Қайталап көріңіз.",
   },
 } satisfies Record<Locale, CopyContract>;
+
+export const bucketUsePurposeCopy = {
+  en: {
+    everyday_purchase: "Everyday purchase",
+    fun_purchase: "Something fun",
+    save_goal: "Bought the Save goal",
+    planned_purchase: "A planned purchase",
+    helped_someone: "Helped someone",
+    gift: "Bought a gift",
+    learning_activity: "A learning activity",
+    book: "Bought a book",
+  },
+  ru: {
+    everyday_purchase: "Повседневная покупка",
+    fun_purchase: "Покупка для удовольствия",
+    save_goal: "Купили цель накопления",
+    planned_purchase: "Запланированная покупка",
+    helped_someone: "Помогли кому-то",
+    gift: "Купили подарок",
+    learning_activity: "Обучение или занятие",
+    book: "Купили книгу",
+  },
+  kk: {
+    everyday_purchase: "Күнделікті сатып алу",
+    fun_purchase: "Көңілге арналған сатып алу",
+    save_goal: "Жинақ мақсатын сатып алды",
+    planned_purchase: "Жоспарланған сатып алу",
+    helped_someone: "Біреуге көмектесті",
+    gift: "Сыйлық сатып алды",
+    learning_activity: "Оқу әрекеті",
+    book: "Кітап сатып алды",
+  },
+} satisfies Record<Locale, Record<BucketUsePurpose, string>>;
 
 interface BucketCopyItem {
   label: string;

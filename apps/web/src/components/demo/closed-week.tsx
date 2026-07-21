@@ -37,7 +37,7 @@ import {
 } from "@/domain/ledger";
 import type { DemoLedgerEvent } from "@/domain/ledger";
 import type { BucketKey } from "@/domain/money";
-import { bucketCopy, copy } from "./copy";
+import { bucketCopy, bucketUsePurposeCopy, copy } from "./copy";
 import { JarVisual } from "./jar-visual";
 import { ParentActions } from "./parent-actions";
 import { useJarSound } from "./use-jar-sound";
@@ -529,7 +529,11 @@ type HistoryEntry =
 function HistoryScreen({ state }: { state: DemoState }) {
   const c = copy[state.locale];
   const labels = bucketCopy[state.locale];
+  const purposeLabels = bucketUsePurposeCopy[state.locale];
   const [filter, setFilter] = useState<HistoryFilter>("all");
+  const selectedBucket = buckets.includes(filter as BucketKey)
+    ? (filter as BucketKey)
+    : null;
   const paydays = [
     ...state.closedPaydays,
     ...(state.payday ? [state.payday] : []),
@@ -565,12 +569,16 @@ function HistoryScreen({ state }: { state: DemoState }) {
       ) {
         return entry.kind === filter;
       }
-      if (entry.kind === "grow_bonus") return filter === "grow";
-      if (entry.kind === "payday") return false;
+      if (!selectedBucket) return false;
+      if (entry.kind === "grow_bonus") return selectedBucket === "grow";
+      if (entry.kind === "payday") return true;
       if (entry.kind === "bucket_move") {
-        return entry.fromBucket === filter || entry.toBucket === filter;
+        return (
+          entry.fromBucket === selectedBucket ||
+          entry.toBucket === selectedBucket
+        );
       }
-      return entry.bucket === filter;
+      return entry.bucket === selectedBucket;
     })
     .sort((left, right) => {
       const byTime = Date.parse(right.createdAt) - Date.parse(left.createdAt);
@@ -611,6 +619,30 @@ function HistoryScreen({ state }: { state: DemoState }) {
         <ol className="history-list">
           {entries.map((entry) => {
             if (entry.kind === "payday") {
+              if (selectedBucket) {
+                return (
+                  <li key={entry.id}>
+                    <span className="history-list__mark history-list__mark--closed">
+                      <CheckCircle2 aria-hidden="true" />
+                    </span>
+                    <div>
+                      <span>
+                        {c.weekAllocation} · {entry.payday.weekNumber}
+                      </span>
+                      <strong>
+                        +
+                        {formatUsdMinor(
+                          entry.payday.allocation[selectedBucket],
+                        )}{" "}
+                        · {labels[selectedBucket].label}
+                      </strong>
+                      <time dateTime={entry.createdAt}>
+                        {formatEventDate(entry.createdAt, state.locale)}
+                      </time>
+                    </div>
+                  </li>
+                );
+              }
               return (
                 <li key={entry.id}>
                   <span className="history-list__mark history-list__mark--closed">
@@ -683,6 +715,7 @@ function HistoryScreen({ state }: { state: DemoState }) {
                       −{formatUsdMinor(entry.amountMinor)} ·{" "}
                       {labels[entry.bucket].label}
                     </strong>
+                    <p>{purposeLabels[entry.purpose]}</p>
                     <time dateTime={entry.createdAt}>
                       {formatEventDate(entry.createdAt, state.locale)}
                     </time>
@@ -711,7 +744,9 @@ function HistoryScreen({ state }: { state: DemoState }) {
           })}
         </ol>
       ) : (
-        <p className="empty-state">{c.noActivity}</p>
+        <p className="empty-state">
+          {filter === "all" ? c.noActivity : c.noMatchingActivity}
+        </p>
       )}
     </div>
   );

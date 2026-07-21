@@ -292,7 +292,7 @@ describe("isolated demo session lifecycle", () => {
       action: "record_bucket_use",
       idempotencyKey: "681d1a3a-3c8d-4aa0-bf3a-0af4b06d1134",
       bucket: "spend",
-      purpose: "purchase",
+      purpose: "everyday_purchase",
       amountMinor: 260,
     });
 
@@ -306,8 +306,27 @@ describe("isolated demo session lifecycle", () => {
     expect(bucketBalance(session.state, "spend")).toBe(1_000);
     expect(session.state.ledgerEvents[0]).toMatchObject({
       kind: "bucket_use",
-      purpose: "purchase",
+      purpose: "everyday_purchase",
     });
+  });
+
+  it("rejects a use purpose that does not belong to the selected jar", () => {
+    const session = advanceToPayday();
+    applyDemoCommand(session, {
+      action: "confirm_payday",
+      idempotencyKey: "b3748e0c-a30a-44b8-8757-7970d41004fd",
+    });
+
+    expect(() =>
+      applyDemoCommand(session, {
+        action: "record_bucket_use",
+        idempotencyKey: "631ad23f-c0e1-4435-92d7-90cf6352408b",
+        bucket: "give",
+        purpose: "save_goal",
+        amountMinor: 50,
+      }),
+    ).toThrow("INVALID_BUCKET_USE_PURPOSE");
+    expect(session.state.ledgerEvents).toHaveLength(0);
   });
 
   it("bounds immutable closed-week history in the anonymous demo", () => {

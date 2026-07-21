@@ -49,3 +49,11 @@ No unresolved P0, P1, or P2 visual-fidelity issue remains for the approved compe
 - Replaced ambiguous sparkle/fork decoration with a semantic completion check, restrained CSS confetti, and a conversation icon; no new decorative visual language was introduced.
 - Fixed inherited scroll position when changing root tabs, verified `scrollY === 0`, and captured the final Jars screen with the complete header visible.
 - The refined Playwright flow verifies the jar's computed transform changes during pointer drag on mobile and desktop; Enter/Space remain the accessible alternative.
+
+## 2026-07-21 product-demo launch refinement
+
+- The top internal demo notice was removed; the first screen now presents only two product-facing choices: a prefilled test run or a blank start.
+- The 390 x 844 Chrome capture preserves the approved Four Jars composition, image assets, goal card, primary/secondary action hierarchy, and fixed navigation.
+- Jar use now explains that money leaves the selected jar and limits reasons by context: Spend purchases, Save goal/planned purchase, Give help/gift, and Grow learning/book.
+- Bucket-filtered History includes the immutable allocation from every closed week, so Give and other untouched jars no longer appear empty after payday.
+- Automated axe verification identified and corrected the only new contrast regression on the highlighted test-run card before the 12/12 E2E pass.

@@ -5,11 +5,14 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { formatUsdMinor, parseUsdInputToMinor } from "@/domain/currency";
 import type { Locale } from "@/domain/demo";
 import type { DemoCommand } from "@/domain/demo-contract";
+import {
+  bucketUsePurposesByBucket,
+  type BucketUsePurpose,
+} from "@/domain/ledger";
 import type { BucketKey } from "@/domain/money";
-import { bucketCopy, copy } from "./copy";
+import { bucketCopy, bucketUsePurposeCopy, copy } from "./copy";
 
 type ParentActionMode = "bonus" | "move" | "use";
-type BucketUsePurpose = "purchase" | "goal" | "gift" | "learning";
 
 interface ParentActionsProps {
   mode: ParentActionMode;
@@ -34,6 +37,7 @@ export function ParentActions({
 }: ParentActionsProps) {
   const c = copy[locale];
   const labels = bucketCopy[locale];
+  const purposeLabels = bucketUsePurposeCopy[locale];
   const dialogRef = useRef<HTMLDivElement>(null);
   const [bucket, setBucket] = useState<BucketKey>(initialBucket);
   const [fromBucket, setFromBucket] = useState<BucketKey>(
@@ -43,7 +47,9 @@ export function ParentActions({
     initialBucket === "spend" ? "save" : initialBucket,
   );
   const [amount, setAmount] = useState(mode === "bonus" ? "1.00" : "0.50");
-  const [purpose, setPurpose] = useState<BucketUsePurpose>("purchase");
+  const [purpose, setPurpose] = useState<BucketUsePurpose>(
+    bucketUsePurposesByBucket[initialBucket][0],
+  );
   const [reviewing, setReviewing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const title =
@@ -186,7 +192,11 @@ export function ParentActions({
                 value={bucket}
                 disabled={reviewing || busy}
                 onChange={(event) => {
-                  setBucket(event.target.value as BucketKey);
+                  const nextBucket = event.target.value as BucketKey;
+                  setBucket(nextBucket);
+                  if (mode === "use") {
+                    setPurpose(bucketUsePurposesByBucket[nextBucket][0]);
+                  }
                   setReviewing(false);
                 }}
               >
@@ -247,13 +257,16 @@ export function ParentActions({
                   setReviewing(false);
                 }}
               >
-                <option value="purchase">{c.purposePurchase}</option>
-                <option value="goal">{c.purposeGoal}</option>
-                <option value="gift">{c.purposeGift}</option>
-                <option value="learning">{c.purposeLearning}</option>
+                {bucketUsePurposesByBucket[bucket].map((item) => (
+                  <option key={item} value={item}>
+                    {purposeLabels[item]}
+                  </option>
+                ))}
               </select>
             </label>
           ) : null}
+
+          {mode === "use" ? <p className="field-help">{c.useHelp}</p> : null}
 
           <label className="field">
             <span>
@@ -284,7 +297,9 @@ export function ParentActions({
               <strong>{formatUsdMinor(amountMinor)}</strong>
               <span>
                 {mode === "bonus" || mode === "use"
-                  ? labels[bucket].label
+                  ? mode === "use"
+                    ? `${labels[bucket].label} · ${purposeLabels[purpose]}`
+                    : labels[bucket].label
                   : `${labels[fromBucket].label} → ${labels[toBucket].label}`}
               </span>
             </div>

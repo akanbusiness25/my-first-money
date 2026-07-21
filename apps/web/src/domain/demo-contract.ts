@@ -8,6 +8,7 @@ import {
   TaskStatusSchema,
 } from "./demo";
 import { BucketKeySchema } from "./money";
+import { bucketUsePurposes } from "./ledger";
 
 const displayNameSchema = z
   .string()
@@ -57,7 +58,7 @@ export const DemoCommandSchema = z
       action: z.literal("record_bucket_use"),
       idempotencyKey: idempotencyKeySchema,
       bucket: BucketKeySchema,
-      purpose: z.enum(["purchase", "goal", "gift", "learning"]),
+      purpose: z.enum(bucketUsePurposes),
       amountMinor: ledgerAmountMinorSchema,
     }),
     z.strictObject({

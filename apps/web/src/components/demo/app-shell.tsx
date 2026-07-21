@@ -2,7 +2,6 @@
 
 import {
   BadgeDollarSign,
-  BadgeInfo,
   CalendarDays,
   CircleUserRound,
   Clock3,
@@ -87,13 +86,7 @@ export function AppShell({
         </button>
       </header>
 
-      <main className="app-main">
-        <p className="demo-notice">
-          <BadgeInfo aria-hidden="true" />
-          {copy[state.locale].demoNotice}
-        </p>
-        {children}
-      </main>
+      <main className="app-main">{children}</main>
 
       {state.stage === "closed" && tab && onTabChange ? (
         <BottomNavigation

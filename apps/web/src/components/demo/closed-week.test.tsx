@@ -89,6 +89,30 @@ describe("approved closed-week experience", () => {
     ).toBeVisible();
   });
 
+  it("limits jar-use reasons to the selected jar", () => {
+    renderTab("jars");
+    fireEvent.click(screen.getByRole("button", { name: "Save jar" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Use money from this jar" }),
+    );
+
+    const dialog = screen.getByRole("dialog", {
+      name: "Use money from this jar",
+    });
+    expect(within(dialog).getByLabelText("What was it used for?")).toHaveValue(
+      "save_goal",
+    );
+    fireEvent.change(within(dialog).getByLabelText("Choose a jar"), {
+      target: { value: "give" },
+    });
+    expect(within(dialog).getByLabelText("What was it used for?")).toHaveValue(
+      "helped_someone",
+    );
+    expect(
+      within(dialog).queryByRole("option", { name: "Bought the Save goal" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows append-only events in History without a correction shortcut", () => {
     renderTab("history");
 
@@ -102,5 +126,16 @@ describe("approved closed-week experience", () => {
     expect(
       screen.queryByRole("button", { name: /correction/i }),
     ).not.toBeInTheDocument();
+  });
+
+  it("shows a closed-week allocation when History is filtered by jar", () => {
+    renderTab("history");
+    fireEvent.change(screen.getByLabelText("Filter history"), {
+      target: { value: "give" },
+    });
+
+    const history = screen.getByRole("list");
+    expect(within(history).getByText("Week allocation · 1")).toBeVisible();
+    expect(within(history).getByText("+$1.80 · Give")).toBeVisible();
   });
 });

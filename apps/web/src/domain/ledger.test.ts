@@ -111,7 +111,7 @@ describe("append-only demo ledger projection", () => {
           id: "use",
           kind: "bucket_use",
           bucket: "spend",
-          purpose: "purchase",
+          purpose: "everyday_purchase",
           amountMinor: 260,
           createdAt: now,
         },

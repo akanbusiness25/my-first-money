@@ -190,28 +190,6 @@ h2 {
   padding-bottom: calc(84px + env(safe-area-inset-bottom));
 }
 
-.demo-notice {
-  display: flex;
-  min-height: 38px;
-  margin: 0 22px;
-  padding: 8px 10px;
-  align-items: flex-start;
-  gap: 8px;
-  border: 1px solid #dce3f5;
-  border-radius: var(--radius);
-  background: var(--soft);
-  color: var(--muted);
-  font-size: 0.68rem;
-  line-height: 1.35;
-}
-
-.demo-notice svg {
-  width: 17px;
-  height: 17px;
-  flex: 0 0 auto;
-  color: var(--primary);
-}
-
 .bottom-nav {
   position: fixed;
   z-index: 30;
@@ -481,6 +459,13 @@ h2 {
 
 .field input::placeholder {
   color: #9aa2b8;
+}
+
+.field-help {
+  margin: -5px 0 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
 }
 
 .field-pair {
@@ -759,6 +744,73 @@ h2 {
   color: var(--muted);
   font-size: 0.98rem;
   line-height: 1.45;
+}
+
+.journey-heading--plain {
+  padding-top: 18px;
+}
+
+.journey-heading--plain h1 {
+  max-width: 12ch;
+}
+
+.run-choice-screen {
+  align-content: start;
+  min-height: calc(100dvh - 76px);
+}
+
+.run-choice-list {
+  display: grid;
+  gap: 12px;
+}
+
+.run-choice-card {
+  display: grid;
+  width: 100%;
+  min-height: 104px;
+  padding: 16px;
+  grid-template-columns: 34px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.run-choice-card--primary {
+  border-color: #b9c6f7;
+  background: var(--primary-soft);
+}
+
+.run-choice-card > svg:first-child {
+  width: 30px;
+  height: 30px;
+  color: var(--primary);
+}
+
+.run-choice-card > svg:last-child {
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+}
+
+.run-choice-card span {
+  display: grid;
+  gap: 5px;
+}
+
+.run-choice-card strong {
+  font-size: 0.94rem;
+}
+
+.run-choice-card small {
+  color: #5d6682;
+  font-size: 0.73rem;
+  font-weight: 520;
+  line-height: 1.42;
 }
 
 .step-count {
@@ -1780,6 +1832,15 @@ h2 {
   font: inherit;
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+.history-filter:focus-within {
+  border-color: #8ba7ff;
+  box-shadow: 0 0 0 2px rgb(139 167 255 / 28%);
+}
+
+.history-filter select:focus-visible {
+  outline: 0;
 }
 
 @keyframes confetti-pop {

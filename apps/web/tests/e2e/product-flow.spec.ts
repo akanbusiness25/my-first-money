@@ -10,6 +10,7 @@ async function settleMotion(page: import("@playwright/test").Page) {
 }
 
 async function finishDemoWeek(page: import("@playwright/test").Page) {
+  await page.getByRole("button", { name: "Start from scratch" }).click();
   await page.getByLabel("Child nickname").fill("Ari");
   await page.getByRole("button", { name: "Continue" }).click();
   await page.getByRole("button", { name: "Review family agreement" }).click();
@@ -45,7 +46,7 @@ test("completes the family ritual and records parent-confirmed jar actions", asy
 }) => {
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Start a money week" }),
+    page.getByRole("heading", { name: "How would you like to begin?" }),
   ).toBeVisible();
   await settleMotion(page);
 
@@ -114,7 +115,22 @@ test("completes the family ritual and records parent-confirmed jar actions", asy
     name: "Use money from this jar",
   });
   await expect(use.getByLabel("Choose a jar")).toHaveValue("save");
-  await expect(use.getByLabel("What was it used for?")).toHaveValue("purchase");
+  await expect(use.getByLabel("What was it used for?")).toHaveValue(
+    "save_goal",
+  );
+  await expect(
+    use.getByText(
+      "This records money leaving the jar. To transfer money between jars, use Move money.",
+    ),
+  ).toBeVisible();
+  await use.getByLabel("Choose a jar").selectOption("give");
+  await expect(use.getByLabel("What was it used for?")).toHaveValue(
+    "helped_someone",
+  );
+  await expect(
+    use.getByRole("option", { name: "Bought the Save goal" }),
+  ).toHaveCount(0);
+  await use.getByLabel("Choose a jar").selectOption("save");
   await use.getByRole("button", { name: "Continue" }).click();
   await use.getByRole("button", { name: "Confirm jar use" }).click();
   await expect(use).toBeHidden();
@@ -130,6 +146,9 @@ test("completes the family ritual and records parent-confirmed jar actions", asy
   ).toBeVisible();
   await expect(history.getByText("Money moved", { exact: true })).toBeVisible();
   await expect(history.getByText("Money used", { exact: true })).toBeVisible();
+  await page.getByLabel("Filter history").selectOption("give");
+  await expect(history.getByText("Week allocation · 1")).toBeVisible();
+  await expect(history.getByText("+$1.80 · Give")).toBeVisible();
 
   await page.getByRole("button", { name: "Open parent settings" }).click();
   const settings = page.getByRole("dialog", { name: "Parent settings" });
@@ -156,6 +175,7 @@ test("keeps a second browser context isolated and defaults it to English", async
   const second = await secondContext.newPage();
 
   await first.goto("/");
+  await first.getByRole("button", { name: "Start from scratch" }).click();
   await first.getByLabel("Child nickname").fill("Demo A");
   await first.getByRole("button", { name: "Continue" }).click();
   await second.goto("/");
@@ -164,7 +184,7 @@ test("keeps a second browser context isolated and defaults it to English", async
     first.getByRole("heading", { name: "Choose this week’s focus" }),
   ).toBeVisible();
   await expect(
-    second.getByRole("heading", { name: "Start a money week" }),
+    second.getByRole("heading", { name: "How would you like to begin?" }),
   ).toBeVisible();
 
   await firstContext.close();

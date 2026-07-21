@@ -17,9 +17,9 @@ export const children = pgTable(
     displayName: text("display_name").notNull(),
     ageBand: text("age_band", { enum: ["4-7", "8-12", "13+"] }).notNull(),
     presentationToken: text("presentation_token").notNull(),
-    currency: text("currency", { enum: ["KZT"] })
+    currency: text("currency", { enum: ["USD"] })
       .notNull()
-      .default("KZT"),
+      .default("USD"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

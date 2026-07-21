@@ -72,7 +72,7 @@ The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, 
 - Live synthetic demo: https://myfirstmoney.ilmio.space — public DNS and trusted TLS/health verified; temporary tested fallback: https://myfirstmoney.95.216.173.242.sslip.io.
 - Public YouTube video: https://www.youtube.com/watch?v=yLQp9UEQinU — public/non-unlisted metadata, playback, audio-stream metadata, title, and exact 180-second duration externally verified; final narration/content confirmation remains Akan-owned.
 - Devpost submission: pending.
-- Repository access: private, with no public source-code license; share only this repository with `testing@devpost.com` and `build-week-event@openai.com` immediately before submission.
+- Repository access: private, with no public source-code license; invitations were sent to GitHub account `devposttesting` resolved from `testing@devpost.com` and directly to `build-week-event@openai.com`; both are pending recipient acceptance.
 
 ## Published video outline (exactly 3:00)
 
@@ -91,7 +91,7 @@ Use public YouTube visibility, narration/audio, English or English translation, 
 - [x] Money Moment provider/fallback/strict-selection/safety/budget tests pass without credentials.
 - [ ] One live `gpt-5.6-sol` verification is recorded without exposing a manually supplied server secret.
 - [x] README covers setup/run/test, synthetic data, architecture, security/privacy, before/new disclosure, concrete Codex/GPT-5.6 use, private license posture/dependencies, and demo access status.
-- [ ] Private repository access is granted to the required judging accounts immediately before submission and removed after judging.
+- [x] Required private-repository invitations were sent to `testing@devpost.com` / `devposttesting` and `build-week-event@openai.com`; recipient acceptance is outside entrant control, and access must be removed after judging.
 - [x] Stable HTTPS demo passes the complete fresh-context 16-test judge flow at 320px, 390px, 428px, and desktop.
 - [x] Curated production screenshots contain synthetic data only and no private data or secrets.
 - [ ] Public YouTube video transport is verified public, playable, audio-bearing, and exactly 3:00; Akan still confirms the final narration explicitly covers the working app, Codex, and GPT-5.6 before this item is closed.

@@ -48,3 +48,15 @@ backup/restore evidence, and the remaining beta gates.
 - live HTTP redirects to HTTPS, `/` returns 200, `/api/health` returns 200 with
   `mode: synthetic-demo`, and Coolify reports the application and database as
   `running:healthy`.
+
+## Preferred-domain activation
+
+- Namecheap A record `myfirstmoney.ilmio.space -> 95.216.173.242` is visible
+  through Cloudflare and Google public resolvers with an approximately 30-minute
+  TTL;
+- Coolify was redeployed after propagation so the preferred hostname now serves
+  a trusted certificate, HSTS, the application shell, and the no-store health
+  endpoint;
+- the workstation's upstream DNS resolver still returns its earlier negative
+  cache, so the full preferred-host browser matrix remains the next verification
+  step after local propagation.

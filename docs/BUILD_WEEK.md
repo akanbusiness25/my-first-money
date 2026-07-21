@@ -60,13 +60,13 @@ The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, 
 - Playwright verification: 12/12 production E2E across 320px, 390px, 428px, and desktop, including axe, session isolation, CSP/CSRF/no-store, browser-storage, and static-only PWA cache assertions.
 - Scoped security review: 44/44 changed files covered; two medium abuse-control findings locally remediated and regression-tested before the implementation commit.
 - Private repository: `https://github.com/akanbusiness25/my-first-money`; verified commit is pushed to `main`.
-- Live demo: `https://myfirstmoney.95.216.173.242.sslip.io` is running and verified with synthetic data. Preferred `myfirstmoney.ilmio.space` DNS, video, and Devpost remain pending.
+- Live demo: `https://myfirstmoney.ilmio.space` has public DNS plus trusted TLS/health; `https://myfirstmoney.95.216.173.242.sslip.io` remains the fully verified fallback. Local DNS propagation, video, and Devpost remain pending.
 - Primary `/feedback` Session ID: `PENDING — Akan must run /feedback in firstmoney main`.
 
 ## Links and access
 
 - Repository URL/status: https://github.com/akanbusiness25/my-first-money — private; `main` pushed.
-- Live synthetic demo: https://myfirstmoney.95.216.173.242.sslip.io — verified 2026-07-21 16:10 Asia/Qyzylorda.
+- Live synthetic demo: https://myfirstmoney.ilmio.space — public DNS and trusted TLS/health verified; temporary tested fallback: https://myfirstmoney.95.216.173.242.sslip.io.
 - Public YouTube video: pending.
 - Devpost submission: pending.
 - Repository access option: public with appropriate license, or private shared with `testing@devpost.com` and `build-week-event@openai.com`.

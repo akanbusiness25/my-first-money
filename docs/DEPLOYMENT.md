@@ -30,8 +30,10 @@ browser matrix pass.
 
 Remaining operator steps:
 
-1. Add DNS A record `myfirstmoney.ilmio.space -> 95.216.173.242`, wait for
-   propagation, then repeat the same live suite on the preferred origin.
+1. The A record `myfirstmoney.ilmio.space -> 95.216.173.242` is published and
+   trusted TLS/health pass. Wait for the local/ISP resolver to finish propagation,
+   repeat the same live suite on the preferred origin, then remove the sslip.io
+   fallback only after the preferred origin is independently stable.
 2. In Coolify, delete the stopped empty resource
    `unused-empty-postgres-delete-me`; the final destructive confirmation
    requires the owner password. Do not delete `my-first-money-postgres`.

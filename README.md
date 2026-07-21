@@ -67,11 +67,24 @@ Use synthetic values only. The demo rejects free-form model input, keeps family/
 
 Real-family use remains blocked by the Kazakhstan legal/data-location, parental identity/consent, deletion, backup/restore, incident response, authorization, database, and security gates in [BETA_GATE.md](docs/launch/BETA_GATE.md).
 
-## Build Week disclosure and Codex use
+## Build Week disclosure
 
 Before implementation, the project had product/strategy/UX/technical/security planning in the ILMIO pipeline. New work in this repository includes the implementation, tests, visual concepts and generated jar assets, provider/fallback boundary, compatibility evidence, security controls, deployment contour, and submission assets.
 
-Codex with GPT-5.6 Sol converted the approved prompt into the repository, encoded integer-money and privacy invariants, generated and implemented the approved Four Jars design, diagnosed compatibility/browser/security issues, and produced automated verification. The app's separate bounded GPT-5.6 use is the optional Money Moment adapter described above.
+## How Codex and GPT-5.6 were used
+
+The core implementation was completed in the continuous primary Codex build task `firstmoney main`, using GPT-5.6 Sol. This was not a one-shot prompt or a generated prototype: the same task carried the product from an empty workspace through implementation, review, browser debugging, verification, Git history, and HTTPS deployment.
+
+| Area                | Concrete Codex / GPT-5.6 contribution                                                                                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Product translation | Converted the approved product, privacy, and safety pipeline into a narrow weekly family loop with explicit non-goals.                                                          |
+| Domain engineering  | Encoded integer-money calculations, deterministic allocation, idempotent payday, append-only ledger events, and the unpaid-responsibility versus paid-extra boundary.           |
+| Product design      | Explored and implemented the approved Family Table / Four Jars direction, responsive mobile composition, jar interactions, motion, multilingual copy, and accessible states.    |
+| Safety architecture | Designed same-origin session boundaries, no-store responses, static-only PWA caching, structured validation, secret isolation, and synthetic-data-only judge behaviour.         |
+| Verification        | Wrote and iterated unit, component, browser, accessibility, storage, CSP/CSRF, session-isolation, and live-deployment checks; diagnosed failures and re-ran the relevant gates. |
+| Shipping evidence   | Prepared the pinned Docker/Coolify deployment contour, private-repository documentation, commit trail, Build Week evidence log, testing path, and video/submission storyboard.  |
+
+The app also contains a separate bounded GPT-5.6 Money Moment adapter. It can select one reviewed conversation-card ID from allowlisted, non-identifying signals through a strict structured-output contract. The deterministic fallback is the deployed judge path, so the weekly product works without an API credential. The adapter is implemented, but no live model call is claimed unless BW2 verification is completed and recorded.
 
 The authoritative competition log, scorecard, video storyboard, links, and remaining external actions live in [docs/BUILD_WEEK.md](docs/BUILD_WEEK.md).
 

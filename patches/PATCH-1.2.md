@@ -30,3 +30,10 @@ Drizzle schema and migrations remain ready for the durable beta implementation.
 - production Next.js build and Drizzle migration check pass;
 - Playwright product flow passes 12/12 at 320px, 390px, 428px, and desktop, including axe checks;
 - Chrome visual verification at 390 x 844 confirms the neutral entry screen, approved Four Jars composition, contextual Save/Give reasons, and absence of the removed banner.
+
+## Launch progress
+
+- created the separate private repository `https://github.com/akanbusiness25/my-first-money` and pushed verified `main` commit `4316976`;
+- created the isolated Coolify project `my-first-money` (`vfz3pz4v5heuls7ny276w556`) and its production environment (`w5hqrglmfl02d8ugbj8qn8g9`);
+- stopped before broadening the existing GitHub App installation because GitHub requires an owner verification code. No existing repository or Coolify project was changed;
+- after owner verification, grant the GitHub App access only to `my-first-money`, create the Dockerfile application, configure HTTPS and health checks, then repeat the complete synthetic flow in an incognito browser.

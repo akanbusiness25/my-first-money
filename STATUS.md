@@ -11,6 +11,7 @@ Updated: 2026-07-21 14:25 Asia/Qyzylorda
 - Approved design/spec milestone: `ea1f7a0`; implementation plan: `9946cda`.
 - Managed redesign implementation: `6ae7058`.
 - Judge-flow clarity and supervised jar use: `218e3e6`.
+- Product-demo launch contour: `4316976`; pushed to private repository `https://github.com/akanbusiness25/my-first-money` on `main`.
 - Product state: English-default EN/RU/KK; USD-only; neutral test-run or blank-start entry; reversible six-step product walkthrough; interactive family agreement; Week / Jars / History roots; Settings behind the parent profile; one editable Save goal; parent-confirmed bonus, bucket move, and context-specific jar use; newest-first filtered append-only history including weekly allocations.
 - Jar experience: five generated transparent assets, live fill, focused detail, deliberate drag plus Enter/Space activation, distinct optional WebAudio feedback, reduced-motion support.
 - Money Moment: provider interface, strict selection/output schemas, curated EN/RU/KK cards, deterministic fallback, server-only OpenAI adapter, and abuse budgets are implemented without a key. Live provider verification is not claimed.
@@ -18,4 +19,5 @@ Updated: 2026-07-21 14:25 Asia/Qyzylorda
 - Verification: frozen install previously passed; current format, strict typecheck, lint, 48 unit/component tests, production build, Drizzle check, and 12 E2E tests pass. Secret/client scans are rerun before launch handoff.
 - Browser QA: complete product flow at 390x844 in Chrome; 320px Russian/Kazakh reflow; 428px and desktop E2E; no internal competition banner remains.
 - Evidence: accepted concepts, production screenshots including refined 390px Week/Jars captures, same-input comparisons, and the exact QA record live under `docs/design/`.
-- External blockers: Docker/PostgreSQL 18 disposable-container smoke unavailable locally; stable HTTPS deployment, incognito verification, repository access, public video, `/feedback`, and Devpost submission remain.
+- Launch resources: isolated Coolify project `my-first-money` (`vfz3pz4v5heuls7ny276w556`) with production environment `w5hqrglmfl02d8ugbj8qn8g9`; no PostgreSQL resource was created because the verified synthetic demo does not use durable storage.
+- External blockers: Coolify's GitHub App must be granted access to the new private repository after GitHub's owner verification prompt. Docker/PostgreSQL 18 disposable-container smoke remains unavailable locally; stable HTTPS deployment, incognito verification, judging-account repository access, public video, `/feedback`, and Devpost submission remain.

@@ -7,7 +7,11 @@ describe("managed redesign demo contract", () => {
     const state = createInitialDemoState();
 
     expect(state.locale).toBe("en");
-    expect(state.saveGoal).toEqual({ title: "Scooter", targetMinor: 8_000 });
+    expect(state.saveGoal).toEqual({
+      title: "Scooter",
+      targetMinor: 8_000,
+      icon: "scooter",
+    });
     expect(state.preferences).toEqual({
       soundEnabled: true,
       motionEnabled: true,
@@ -40,6 +44,7 @@ describe("managed redesign demo contract", () => {
         action: "update_save_goal",
         title: "  Scooter  ",
         targetMinor: 8_000,
+        icon: "scooter",
       }),
     ).toMatchObject({ title: "Scooter" });
     expect(

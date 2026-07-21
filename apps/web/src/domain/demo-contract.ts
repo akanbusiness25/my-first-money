@@ -1,8 +1,10 @@
 import { z } from "zod";
 import {
   AgeBandSchema,
+  GoalIconSchema,
   LearningObjectiveSchema,
   LocaleSchema,
+  TaskIdSchema,
   TaskStatusSchema,
 } from "./demo";
 import { BucketKeySchema } from "./money";
@@ -21,6 +23,10 @@ const goalTitleSchema = z.string().trim().min(1).max(40);
 export const DemoCommandSchema = z
   .discriminatedUnion("action", [
     z.strictObject({ action: z.literal("reset") }),
+    z.strictObject({ action: z.literal("back_to_child_setup") }),
+    z.strictObject({ action: z.literal("back_to_mission_builder") }),
+    z.strictObject({ action: z.literal("back_to_agreement") }),
+    z.strictObject({ action: z.literal("start_next_week") }),
     z.strictObject({ action: z.literal("set_locale"), locale: LocaleSchema }),
     z.strictObject({
       action: z.literal("update_preferences"),
@@ -32,6 +38,7 @@ export const DemoCommandSchema = z
       action: z.literal("update_save_goal"),
       title: goalTitleSchema,
       targetMinor: z.number().int().min(100).max(1_000_000),
+      icon: GoalIconSchema,
     }),
     z.strictObject({
       action: z.literal("add_parent_bonus"),
@@ -47,6 +54,13 @@ export const DemoCommandSchema = z
       amountMinor: ledgerAmountMinorSchema,
     }),
     z.strictObject({
+      action: z.literal("record_bucket_use"),
+      idempotencyKey: idempotencyKeySchema,
+      bucket: BucketKeySchema,
+      purpose: z.enum(["purchase", "goal", "gift", "learning"]),
+      amountMinor: ledgerAmountMinorSchema,
+    }),
+    z.strictObject({
       action: z.literal("create_child"),
       displayName: displayNameSchema,
       ageBand: AgeBandSchema,
@@ -54,14 +68,24 @@ export const DemoCommandSchema = z
     z.strictObject({
       action: z.literal("create_mission"),
       objective: LearningObjectiveSchema,
-      baseAmountMinor: z.literal(1_000),
+      baseAmountMinor: z.number().int().min(0).max(10_000),
+    }),
+    z.strictObject({
+      action: z.literal("set_agreement_mark"),
+      actor: z.enum(["parent", "child"]),
+      marked: z.boolean(),
+    }),
+    z.strictObject({
+      action: z.literal("set_task_included"),
+      taskId: TaskIdSchema,
+      included: z.boolean(),
     }),
     z.strictObject({ action: z.literal("confirm_agreement") }),
     z.strictObject({ action: z.literal("open_quick_check") }),
     z.strictObject({ action: z.literal("back_to_week") }),
     z.strictObject({
       action: z.literal("set_task_status"),
-      taskId: z.enum(["clear_table", "water_plants", "sort_books"]),
+      taskId: TaskIdSchema,
       status: TaskStatusSchema,
     }),
     z.strictObject({ action: z.literal("finish_check") }),

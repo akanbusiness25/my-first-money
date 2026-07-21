@@ -12,6 +12,7 @@ import type { BucketKey } from "@/domain/money";
 const SESSION_TTL_MS = 30 * 60 * 1_000;
 export const MAX_DEMO_SESSIONS = 500;
 export const MAX_DEMO_LEDGER_EVENTS = 100;
+export const MAX_DEMO_CLOSED_PAYDAYS = 52;
 
 export interface DemoSession {
   id: string;
@@ -119,6 +120,40 @@ export function applyDemoCommand(
       session.state = createInitialDemoState();
       session.csrfToken = randomUUID();
       return;
+    case "back_to_child_setup":
+      if (state.stage !== "mission_builder") throw new Error("STAGE_CONFLICT");
+      state.stage = "child_setup";
+      return;
+    case "back_to_mission_builder":
+      if (state.stage !== "agreement") throw new Error("STAGE_CONFLICT");
+      state.stage = "mission_builder";
+      return;
+    case "back_to_agreement":
+      if (state.stage !== "week" && state.stage !== "payday") {
+        throw new Error("STAGE_CONFLICT");
+      }
+      state.stage = state.stage === "payday" ? "quick_check" : "agreement";
+      return;
+    case "start_next_week":
+      if (state.stage !== "closed" || !state.payday || !state.child) {
+        throw new Error("STAGE_CONFLICT");
+      }
+      if (state.closedPaydays.length >= MAX_DEMO_CLOSED_PAYDAYS) {
+        throw new Error("DEMO_HISTORY_CAPACITY_REACHED");
+      }
+      if (
+        !state.closedPaydays.some(
+          (payday) => payday.idempotencyKey === state.payday?.idempotencyKey,
+        )
+      ) {
+        state.closedPaydays.push(state.payday);
+      }
+      state.weekNumber += 1;
+      state.stage = "mission_builder";
+      state.mission = null;
+      state.payday = null;
+      state.moneyMoment = null;
+      return;
     case "set_locale":
       state.locale = command.locale;
       return;
@@ -140,6 +175,7 @@ export function applyDemoCommand(
       state.saveGoal = {
         title: command.title.trim(),
         targetMinor: command.targetMinor,
+        icon: command.icon,
       };
       return;
     case "add_parent_bonus":
@@ -174,6 +210,7 @@ export function applyDemoCommand(
       const balances = projectLedgerBalances({
         payday: payday.allocation,
         growBonusMinor: payday.growBonusMinor,
+        previousPaydays: state.closedPaydays,
         events: state.ledgerEvents,
       });
       if (balances[command.fromBucket] < command.amountMinor) {
@@ -184,6 +221,34 @@ export function applyDemoCommand(
         kind: "bucket_move",
         fromBucket: command.fromBucket,
         toBucket: command.toBucket,
+        amountMinor: command.amountMinor,
+        createdAt: new Date().toISOString(),
+      });
+      return;
+    }
+    case "record_bucket_use": {
+      const payday = requireClosedPayday(state);
+      assertLedgerAmount(command.amountMinor);
+      if (
+        state.ledgerEvents.some((event) => event.id === command.idempotencyKey)
+      ) {
+        return;
+      }
+      assertLedgerCapacity(state);
+      const balances = projectLedgerBalances({
+        payday: payday.allocation,
+        growBonusMinor: payday.growBonusMinor,
+        previousPaydays: state.closedPaydays,
+        events: state.ledgerEvents,
+      });
+      if (balances[command.bucket] < command.amountMinor) {
+        throw new Error("INSUFFICIENT_BUCKET_BALANCE");
+      }
+      state.ledgerEvents.push({
+        id: command.idempotencyKey,
+        kind: "bucket_use",
+        bucket: command.bucket,
+        purpose: command.purpose,
         amountMinor: command.amountMinor,
         createdAt: new Date().toISOString(),
       });
@@ -207,14 +272,39 @@ export function applyDemoCommand(
         baseAmountMinor: command.baseAmountMinor,
         tasks: createDemoTasks(),
         agreementVersion: 1,
-        parentMarked: true,
-        childMarked: true,
+        parentMarked: false,
+        childMarked: false,
       };
       state.stage = "agreement";
       return;
+    case "set_agreement_mark": {
+      if (state.stage !== "agreement") throw new Error("STAGE_CONFLICT");
+      const mission = requireMission(state);
+      if (command.actor === "parent") mission.parentMarked = command.marked;
+      else mission.childMarked = command.marked;
+      return;
+    }
+    case "set_task_included": {
+      if (state.stage !== "agreement") throw new Error("STAGE_CONFLICT");
+      const task = requireMission(state).tasks.find(
+        (item) => item.id === command.taskId,
+      );
+      if (!task) throw new Error("TASK_NOT_FOUND");
+      task.included = command.included;
+      if (!command.included) task.status = "not_checked";
+      return;
+    }
     case "confirm_agreement":
       if (state.stage !== "agreement") throw new Error("STAGE_CONFLICT");
-      requireMission(state);
+      {
+        const mission = requireMission(state);
+        if (!mission.parentMarked || !mission.childMarked) {
+          throw new Error("AGREEMENT_MARKS_REQUIRED");
+        }
+        if (!mission.tasks.some((task) => task.included)) {
+          throw new Error("AGREEMENT_TASK_REQUIRED");
+        }
+      }
       state.stage = "week";
       return;
     case "open_quick_check":
@@ -238,7 +328,11 @@ export function applyDemoCommand(
     case "finish_check": {
       if (state.stage !== "quick_check") throw new Error("STAGE_CONFLICT");
       const mission = requireMission(state);
-      if (mission.tasks.some((task) => task.status === "not_checked")) {
+      if (
+        mission.tasks.some(
+          (task) => task.included && task.status === "not_checked",
+        )
+      ) {
         throw new Error("TASKS_STILL_UNCHECKED");
       }
       state.stage = "payday";
@@ -254,6 +348,7 @@ export function applyDemoCommand(
       );
       const paidTaskMinor = totalMinor - mission.baseAmountMinor;
       state.payday = {
+        weekNumber: state.weekNumber,
         idempotencyKey: command.idempotencyKey,
         baseAmountMinor: mission.baseAmountMinor,
         paidTaskMinor,
@@ -274,6 +369,7 @@ export function bucketBalance(state: DemoState, bucket: BucketKey) {
   return projectLedgerBalances({
     payday: state.payday?.allocation ?? null,
     growBonusMinor: state.payday?.growBonusMinor ?? 0,
+    previousPaydays: state.closedPaydays,
     events: state.ledgerEvents,
   })[bucket];
 }

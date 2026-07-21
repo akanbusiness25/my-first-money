@@ -17,6 +17,14 @@ export type DemoLedgerEvent =
       toBucket: BucketKey;
       amountMinor: number;
       createdAt: string;
+    }
+  | {
+      id: string;
+      kind: "bucket_use";
+      bucket: BucketKey;
+      purpose: "purchase" | "goal" | "gift" | "learning";
+      amountMinor: number;
+      createdAt: string;
     };
 
 export type BucketBalances = Record<BucketKey, number>;
@@ -24,6 +32,10 @@ export type BucketBalances = Record<BucketKey, number>;
 interface LedgerProjectionInput {
   payday: Readonly<BucketBalances> | null;
   growBonusMinor: number;
+  previousPaydays?: readonly {
+    allocation: Readonly<BucketBalances>;
+    growBonusMinor: number;
+  }[];
   events: readonly DemoLedgerEvent[];
 }
 
@@ -36,6 +48,7 @@ function assertMinorUnits(value: number): void {
 export function projectLedgerBalances({
   payday,
   growBonusMinor,
+  previousPaydays = [],
   events,
 }: LedgerProjectionInput): BucketBalances {
   assertMinorUnits(growBonusMinor);
@@ -50,10 +63,27 @@ export function projectLedgerBalances({
   for (const bucket of bucketOrder) assertMinorUnits(balances[bucket]);
   balances.grow += growBonusMinor;
 
+  for (const previous of previousPaydays) {
+    assertMinorUnits(previous.growBonusMinor);
+    for (const bucket of bucketOrder) {
+      assertMinorUnits(previous.allocation[bucket]);
+      balances[bucket] += previous.allocation[bucket];
+    }
+    balances.grow += previous.growBonusMinor;
+  }
+
   for (const event of events) {
     assertMinorUnits(event.amountMinor);
     if (event.kind === "parent_bonus") {
       balances[event.bucket] += event.amountMinor;
+      continue;
+    }
+
+    if (event.kind === "bucket_use") {
+      if (balances[event.bucket] < event.amountMinor) {
+        throw new Error("INSUFFICIENT_BUCKET_BALANCE");
+      }
+      balances[event.bucket] -= event.amountMinor;
       continue;
     }
 

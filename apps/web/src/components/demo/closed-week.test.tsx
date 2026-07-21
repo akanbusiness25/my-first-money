@@ -33,6 +33,7 @@ function closedState(): DemoState {
       childMarked: true,
     },
     payday: {
+      weekNumber: 1,
       idempotencyKey: "22f8d588-5470-423d-8845-a1108869ba8e",
       baseAmountMinor: 1_000,
       paidTaskMinor: 800,
@@ -94,7 +95,9 @@ describe("approved closed-week experience", () => {
     expect(
       screen.getByRole("heading", { name: "Family history" }),
     ).toBeVisible();
-    expect(screen.getByText("Parent bonus")).toBeVisible();
+    expect(
+      within(screen.getByRole("list")).getByText("Parent bonus"),
+    ).toBeVisible();
     expect(screen.getByText("+$1.00 · Save")).toBeVisible();
     expect(
       screen.queryByRole("button", { name: /correction/i }),

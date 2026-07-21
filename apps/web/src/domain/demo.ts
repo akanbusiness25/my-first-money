@@ -23,6 +23,25 @@ export const TaskStatusSchema = z.enum([
 ]);
 export type TaskStatus = z.infer<typeof TaskStatusSchema>;
 
+export const TaskIdSchema = z.enum([
+  "clear_table",
+  "tidy_space",
+  "water_plants",
+  "sort_books",
+  "help_laundry",
+]);
+export type TaskId = z.infer<typeof TaskIdSchema>;
+
+export const GoalIconSchema = z.enum([
+  "scooter",
+  "bike",
+  "books",
+  "game",
+  "trip",
+  "custom",
+]);
+export type GoalIcon = z.infer<typeof GoalIconSchema>;
+
 export type DemoStage =
   | "child_setup"
   | "mission_builder"
@@ -40,9 +59,10 @@ export interface DemoChild {
 }
 
 export interface DemoTask {
-  id: "clear_table" | "water_plants" | "sort_books";
+  id: TaskId;
   kind: "responsibility" | "paid";
   amountMinor: number;
+  included: boolean;
   status: TaskStatus;
 }
 
@@ -56,6 +76,7 @@ export interface DemoMission {
 }
 
 export interface DemoPayday {
+  weekNumber: number;
   idempotencyKey: string;
   baseAmountMinor: number;
   paidTaskMinor: number;
@@ -84,6 +105,8 @@ export interface DemoState {
   child: DemoChild | null;
   mission: DemoMission | null;
   payday: DemoPayday | null;
+  closedPaydays: DemoPayday[];
+  weekNumber: number;
   preferences: {
     soundEnabled: boolean;
     motionEnabled: boolean;
@@ -93,6 +116,7 @@ export interface DemoState {
   saveGoal: {
     title: string;
     targetMinor: number;
+    icon: GoalIcon;
   };
 }
 
@@ -103,13 +127,15 @@ export function createInitialDemoState(): DemoState {
     child: null,
     mission: null,
     payday: null,
+    closedPaydays: [],
+    weekNumber: 1,
     preferences: {
       soundEnabled: true,
       motionEnabled: true,
     },
     ledgerEvents: [],
     moneyMoment: null,
-    saveGoal: { title: "Scooter", targetMinor: 8_000 },
+    saveGoal: { title: "Scooter", targetMinor: 8_000, icon: "scooter" },
   };
 }
 
@@ -119,18 +145,35 @@ export function createDemoTasks(): DemoTask[] {
       id: "clear_table",
       kind: "responsibility",
       amountMinor: 0,
+      included: true,
+      status: "not_checked",
+    },
+    {
+      id: "tidy_space",
+      kind: "responsibility",
+      amountMinor: 0,
+      included: false,
       status: "not_checked",
     },
     {
       id: "water_plants",
       kind: "paid",
       amountMinor: 500,
+      included: true,
       status: "not_checked",
     },
     {
       id: "sort_books",
       kind: "paid",
       amountMinor: 300,
+      included: true,
+      status: "not_checked",
+    },
+    {
+      id: "help_laundry",
+      kind: "paid",
+      amountMinor: 200,
+      included: false,
       status: "not_checked",
     },
   ];

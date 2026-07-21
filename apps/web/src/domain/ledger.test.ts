@@ -95,4 +95,34 @@ describe("append-only demo ledger projection", () => {
       }),
     ).toThrow("INSUFFICIENT_BUCKET_BALANCE");
   });
+
+  it("adds prior weeks and subtracts parent-confirmed jar use", () => {
+    const balances = projectLedgerBalances({
+      payday: { spend: 700, save: 100, give: 100, grow: 100 },
+      growBonusMinor: 100,
+      previousPaydays: [
+        {
+          allocation: { spend: 1_260, save: 180, give: 180, grow: 180 },
+          growBonusMinor: 100,
+        },
+      ],
+      events: [
+        {
+          id: "use",
+          kind: "bucket_use",
+          bucket: "spend",
+          purpose: "purchase",
+          amountMinor: 260,
+          createdAt: now,
+        },
+      ],
+    });
+
+    expect(balances).toEqual({
+      spend: 1_700,
+      save: 280,
+      give: 280,
+      grow: 480,
+    });
+  });
 });

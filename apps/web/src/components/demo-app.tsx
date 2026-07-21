@@ -8,7 +8,6 @@ import {
   CircleDollarSign,
   LoaderCircle,
   ShieldCheck,
-  Sparkles,
   Target,
   UsersRound,
 } from "lucide-react";
@@ -18,6 +17,7 @@ import { ClosedWeek, type RootTab } from "@/components/demo/closed-week";
 import { bucketCopy, copy, taskCopy } from "@/components/demo/copy";
 import { JarVisual } from "@/components/demo/jar-visual";
 import { formatUsdMinor } from "@/domain/currency";
+import { parseUsdInputToMinor } from "@/domain/currency";
 import type {
   AgeBand,
   DemoState,
@@ -208,8 +208,12 @@ function StepHeader({
 
 function ChildSetup({ state, busy, onCommand }: JourneyProps) {
   const c = copy[state.locale];
-  const [displayName, setDisplayName] = useState("");
-  const [ageBand, setAgeBand] = useState<AgeBand>("8-12");
+  const [displayName, setDisplayName] = useState(
+    state.child?.displayName ?? "",
+  );
+  const [ageBand, setAgeBand] = useState<AgeBand>(
+    state.child?.ageBand ?? "8-12",
+  );
 
   function submit(event: FormEvent) {
     event.preventDefault();
@@ -267,19 +271,45 @@ interface JourneyProps {
 
 function MissionBuilder({ state, busy, onCommand }: JourneyProps) {
   const c = copy[state.locale];
-  const [objective, setObjective] =
-    useState<LearningObjective>("first_choices");
+  const [objective, setObjective] = useState<LearningObjective>(
+    state.mission?.objective ?? "first_choices",
+  );
+  const [baseAmount, setBaseAmount] = useState(
+    ((state.mission?.baseAmountMinor ?? 1_000) / 100).toFixed(2),
+  );
+  const baseAmountMinor = parseUsdInputToMinor(baseAmount);
   const objectives: Array<{
     id: LearningObjective;
     label: string;
+    help: string;
   }> = [
-    { id: "first_choices", label: c.objectiveFirstChoices },
-    { id: "saving_patience", label: c.objectiveSavingPatience },
-    { id: "balanced_sharing", label: c.objectiveBalancedSharing },
+    {
+      id: "first_choices",
+      label: c.objectiveFirstChoices,
+      help: c.objectiveFirstHelp,
+    },
+    {
+      id: "saving_patience",
+      label: c.objectiveSavingPatience,
+      help: c.objectiveSavingHelp,
+    },
+    {
+      id: "balanced_sharing",
+      label: c.objectiveBalancedSharing,
+      help: c.objectiveSharingHelp,
+    },
   ];
 
   return (
     <section className="journey-screen">
+      <button
+        className="back-link"
+        disabled={busy}
+        onClick={() => void onCommand({ action: "back_to_child_setup" })}
+      >
+        <ArrowLeft aria-hidden="true" />
+        {c.back}
+      </button>
       <StepHeader title={c.missionTitle} body={c.missionBody} step={2} />
       <div
         className="choice-list"
@@ -295,23 +325,45 @@ function MissionBuilder({ state, busy, onCommand }: JourneyProps) {
               onChange={() => setObjective(item.id)}
             />
             <Target aria-hidden="true" />
-            <span>{item.label}</span>
+            <span>
+              <strong>
+                {item.label}
+                {item.id === "first_choices" ? (
+                  <small className="default-label">{c.defaultChoice}</small>
+                ) : null}
+              </strong>
+              <small>{item.help}</small>
+            </span>
             <Check aria-hidden="true" />
           </label>
         ))}
       </div>
-      <div className="amount-preview">
+      <label className="field weekly-base-field">
         <span>{c.weeklyBase}</span>
-        <strong>{formatUsdMinor(1_000)}</strong>
-      </div>
+        <span className="money-input">
+          <span aria-hidden="true">$</span>
+          <input
+            inputMode="decimal"
+            value={baseAmount}
+            aria-describedby="weekly-base-help"
+            onChange={(event) => setBaseAmount(event.target.value)}
+          />
+        </span>
+        <small id="weekly-base-help">{c.weeklyBaseHelp}</small>
+      </label>
       <button
         className="button"
-        disabled={busy}
+        disabled={
+          busy ||
+          baseAmountMinor === null ||
+          baseAmountMinor < 0 ||
+          baseAmountMinor > 10_000
+        }
         onClick={() =>
           void onCommand({
             action: "create_mission",
             objective,
-            baseAmountMinor: 1_000,
+            baseAmountMinor: baseAmountMinor!,
           })
         }
       >
@@ -324,29 +376,104 @@ function MissionBuilder({ state, busy, onCommand }: JourneyProps) {
 
 function Agreement({ state, busy, onCommand }: JourneyProps) {
   const c = copy[state.locale];
+  const mission = state.mission;
+  const labels = taskCopy[state.locale];
+  const taskGroups = [
+    {
+      kind: "responsibility" as const,
+      title: c.responsibilities,
+    },
+    { kind: "paid" as const, title: c.paidJobs },
+  ];
   return (
     <section className="journey-screen">
+      <button
+        className="back-link"
+        disabled={busy}
+        onClick={() => void onCommand({ action: "back_to_mission_builder" })}
+      >
+        <ArrowLeft aria-hidden="true" />
+        {c.back}
+      </button>
       <StepHeader title={c.agreementTitle} body={c.agreementBody} step={3} />
       <div className="agreement-people">
-        <span>
+        <button
+          type="button"
+          aria-pressed={mission?.parentMarked ?? false}
+          disabled={busy}
+          onClick={() =>
+            void onCommand({
+              action: "set_agreement_mark",
+              actor: "parent",
+              marked: !(mission?.parentMarked ?? false),
+            })
+          }
+        >
           <UsersRound aria-hidden="true" />
           {c.parentMarked}
-          <CheckCircle2 aria-hidden="true" />
-        </span>
-        <span>
+          {mission?.parentMarked ? <CheckCircle2 aria-hidden="true" /> : null}
+          <span className="mini-confetti" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          aria-pressed={mission?.childMarked ?? false}
+          disabled={busy}
+          onClick={() =>
+            void onCommand({
+              action: "set_agreement_mark",
+              actor: "child",
+              marked: !(mission?.childMarked ?? false),
+            })
+          }
+        >
           <ShieldCheck aria-hidden="true" />
           {c.childMarked}
-          <CheckCircle2 aria-hidden="true" />
-        </span>
+          {mission?.childMarked ? <CheckCircle2 aria-hidden="true" /> : null}
+          <span className="mini-confetti" aria-hidden="true" />
+        </button>
       </div>
-      <TaskList state={state} />
+      <p className="agreement-marks-help">{c.agreementMarksHelp}</p>
+      <div className="agreement-task-groups">
+        {taskGroups.map((group) => (
+          <fieldset key={group.kind}>
+            <legend>{group.title}</legend>
+            {(mission?.tasks ?? [])
+              .filter((task) => task.kind === group.kind)
+              .map((task) => (
+                <label className="agreement-task-option" key={task.id}>
+                  <input
+                    type="checkbox"
+                    checked={task.included}
+                    disabled={busy}
+                    onChange={(event) =>
+                      void onCommand({
+                        action: "set_task_included",
+                        taskId: task.id,
+                        included: event.target.checked,
+                      })
+                    }
+                  />
+                  <span>
+                    <strong>{labels[task.id].label}</strong>
+                    <small>{labels[task.id].detail}</small>
+                  </span>
+                </label>
+              ))}
+          </fieldset>
+        ))}
+      </div>
+      <p className="base-not-penalty">{c.baseNotPenalty}</p>
       <button
         className="button"
-        disabled={busy}
+        disabled={
+          busy ||
+          !mission?.parentMarked ||
+          !mission.childMarked ||
+          !mission.tasks.some((task) => task.included)
+        }
         onClick={() => void onCommand({ action: "confirm_agreement" })}
       >
         {c.startWeek}
-        <Sparkles aria-hidden="true" />
       </button>
     </section>
   );
@@ -354,12 +481,29 @@ function Agreement({ state, busy, onCommand }: JourneyProps) {
 
 function ActiveWeek({ state, busy, onCommand }: JourneyProps) {
   const c = copy[state.locale];
+  const objectiveCopy: Record<LearningObjective, string> = {
+    first_choices: c.objectiveFirstChoices,
+    saving_patience: c.objectiveSavingPatience,
+    balanced_sharing: c.objectiveBalancedSharing,
+  };
   return (
     <section className="journey-screen active-week-screen">
-      <StepHeader title={c.thisWeek} body={c.weekReady} step={4} />
+      <button
+        className="back-link"
+        disabled={busy}
+        onClick={() => void onCommand({ action: "back_to_agreement" })}
+      >
+        <ArrowLeft aria-hidden="true" />
+        {c.back}
+      </button>
+      <StepHeader title={c.thisWeek} body={c.activeWeekDemoBody} step={4} />
       <div className="mission-banner">
         <Target aria-hidden="true" />
-        <span>{c.objectiveFirstChoices}</span>
+        <span>
+          {state.mission
+            ? objectiveCopy[state.mission.objective]
+            : c.objectiveFirstChoices}
+        </span>
         <strong>{formatUsdMinor(state.mission?.baseAmountMinor ?? 0)}</strong>
       </div>
       <TaskList state={state} />
@@ -376,7 +520,7 @@ function ActiveWeek({ state, busy, onCommand }: JourneyProps) {
 }
 
 function TaskList({ state }: { state: DemoState }) {
-  const tasks = state.mission?.tasks ?? [];
+  const tasks = (state.mission?.tasks ?? []).filter((task) => task.included);
   const labels = taskCopy[state.locale];
   return (
     <ul className="task-list">
@@ -398,7 +542,7 @@ function TaskList({ state }: { state: DemoState }) {
 function QuickCheck({ state, busy, onCommand }: JourneyProps) {
   const c = copy[state.locale];
   const labels = taskCopy[state.locale];
-  const tasks = state.mission?.tasks ?? [];
+  const tasks = (state.mission?.tasks ?? []).filter((task) => task.included);
   const complete = tasks.every((task) => task.status !== "not_checked");
 
   function setStatus(taskId: (typeof tasks)[number]["id"], status: TaskStatus) {
@@ -445,6 +589,7 @@ function QuickCheck({ state, busy, onCommand }: JourneyProps) {
           </fieldset>
         ))}
       </div>
+      <p className="base-not-penalty">{c.baseNotPenalty}</p>
       <button
         className="button"
         disabled={busy || !complete}
@@ -469,6 +614,14 @@ function Payday({ state, busy, onCommand }: JourneyProps) {
 
   return (
     <section className="journey-screen payday-screen">
+      <button
+        className="back-link"
+        disabled={busy}
+        onClick={() => void onCommand({ action: "back_to_agreement" })}
+      >
+        <ArrowLeft aria-hidden="true" />
+        {c.back}
+      </button>
       <StepHeader title={c.paydayTitle} body={c.paydayBody} step={6} />
       <div className="payday-total">
         <CircleDollarSign aria-hidden="true" />
@@ -511,7 +664,6 @@ function Payday({ state, busy, onCommand }: JourneyProps) {
         }
       >
         {c.confirmPayday}
-        <Sparkles aria-hidden="true" />
       </button>
     </section>
   );

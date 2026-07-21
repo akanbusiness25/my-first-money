@@ -40,3 +40,12 @@ Result: passed for the competition MVP
 - Browser console: no errors or warnings during the completed judge flow and focused-jar keyboard interaction.
 
 No unresolved P0, P1, or P2 visual-fidelity issue remains for the approved competition-MVP scope.
+
+## 2026-07-21 judge-flow clarity refinement
+
+- Compared `redesign-jars-approved.png` with `implementation-jars-refined-390.png` at the same 390px product width after completing a fresh synthetic week.
+- Preserved the approved Four Jars composition, color semantics, goal card, primary parent bonus, secondary move action, and fixed bottom navigation.
+- Added only product-clarifying surfaces: a compact synthetic-demo notice, explicit objective effects, interactive agreement marks, grouped unpaid/paid choices, and parent-confirmed jar use.
+- Replaced ambiguous sparkle/fork decoration with a semantic completion check, restrained CSS confetti, and a conversation icon; no new decorative visual language was introduced.
+- Fixed inherited scroll position when changing root tabs, verified `scrollY === 0`, and captured the final Jars screen with the complete header visible.
+- The refined Playwright flow verifies the jar's computed transform changes during pointer drag on mobile and desktop; Enter/Space remain the accessible alternative.

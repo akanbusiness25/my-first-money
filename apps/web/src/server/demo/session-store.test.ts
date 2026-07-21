@@ -4,6 +4,7 @@ import {
   bucketBalance,
   getOrCreateDemoSession,
   getOrCreateDemoSessionInStore,
+  MAX_DEMO_CLOSED_PAYDAYS,
   MAX_DEMO_LEDGER_EVENTS,
 } from "./session-store";
 
@@ -18,6 +19,16 @@ function advanceToPayday() {
     action: "create_mission",
     objective: "first_choices",
     baseAmountMinor: 1_000,
+  });
+  applyDemoCommand(session, {
+    action: "set_agreement_mark",
+    actor: "parent",
+    marked: true,
+  });
+  applyDemoCommand(session, {
+    action: "set_agreement_mark",
+    actor: "child",
+    marked: true,
   });
   applyDemoCommand(session, { action: "confirm_agreement" });
   applyDemoCommand(session, { action: "open_quick_check" });
@@ -195,6 +206,7 @@ describe("isolated demo session lifecycle", () => {
       action: "update_save_goal",
       title: "  First bike  ",
       targetMinor: 12_500,
+      icon: "bike",
     });
 
     expect(session.state.locale).toBe("kk");
@@ -205,6 +217,7 @@ describe("isolated demo session lifecycle", () => {
     expect(session.state.saveGoal).toEqual({
       title: "First bike",
       targetMinor: 12_500,
+      icon: "bike",
     });
   });
 
@@ -220,11 +233,103 @@ describe("isolated demo session lifecycle", () => {
       objective: "first_choices",
       baseAmountMinor: 1_000,
     });
+    applyDemoCommand(session, {
+      action: "set_agreement_mark",
+      actor: "parent",
+      marked: true,
+    });
+    applyDemoCommand(session, {
+      action: "set_agreement_mark",
+      actor: "child",
+      marked: true,
+    });
     applyDemoCommand(session, { action: "confirm_agreement" });
     applyDemoCommand(session, { action: "open_quick_check" });
     expect(() => applyDemoCommand(session, { action: "finish_check" })).toThrow(
       "TASKS_STILL_UNCHECKED",
     );
+  });
+
+  it("requires both playful agreement marks before the week starts", () => {
+    const { session } = getOrCreateDemoSession();
+    applyDemoCommand(session, {
+      action: "create_child",
+      displayName: "Ayan",
+      ageBand: "8-12",
+    });
+    applyDemoCommand(session, {
+      action: "create_mission",
+      objective: "saving_patience",
+      baseAmountMinor: 750,
+    });
+
+    expect(() =>
+      applyDemoCommand(session, { action: "confirm_agreement" }),
+    ).toThrow("AGREEMENT_MARKS_REQUIRED");
+    applyDemoCommand(session, {
+      action: "set_agreement_mark",
+      actor: "parent",
+      marked: true,
+    });
+    applyDemoCommand(session, {
+      action: "set_agreement_mark",
+      actor: "child",
+      marked: true,
+    });
+    applyDemoCommand(session, { action: "confirm_agreement" });
+
+    expect(session.state.stage).toBe("week");
+    expect(session.state.mission?.baseAmountMinor).toBe(750);
+  });
+
+  it("records supervised jar use and carries balances into the next week", () => {
+    const session = advanceToPayday();
+    applyDemoCommand(session, {
+      action: "confirm_payday",
+      idempotencyKey: "bfdf4a5d-880e-4377-9234-15f4c92a8860",
+    });
+    applyDemoCommand(session, {
+      action: "record_bucket_use",
+      idempotencyKey: "681d1a3a-3c8d-4aa0-bf3a-0af4b06d1134",
+      bucket: "spend",
+      purpose: "purchase",
+      amountMinor: 260,
+    });
+
+    expect(bucketBalance(session.state, "spend")).toBe(1_000);
+    applyDemoCommand(session, { action: "start_next_week" });
+
+    expect(session.state.stage).toBe("mission_builder");
+    expect(session.state.child?.displayName).toBe("Аян");
+    expect(session.state.closedPaydays).toHaveLength(1);
+    expect(session.state.weekNumber).toBe(2);
+    expect(bucketBalance(session.state, "spend")).toBe(1_000);
+    expect(session.state.ledgerEvents[0]).toMatchObject({
+      kind: "bucket_use",
+      purpose: "purchase",
+    });
+  });
+
+  it("bounds immutable closed-week history in the anonymous demo", () => {
+    const session = advanceToPayday();
+    applyDemoCommand(session, {
+      action: "confirm_payday",
+      idempotencyKey: "2dc42ead-ff71-49c1-b507-144c5e07b012",
+    });
+    const payday = structuredClone(session.state.payday!);
+    session.state.closedPaydays = Array.from(
+      { length: MAX_DEMO_CLOSED_PAYDAYS },
+      (_, index) => ({
+        ...payday,
+        weekNumber: index + 1,
+        idempotencyKey: `closed-week-${index}`,
+      }),
+    );
+
+    expect(() =>
+      applyDemoCommand(session, { action: "start_next_week" }),
+    ).toThrow("DEMO_HISTORY_CAPACITY_REACHED");
+    expect(session.state.stage).toBe("closed");
   });
 
   it("does not mint a new Money Moment allowance on reset", () => {

@@ -91,10 +91,11 @@ export async function POST(request: NextRequest) {
       session.lastMoneyMomentAt = Date.now();
 
       const completedPaid = state.mission.tasks.filter(
-        (task) => task.kind === "paid" && task.status === "completed",
+        (task) =>
+          task.included && task.kind === "paid" && task.status === "completed",
       ).length;
       const paidTotal = state.mission.tasks.filter(
-        (task) => task.kind === "paid",
+        (task) => task.included && task.kind === "paid",
       ).length;
       const result = await generateMoneyMoment({
         ageBand: state.child.ageBand,
@@ -144,7 +145,9 @@ export async function POST(request: NextRequest) {
     const status =
       code === "DEMO_CAPACITY_REACHED"
         ? 503
-        : code === "RATE_LIMITED" || code === "DEMO_LEDGER_CAPACITY_REACHED"
+        : code === "RATE_LIMITED" ||
+            code === "DEMO_LEDGER_CAPACITY_REACHED" ||
+            code === "DEMO_HISTORY_CAPACITY_REACHED"
           ? 429
           : code.includes("REJECTED")
             ? 403

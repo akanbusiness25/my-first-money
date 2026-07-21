@@ -2,10 +2,12 @@
 
 import {
   BadgeDollarSign,
+  BadgeInfo,
   CalendarDays,
   CircleUserRound,
   Clock3,
   Globe2,
+  Layers3,
   RotateCcw,
   Sparkles,
   Target,
@@ -85,7 +87,13 @@ export function AppShell({
         </button>
       </header>
 
-      <main className="app-main">{children}</main>
+      <main className="app-main">
+        <p className="demo-notice">
+          <BadgeInfo aria-hidden="true" />
+          {copy[state.locale].demoNotice}
+        </p>
+        {children}
+      </main>
 
       {state.stage === "closed" && tab && onTabChange ? (
         <BottomNavigation
@@ -138,7 +146,10 @@ function BottomNavigation({
           key={item.id}
           className={tab === item.id ? "active" : ""}
           aria-current={tab === item.id ? "page" : undefined}
-          onClick={() => onTabChange(item.id)}
+          onClick={() => {
+            onTabChange(item.id);
+            window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+          }}
         >
           {item.icon}
           <span>{item.label}</span>
@@ -168,6 +179,7 @@ function SettingsSheet({
     state.preferences.motionEnabled,
   );
   const [goalTitle, setGoalTitle] = useState(state.saveGoal.title);
+  const [goalIcon, setGoalIcon] = useState(state.saveGoal.icon);
   const [goalTarget, setGoalTarget] = useState(
     (state.saveGoal.targetMinor / 100).toFixed(2),
   );
@@ -231,6 +243,7 @@ function SettingsSheet({
         action: "update_save_goal",
         title: goalTitle,
         targetMinor,
+        icon: goalIcon,
       });
       onClose();
     } catch {
@@ -279,6 +292,25 @@ function SettingsSheet({
         </header>
 
         <form className="settings-form" onSubmit={saveSettings}>
+          <div className="settings-row settings-row--fixed">
+            <CircleUserRound aria-hidden="true" />
+            <span>
+              <strong>{c.childProfile}</strong>
+              <small>{state.child?.displayName ?? "—"}</small>
+            </span>
+            <b>{state.child?.ageBand ?? "—"}</b>
+          </div>
+
+          <div className="settings-row settings-row--fixed settings-plan">
+            <Layers3 aria-hidden="true" />
+            <span>
+              <strong>{c.currentPlan}</strong>
+              <small>{c.freePlan}</small>
+              <small>{c.plusComingSoon}</small>
+            </span>
+            <b>Free</b>
+          </div>
+
           <fieldset className="settings-group">
             <legend>
               <Globe2 aria-hidden="true" />
@@ -357,6 +389,22 @@ function SettingsSheet({
                 maxLength={40}
                 onChange={(event) => setGoalTitle(event.target.value)}
               />
+            </label>
+            <label className="field">
+              <span>{c.goalIcon}</span>
+              <select
+                value={goalIcon}
+                onChange={(event) =>
+                  setGoalIcon(event.target.value as typeof goalIcon)
+                }
+              >
+                <option value="scooter">{c.iconScooter}</option>
+                <option value="bike">{c.iconBike}</option>
+                <option value="books">{c.iconBooks}</option>
+                <option value="game">{c.iconGame}</option>
+                <option value="trip">{c.iconTrip}</option>
+                <option value="custom">{c.iconCustom}</option>
+              </select>
             </label>
             <label className="field">
               <span>{c.targetAmount}</span>

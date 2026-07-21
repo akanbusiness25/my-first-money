@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import type { BucketKey } from "@/domain/money";
 
@@ -32,10 +32,12 @@ export function JarVisual({
 }: JarVisualProps) {
   const drag = useRef({
     active: false,
+    startX: 0,
     minX: 0,
     maxX: 0,
     shook: false,
   });
+  const [dragOffset, setDragOffset] = useState(0);
   const fillPercent = Math.min(Math.max(fillBasisPoints, 0), 10_000) / 100;
 
   const visual = (
@@ -83,6 +85,13 @@ export function JarVisual({
       type="button"
       className={`jar-visual jar-visual--button jar-visual--${bucket}${focused ? " jar-visual--focused" : ""}`}
       aria-label={label}
+      style={
+        focused
+          ? {
+              transform: `translateX(${dragOffset}px) rotate(${dragOffset / 8}deg)`,
+            }
+          : undefined
+      }
       onClick={() => {
         if (!drag.current.shook) onActivate?.();
         drag.current.shook = false;
@@ -96,14 +105,19 @@ export function JarVisual({
       onPointerDown={(event) => {
         drag.current = {
           active: true,
+          startX: event.clientX,
           minX: event.clientX,
           maxX: event.clientX,
           shook: false,
         };
+        setDragOffset(0);
         event.currentTarget.setPointerCapture?.(event.pointerId);
       }}
       onPointerMove={(event) => {
         if (!drag.current.active) return;
+        setDragOffset(
+          Math.max(-36, Math.min(36, event.clientX - drag.current.startX)),
+        );
         drag.current.minX = Math.min(drag.current.minX, event.clientX);
         drag.current.maxX = Math.max(drag.current.maxX, event.clientX);
         if (
@@ -116,10 +130,12 @@ export function JarVisual({
       }}
       onPointerUp={(event) => {
         drag.current.active = false;
+        setDragOffset(0);
         event.currentTarget.releasePointerCapture?.(event.pointerId);
       }}
       onPointerCancel={() => {
         drag.current.active = false;
+        setDragOffset(0);
       }}
     >
       {visual}

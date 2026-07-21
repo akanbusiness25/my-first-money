@@ -13,6 +13,8 @@ async function finishDemoWeek(page: import("@playwright/test").Page) {
   await page.getByLabel("Child nickname").fill("Ari");
   await page.getByRole("button", { name: "Continue" }).click();
   await page.getByRole("button", { name: "Review family agreement" }).click();
+  await page.getByRole("button", { name: "Parent has reviewed it" }).click();
+  await page.getByRole("button", { name: "Child understands it" }).click();
   await page.getByRole("button", { name: "Start this week" }).click();
   await page.getByRole("button", { name: "Review the week" }).click();
 
@@ -67,6 +69,25 @@ test("completes the family ritual and records parent-confirmed jar actions", asy
     page.getByRole("heading", { name: "Scooter goal" }),
   ).toBeVisible();
 
+  const focusedJar = page.getByRole("button", { name: "Save jar" });
+  const jarBox = await focusedJar.boundingBox();
+  expect(jarBox).not.toBeNull();
+  await page.mouse.move(
+    jarBox!.x + jarBox!.width / 2,
+    jarBox!.y + jarBox!.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    jarBox!.x + jarBox!.width / 2 + 36,
+    jarBox!.y + jarBox!.height / 2,
+  );
+  await expect
+    .poll(() =>
+      focusedJar.evaluate((element) => getComputedStyle(element).transform),
+    )
+    .not.toBe("matrix(1, 0, 0, 1, 0, 0)");
+  await page.mouse.up();
+
   await page.getByRole("button", { name: "Add parent bonus" }).click();
   const bonus = page.getByRole("dialog", { name: "Add parent bonus" });
   await expect(bonus.getByLabel("Choose a jar")).toHaveValue("save");
@@ -88,12 +109,27 @@ test("completes the family ritual and records parent-confirmed jar actions", asy
   await expect(move).toBeHidden();
   await expect(page.getByText("$3.30", { exact: true })).toBeVisible();
 
+  await page.getByRole("button", { name: "Use money from this jar" }).click();
+  const use = page.getByRole("dialog", {
+    name: "Use money from this jar",
+  });
+  await expect(use.getByLabel("Choose a jar")).toHaveValue("save");
+  await expect(use.getByLabel("What was it used for?")).toHaveValue("purchase");
+  await use.getByRole("button", { name: "Continue" }).click();
+  await use.getByRole("button", { name: "Confirm jar use" }).click();
+  await expect(use).toBeHidden();
+  await expect(page.getByText("$2.80", { exact: true })).toBeVisible();
+
   await page.getByRole("button", { name: "History", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Family history" }),
   ).toBeVisible();
-  await expect(page.getByText("Parent bonus", { exact: true })).toBeVisible();
-  await expect(page.getByText("Money moved", { exact: true })).toBeVisible();
+  const history = page.getByRole("list");
+  await expect(
+    history.getByText("Parent bonus", { exact: true }),
+  ).toBeVisible();
+  await expect(history.getByText("Money moved", { exact: true })).toBeVisible();
+  await expect(history.getByText("Money used", { exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "Open parent settings" }).click();
   const settings = page.getByRole("dialog", { name: "Parent settings" });

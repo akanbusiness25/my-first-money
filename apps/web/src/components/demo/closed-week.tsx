@@ -3,16 +3,22 @@
 import {
   ArrowLeft,
   ArrowRightLeft,
+  Bike,
+  BookOpen,
   Check,
   CheckCircle2,
-  GitFork,
+  Filter,
+  Gamepad2,
   Gift,
+  HandCoins,
   HandHeart,
   LockKeyhole,
   MoveHorizontal,
+  MessageCircle,
+  Plane,
+  Shapes,
   ShieldCheck,
   ShoppingBag,
-  Sparkles,
   Sprout,
   UsersRound,
   Volume2,
@@ -22,13 +28,14 @@ import {
 import { useState } from "react";
 import Image from "next/image";
 import { formatUsdMinor } from "@/domain/currency";
-import type { DemoState, Locale } from "@/domain/demo";
+import type { DemoPayday, DemoState, GoalIcon, Locale } from "@/domain/demo";
 import type { DemoCommand } from "@/domain/demo-contract";
 import {
   bucketShareBasisPoints,
   goalProgressBasisPoints,
   projectLedgerBalances,
 } from "@/domain/ledger";
+import type { DemoLedgerEvent } from "@/domain/ledger";
 import type { BucketKey } from "@/domain/money";
 import { bucketCopy, copy } from "./copy";
 import { JarVisual } from "./jar-visual";
@@ -87,11 +94,13 @@ function formatEventDate(value: string, locale: Locale): string {
 function GoalCard({
   locale,
   title,
+  icon,
   savedMinor,
   targetMinor,
 }: {
   locale: Locale;
   title: string;
+  icon: GoalIcon;
   savedMinor: number;
   targetMinor: number;
 }) {
@@ -99,7 +108,19 @@ function GoalCard({
   return (
     <section className="goal-card" aria-label={copy[locale].saveGoal}>
       <span className="goal-card__icon" aria-hidden="true">
-        <Image src="/jars/scooter.png" width={96} height={64} alt="" />
+        {icon === "scooter" ? (
+          <Image src="/jars/scooter.png" width={96} height={64} alt="" />
+        ) : icon === "bike" ? (
+          <Bike />
+        ) : icon === "books" ? (
+          <BookOpen />
+        ) : icon === "game" ? (
+          <Gamepad2 />
+        ) : icon === "trip" ? (
+          <Plane />
+        ) : (
+          <Shapes />
+        )}
       </span>
       <span className="goal-card__body">
         <strong>{title}</strong>
@@ -198,11 +219,13 @@ function PrimaryActions({
   busy,
   onBonus,
   onMove,
+  onUse,
 }: {
   locale: Locale;
   busy: boolean;
   onBonus: () => void;
   onMove: () => void;
+  onUse?: () => void;
 }) {
   const c = copy[locale];
   return (
@@ -219,6 +242,16 @@ function PrimaryActions({
         <ArrowRightLeft aria-hidden="true" />
         {c.moveMoney}
       </button>
+      {onUse ? (
+        <button
+          className="button button--outline"
+          disabled={busy}
+          onClick={onUse}
+        >
+          <HandCoins aria-hidden="true" />
+          {c.useFromJar}
+        </button>
+      ) : null}
       <p className="parent-note">
         <LockKeyhole aria-hidden="true" />
         {c.parentConfirms}
@@ -261,11 +294,14 @@ function WeekScreen({
   return (
     <div className="closed-screen week-complete-screen">
       <div className="celebration-mark" aria-hidden="true">
-        <Sparkles className="celebration-mark__spark celebration-mark__spark--one" />
+        <span className="celebration-confetti celebration-confetti--one" />
+        <span className="celebration-confetti celebration-confetti--two" />
+        <span className="celebration-confetti celebration-confetti--three" />
         <span className="celebration-mark__check">
           <Check />
         </span>
-        <Sparkles className="celebration-mark__spark celebration-mark__spark--two" />
+        <span className="celebration-confetti celebration-confetti--four" />
+        <span className="celebration-confetti celebration-confetti--five" />
       </div>
       <header className="hero-heading hero-heading--center">
         <h1>{c.weekComplete}</h1>
@@ -278,10 +314,6 @@ function WeekScreen({
         <strong>{formatUsdMinor(state.payday?.totalMinor ?? 0)}</strong>
       </div>
 
-      <div className="allocation-fork" aria-hidden="true">
-        <GitFork />
-      </div>
-
       <JarRow
         locale={state.locale}
         balances={balances}
@@ -292,6 +324,7 @@ function WeekScreen({
       <GoalCard
         locale={state.locale}
         title={state.saveGoal.title}
+        icon={state.saveGoal.icon}
         savedMinor={balances.save}
         targetMinor={state.saveGoal.targetMinor}
       />
@@ -301,7 +334,7 @@ function WeekScreen({
         disabled={busy}
         onClick={() => void openMoneyMoment()}
       >
-        <Sparkles aria-hidden="true" />
+        <MessageCircle aria-hidden="true" />
         {c.talkAboutWeek}
       </button>
       {momentError ? (
@@ -312,7 +345,7 @@ function WeekScreen({
       <button
         className="text-button"
         disabled={busy}
-        onClick={() => void onCommand({ action: "reset" })}
+        onClick={() => void onCommand({ action: "start_next_week" })}
       >
         {c.startNextWeek}
       </button>
@@ -340,7 +373,9 @@ function JarsScreen({
   const c = copy[state.locale];
   const labels = bucketCopy[state.locale];
   const [selectedBucket, setSelectedBucket] = useState<BucketKey | null>(null);
-  const [actionMode, setActionMode] = useState<"bonus" | "move" | null>(null);
+  const [actionMode, setActionMode] = useState<"bonus" | "move" | "use" | null>(
+    null,
+  );
 
   if (selectedBucket) {
     const Icon = bucketIcons[selectedBucket];
@@ -415,6 +450,7 @@ function JarsScreen({
           busy={busy}
           onBonus={() => setActionMode("bonus")}
           onMove={() => setActionMode("move")}
+          onUse={() => setActionMode("use")}
         />
 
         {actionMode ? (
@@ -456,6 +492,7 @@ function JarsScreen({
       <GoalCard
         locale={state.locale}
         title={state.saveGoal.title}
+        icon={state.saveGoal.icon}
         savedMinor={balances.save}
         targetMinor={state.saveGoal.targetMinor}
       />
@@ -481,10 +518,67 @@ function JarsScreen({
   );
 }
 
+type HistoryFilter =
+  "all" | BucketKey | "parent_bonus" | "bucket_move" | "bucket_use";
+
+type HistoryEntry =
+  | { id: string; kind: "payday"; createdAt: string; payday: DemoPayday }
+  | { id: string; kind: "grow_bonus"; createdAt: string; payday: DemoPayday }
+  | ({ id: string; createdAt: string } & DemoLedgerEvent);
+
 function HistoryScreen({ state }: { state: DemoState }) {
   const c = copy[state.locale];
   const labels = bucketCopy[state.locale];
-  const payday = state.payday;
+  const [filter, setFilter] = useState<HistoryFilter>("all");
+  const paydays = [
+    ...state.closedPaydays,
+    ...(state.payday ? [state.payday] : []),
+  ].filter(
+    (payday, index, items) =>
+      items.findIndex(
+        (candidate) => candidate.idempotencyKey === payday.idempotencyKey,
+      ) === index,
+  );
+  const entries: HistoryEntry[] = [
+    ...paydays.flatMap((payday) => [
+      {
+        id: `payday-${payday.idempotencyKey}`,
+        kind: "payday" as const,
+        createdAt: payday.closedAt,
+        payday,
+      },
+      {
+        id: `grow-${payday.idempotencyKey}`,
+        kind: "grow_bonus" as const,
+        createdAt: payday.closedAt,
+        payday,
+      },
+    ]),
+    ...state.ledgerEvents,
+  ]
+    .filter((entry) => {
+      if (filter === "all") return true;
+      if (
+        filter === "parent_bonus" ||
+        filter === "bucket_move" ||
+        filter === "bucket_use"
+      ) {
+        return entry.kind === filter;
+      }
+      if (entry.kind === "grow_bonus") return filter === "grow";
+      if (entry.kind === "payday") return false;
+      if (entry.kind === "bucket_move") {
+        return entry.fromBucket === filter || entry.toBucket === filter;
+      }
+      return entry.bucket === filter;
+    })
+    .sort((left, right) => {
+      const byTime = Date.parse(right.createdAt) - Date.parse(left.createdAt);
+      if (byTime !== 0) return byTime;
+      if (left.kind === "grow_bonus" && right.kind === "payday") return -1;
+      if (left.kind === "payday" && right.kind === "grow_bonus") return 1;
+      return right.id.localeCompare(left.id);
+    });
 
   return (
     <div className="closed-screen history-screen">
@@ -493,70 +587,123 @@ function HistoryScreen({ state }: { state: DemoState }) {
         <p>{c.historyBody}</p>
       </header>
 
-      {payday ? (
+      <label className="history-filter">
+        <Filter aria-hidden="true" />
+        <span className="sr-only">{c.filterHistory}</span>
+        <select
+          aria-label={c.filterHistory}
+          value={filter}
+          onChange={(event) => setFilter(event.target.value as HistoryFilter)}
+        >
+          <option value="all">{c.allActivity}</option>
+          {buckets.map((bucket) => (
+            <option key={bucket} value={bucket}>
+              {labels[bucket].label}
+            </option>
+          ))}
+          <option value="parent_bonus">{c.parentBonus}</option>
+          <option value="bucket_move">{c.bucketMove}</option>
+          <option value="bucket_use">{c.bucketUse}</option>
+        </select>
+      </label>
+
+      {entries.length > 0 ? (
         <ol className="history-list">
-          <li>
-            <span className="history-list__mark history-list__mark--closed">
-              <CheckCircle2 aria-hidden="true" />
-            </span>
-            <div>
-              <span>{c.weekClosed}</span>
-              <strong>{formatUsdMinor(payday.totalMinor)}</strong>
-              <p>
-                {formatUsdMinor(payday.baseAmountMinor)} +{" "}
-                {formatUsdMinor(payday.paidTaskMinor)} ={" "}
-                {formatUsdMinor(payday.totalMinor)}
-              </p>
-              <time dateTime={payday.closedAt}>
-                {formatEventDate(payday.closedAt, state.locale)}
-              </time>
-            </div>
-          </li>
-          <li>
-            <span className="history-list__mark history-list__mark--grow">
-              <Sprout aria-hidden="true" />
-            </span>
-            <div>
-              <span>{c.growBonus}</span>
-              <strong>
-                +{formatUsdMinor(payday.growBonusMinor)} · {labels.grow.label}
-              </strong>
-            </div>
-          </li>
-          {state.ledgerEvents.map((event) => {
-            if (event.kind === "parent_bonus") {
+          {entries.map((entry) => {
+            if (entry.kind === "payday") {
               return (
-                <li key={event.id}>
+                <li key={entry.id}>
+                  <span className="history-list__mark history-list__mark--closed">
+                    <CheckCircle2 aria-hidden="true" />
+                  </span>
+                  <div>
+                    <span>
+                      {c.weekClosed} · {entry.payday.weekNumber}
+                    </span>
+                    <strong>{formatUsdMinor(entry.payday.totalMinor)}</strong>
+                    <p>
+                      {formatUsdMinor(entry.payday.baseAmountMinor)} +{" "}
+                      {formatUsdMinor(entry.payday.paidTaskMinor)} ={" "}
+                      {formatUsdMinor(entry.payday.totalMinor)}
+                    </p>
+                    <time dateTime={entry.createdAt}>
+                      {formatEventDate(entry.createdAt, state.locale)}
+                    </time>
+                  </div>
+                </li>
+              );
+            }
+            if (entry.kind === "grow_bonus") {
+              return (
+                <li key={entry.id}>
+                  <span className="history-list__mark history-list__mark--grow">
+                    <Sprout aria-hidden="true" />
+                  </span>
+                  <div>
+                    <span>{c.growBonus}</span>
+                    <strong>
+                      +{formatUsdMinor(entry.payday.growBonusMinor)} ·{" "}
+                      {labels.grow.label}
+                    </strong>
+                    <time dateTime={entry.createdAt}>
+                      {formatEventDate(entry.createdAt, state.locale)}
+                    </time>
+                  </div>
+                </li>
+              );
+            }
+            if (entry.kind === "parent_bonus") {
+              return (
+                <li key={entry.id}>
                   <span className="history-list__mark">
                     <Gift aria-hidden="true" />
                   </span>
                   <div>
                     <span>{c.parentBonus}</span>
                     <strong>
-                      +{formatUsdMinor(event.amountMinor)} ·{" "}
-                      {labels[event.bucket].label}
+                      +{formatUsdMinor(entry.amountMinor)} ·{" "}
+                      {labels[entry.bucket].label}
                     </strong>
-                    <time dateTime={event.createdAt}>
-                      {formatEventDate(event.createdAt, state.locale)}
+                    <time dateTime={entry.createdAt}>
+                      {formatEventDate(entry.createdAt, state.locale)}
+                    </time>
+                  </div>
+                </li>
+              );
+            }
+            if (entry.kind === "bucket_use") {
+              return (
+                <li key={entry.id}>
+                  <span className="history-list__mark">
+                    <HandCoins aria-hidden="true" />
+                  </span>
+                  <div>
+                    <span>{c.bucketUse}</span>
+                    <strong>
+                      −{formatUsdMinor(entry.amountMinor)} ·{" "}
+                      {labels[entry.bucket].label}
+                    </strong>
+                    <time dateTime={entry.createdAt}>
+                      {formatEventDate(entry.createdAt, state.locale)}
                     </time>
                   </div>
                 </li>
               );
             }
             return (
-              <li key={event.id}>
+              <li key={entry.id}>
                 <span className="history-list__mark">
                   <ArrowRightLeft aria-hidden="true" />
                 </span>
                 <div>
                   <span>{c.bucketMove}</span>
                   <strong>
-                    {formatUsdMinor(event.amountMinor)} ·{" "}
-                    {labels[event.fromBucket].label} →{" "}
-                    {labels[event.toBucket].label}
+                    {formatUsdMinor(entry.amountMinor)} ·{" "}
+                    {labels[entry.fromBucket].label} →{" "}
+                    {labels[entry.toBucket].label}
                   </strong>
-                  <time dateTime={event.createdAt}>
-                    {formatEventDate(event.createdAt, state.locale)}
+                  <time dateTime={entry.createdAt}>
+                    {formatEventDate(entry.createdAt, state.locale)}
                   </time>
                 </div>
               </li>
@@ -591,7 +738,7 @@ function MoneyMomentSheet({
       >
         <header className="sheet__header">
           <span className="sheet__icon">
-            <Sparkles aria-hidden="true" />
+            <MessageCircle aria-hidden="true" />
           </span>
           <div>
             <span>{c.localCard}</span>
@@ -638,6 +785,7 @@ export function ClosedWeek({
   const balances = projectLedgerBalances({
     payday: payday?.allocation ?? null,
     growBonusMinor: payday?.growBonusMinor ?? 0,
+    previousPaydays: state.closedPaydays,
     events: state.ledgerEvents,
   });
   const shares = bucketShareBasisPoints(balances);

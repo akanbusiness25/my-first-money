@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Gift, LockKeyhole, X } from "lucide-react";
+import { ArrowRight, Gift, HandCoins, LockKeyhole, X } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { formatUsdMinor, parseUsdInputToMinor } from "@/domain/currency";
 import type { Locale } from "@/domain/demo";
@@ -8,7 +8,8 @@ import type { DemoCommand } from "@/domain/demo-contract";
 import type { BucketKey } from "@/domain/money";
 import { bucketCopy, copy } from "./copy";
 
-type ParentActionMode = "bonus" | "move";
+type ParentActionMode = "bonus" | "move" | "use";
+type BucketUsePurpose = "purchase" | "goal" | "gift" | "learning";
 
 interface ParentActionsProps {
   mode: ParentActionMode;
@@ -42,9 +43,15 @@ export function ParentActions({
     initialBucket === "spend" ? "save" : initialBucket,
   );
   const [amount, setAmount] = useState(mode === "bonus" ? "1.00" : "0.50");
+  const [purpose, setPurpose] = useState<BucketUsePurpose>("purchase");
   const [reviewing, setReviewing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const title = mode === "bonus" ? c.addParentBonus : c.moveMoney;
+  const title =
+    mode === "bonus"
+      ? c.addParentBonus
+      : mode === "move"
+        ? c.moveMoney
+        : c.useFromJar;
   const amountMinor = parseUsdInputToMinor(amount);
 
   useEffect(() => {
@@ -57,6 +64,9 @@ export function ParentActions({
     if (!amountMinor || amountMinor > 10_000) return c.invalidAmount;
     if (mode === "move" && fromBucket === toBucket) return c.sameJarError;
     if (mode === "move" && amountMinor > balances[fromBucket]) {
+      return c.insufficientBalance;
+    }
+    if (mode === "use" && amountMinor > balances[bucket]) {
       return c.insufficientBalance;
     }
     return null;
@@ -84,12 +94,20 @@ export function ParentActions({
           bucket,
           amountMinor: amountMinor!,
         });
-      } else {
+      } else if (mode === "move") {
         await onCommand({
           action: "move_money",
           idempotencyKey: crypto.randomUUID(),
           fromBucket,
           toBucket,
+          amountMinor: amountMinor!,
+        });
+      } else {
+        await onCommand({
+          action: "record_bucket_use",
+          idempotencyKey: crypto.randomUUID(),
+          bucket,
+          purpose,
           amountMinor: amountMinor!,
         });
       }
@@ -141,7 +159,13 @@ export function ParentActions({
         <div className="sheet__handle" aria-hidden="true" />
         <header className="sheet__header">
           <span className="sheet__icon" aria-hidden="true">
-            {mode === "bonus" ? <Gift /> : <ArrowRight />}
+            {mode === "bonus" ? (
+              <Gift />
+            ) : mode === "move" ? (
+              <ArrowRight />
+            ) : (
+              <HandCoins />
+            )}
           </span>
           <h2 id="parent-action-title">{title}</h2>
           <button
@@ -155,7 +179,7 @@ export function ParentActions({
         </header>
 
         <form className="action-form" onSubmit={submit}>
-          {mode === "bonus" ? (
+          {mode === "bonus" || mode === "use" ? (
             <label className="field">
               <span>{c.chooseJar}</span>
               <select
@@ -212,8 +236,33 @@ export function ParentActions({
             </div>
           )}
 
+          {mode === "use" ? (
+            <label className="field">
+              <span>{c.usePurpose}</span>
+              <select
+                value={purpose}
+                disabled={reviewing || busy}
+                onChange={(event) => {
+                  setPurpose(event.target.value as BucketUsePurpose);
+                  setReviewing(false);
+                }}
+              >
+                <option value="purchase">{c.purposePurchase}</option>
+                <option value="goal">{c.purposeGoal}</option>
+                <option value="gift">{c.purposeGift}</option>
+                <option value="learning">{c.purposeLearning}</option>
+              </select>
+            </label>
+          ) : null}
+
           <label className="field">
-            <span>{mode === "bonus" ? c.bonusAmount : c.moveAmount}</span>
+            <span>
+              {mode === "bonus"
+                ? c.bonusAmount
+                : mode === "move"
+                  ? c.moveAmount
+                  : c.useAmount}
+            </span>
             <span className="money-input">
               <span aria-hidden="true">$</span>
               <input
@@ -234,7 +283,7 @@ export function ParentActions({
             <div className="review-strip" aria-live="polite">
               <strong>{formatUsdMinor(amountMinor)}</strong>
               <span>
-                {mode === "bonus"
+                {mode === "bonus" || mode === "use"
                   ? labels[bucket].label
                   : `${labels[fromBucket].label} → ${labels[toBucket].label}`}
               </span>
@@ -264,7 +313,9 @@ export function ParentActions({
               {reviewing
                 ? mode === "bonus"
                   ? c.confirmBonus
-                  : c.confirmMove
+                  : mode === "move"
+                    ? c.confirmMove
+                    : c.confirmUse
                 : c.continue}
             </button>
           </div>

@@ -33,6 +33,7 @@ New during the submission period: this repository, application code, tests, synt
 | 2026-07-21 15:04      | Product-demo launch contour on GPT-5.6 Sol               | Neutral test-run entry, contextual jar use, allocation-aware History, private GitHub repository, isolated Coolify project                              | 48 unit/component; build; Drizzle; secret/client; 12 E2E; Chrome 390px product-flow QA        | `4316976`                     |
 | 2026-07-21 16:10      | Private HTTPS launch on GPT-5.6 Sol                      | Healthy Coolify Docker deployment, temporary HTTPS origin, private PostgreSQL boundary, remote-testable Playwright configuration                       | Full local check; local 12/12 E2E; live HTTPS 12/12 E2E; health/CSP/HSTS verified             | `b162530`, `0b02f6b`          |
 | 2026-07-21 17:18      | Active-week product home and release hardening           | Three-step setup, real Week/Jars/History root, locked pre-payday mutations, stale-session recovery, next-week verification, private no-license posture | Full code gate; 50 unit/component; local 16/16 E2E; Chrome 390px QA                           | `16d9687`                     |
+| 2026-07-21 17:24      | Preferred-origin release verification                    | Coolify deployed the active-week product release to the primary HTTPS origin                                                                           | Stable rerun passed live 16/16 after the first run crossed the container switch               | `16d9687`                     |
 
 Append new rows; never rewrite prior evidence or invent results.
 
@@ -58,10 +59,10 @@ The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, 
 - Accepted UI concepts: `docs/design/redesign-week-approved.png`, `redesign-jars-approved.png`, and `redesign-jar-detail-approved.png`; earlier lifecycle concepts remain supporting references.
 - Browser screenshots: `docs/design/implementation-week.png`, `implementation-jars.png`, `implementation-jar-detail.png`, `implementation-week-refined-390.png`, and `implementation-jars-refined-390.png`; generated from the production build with synthetic data only.
 - Visual fidelity: `docs/design/comparison-*.png` and `docs/design/design-qa.md` record the same-viewport comparison, copy differences, intentional simplifications, and browser method.
-- Playwright verification: local 16/16 production E2E across 320px, 390px, 428px, and desktop, including the lifecycle flow, active product roots, expired-session recovery, next-week transition, axe, session isolation, CSP/CSRF/no-store, browser-storage, and static-only PWA cache assertions.
+- Playwright verification: local and preferred-origin live 16/16 production E2E across 320px, 390px, 428px, and desktop, including the lifecycle flow, active product roots, expired-session recovery, next-week transition, axe, session isolation, CSP/CSRF/no-store, browser-storage, and static-only PWA cache assertions.
 - Scoped security review: 44/44 changed files covered; two medium abuse-control findings locally remediated and regression-tested before the implementation commit.
 - Private repository: `https://github.com/akanbusiness25/my-first-money`; verified commit is pushed to `main`.
-- Live demo: `https://myfirstmoney.ilmio.space` resolves locally and publicly with trusted TLS/health; `https://myfirstmoney.95.216.173.242.sslip.io` remains a temporary fallback. Current-release live browser verification, video, and Devpost remain pending.
+- Live demo: `https://myfirstmoney.ilmio.space` resolves locally and publicly with trusted TLS/health and passes the current 16/16 browser suite; `https://myfirstmoney.95.216.173.242.sslip.io` remains a temporary fallback. Video and Devpost remain pending.
 - Primary `/feedback` Session ID: `PENDING — Akan must run /feedback in firstmoney main`.
 
 ## Links and access
@@ -90,7 +91,7 @@ Use public YouTube visibility, narration/audio, English or English translation, 
 - [ ] One live `gpt-5.6-sol` verification is recorded without exposing a manually supplied server secret.
 - [x] README covers setup/run/test, synthetic data, architecture, security/privacy, before/new disclosure, concrete Codex/GPT-5.6 use, private license posture/dependencies, and demo access status.
 - [ ] Private repository access is granted to the required judging accounts immediately before submission and removed after judging.
-- [x] Stable HTTPS demo passed the previous complete fresh-context 12-test judge flow; the current 16-test preferred-origin release rerun is pending deployment.
+- [x] Stable HTTPS demo passes the complete fresh-context 16-test judge flow at 320px, 390px, 428px, and desktop.
 - [x] Curated production screenshots contain synthetic data only and no private data or secrets.
 - [ ] Public YouTube video is <=3:00, has audio, shows the working app, and explains Codex/GPT-5.6 use.
 - [ ] Akan runs `/feedback` in `firstmoney main` and copies the exact Session ID here and to Devpost.

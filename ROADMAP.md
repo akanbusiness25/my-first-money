@@ -36,7 +36,7 @@ Updated: 2026-07-20
 - [x] Browser verification at 320px, 390px, 428px, and desktop; semantic keyboard/focus controls, reduced-motion/safe-area CSS, and automated axe checks.
 - [x] Playwright full judge flow plus PWA/cache/header/storage/CSRF/session-isolation/expired-session checks (16/16 E2E), plus production-build health/evidence smoke.
 - [x] Scoped security review and remediation; stable HTTPS synthetic deployment is running healthy in isolated Coolify infrastructure.
-- [x] Local fresh-context judge-path verification passes 16/16 across 320px, 390px, 428px, and desktop; the previous live release passes 12/12 and the current live 16/16 rerun is part of release verification.
+- [x] Local and preferred-origin live fresh-context judge-path verification pass 16/16 across 320px, 390px, 428px, and desktop.
 - [x] Approved managed product redesign implemented and visually compared at 390x844; long RU/KK copy reflow verified at 320px.
 
 ### BW4 — Submission

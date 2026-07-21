@@ -1,6 +1,6 @@
 # Status
 
-Updated: 2026-07-21 17:18 Asia/Qyzylorda
+Updated: 2026-07-21 17:24 Asia/Qyzylorda
 
 - Current lane: verified local `BW3`; `BW4` private repository and stable HTTPS synthetic launch are complete, while submission assets/access remain.
 - Workspace/task: `D:\app myfirstmoney`, primary task `firstmoney main`, GPT-5.6 Sol.
@@ -16,7 +16,7 @@ Updated: 2026-07-21 17:18 Asia/Qyzylorda
 - Jar experience: five generated transparent assets, live fill, focused detail, deliberate drag plus Enter/Space activation, distinct optional WebAudio feedback, reduced-motion support.
 - Money Moment: provider interface, strict selection/output schemas, curated EN/RU/KK cards, deterministic fallback, server-only OpenAI adapter, and abuse budgets are implemented without a key. Live provider verification is not claimed.
 - Security: same-origin/CSRF/no-store controls remain; server-side amount/balance rules and 500-session, 100-ledger-event, and 52-closed-week caps bound the anonymous demo; secret and client-bundle scans pass.
-- Verification: frozen install previously passed; current format, clean-checkout route type generation, strict typecheck, lint, 50 unit/component tests, production build, Drizzle check, secret/client scans, local 16/16 E2E, and prior live HTTPS 12/12 E2E pass. Fresh preferred-origin 16/16 verification follows deployment of `16d9687`.
+- Verification: frozen install previously passed; current format, clean-checkout route type generation, strict typecheck, lint, 50 unit/component tests, production build, Drizzle check, secret/client scans, local 16/16 E2E, and preferred-origin live HTTPS 16/16 E2E pass for release `16d9687`.
 - Browser QA: complete product flow at 390x844 in Chrome; 320px Russian/Kazakh reflow; 428px and desktop E2E; no internal competition banner remains.
 - Evidence: accepted concepts, production screenshots including refined 390px Week/Jars captures, same-input comparisons, and the exact QA record live under `docs/design/`.
 - Launch resources: Coolify project `my-first-money` (`vfz3pz4v5heuls7ny276w556`), healthy application `c8s9zfhem3xh0vai0ury64d8`, preferred origin `https://myfirstmoney.ilmio.space`, and fallback `https://myfirstmoney.95.216.173.242.sslip.io`. Local, Cloudflare, and Google DNS resolve the preferred A record to `95.216.173.242`; its trusted HTTPS route, HSTS, and health endpoint pass.

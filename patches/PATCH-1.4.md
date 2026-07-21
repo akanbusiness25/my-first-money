@@ -1,6 +1,6 @@
 # PATCH-1.4 — active-week product home and release hardening
 
-Status: implemented and locally verified
+Status: implemented, deployed, and verified
 
 ## Scope
 
@@ -35,6 +35,8 @@ Status: implemented and locally verified
 - local production Playwright passes 16/16 across 320px, 390px, 428px, and
   desktop, including active-week roots, expired-session recovery, and the next
   week transition;
+- preferred-origin production Playwright passes the same 16/16 suite after the
+  Coolify release became stable;
 - Chrome visual QA at 390x844 confirms the active Week product home follows the
   approved typography, color, spacing, border, navigation, and motion system.
 

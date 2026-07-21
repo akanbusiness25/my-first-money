@@ -12,6 +12,7 @@ Updated: 2026-07-21 17:24 Asia/Qyzylorda
 - Managed redesign implementation: `6ae7058`.
 - Judge-flow clarity and supervised jar use: `218e3e6`.
 - Product-demo launch contour: `4316976`; pushed to private repository `https://github.com/akanbusiness25/my-first-money` on `main`.
+- Branch rule: classic `main` rule is configured to require a pull request, disallow bypass, force-push, and deletion. GitHub labels it `Not enforced` for this private personal-account repository; real enforcement requires a Team/Enterprise organization plan.
 - Product state: English-default EN/RU/KK; USD-only; neutral Test Run or blank start; reversible three-step setup and agreement; confirmation opens the active Week / Jars / History product root; Quick Check and payday are lifecycle actions rather than setup steps; Settings behind the parent profile; one editable Save goal; parent-confirmed bonus, bucket move, and context-specific jar use; newest-first filtered append-only history including weekly allocations.
 - Jar experience: five generated transparent assets, live fill, focused detail, deliberate drag plus Enter/Space activation, distinct optional WebAudio feedback, reduced-motion support.
 - Money Moment: provider interface, strict selection/output schemas, curated EN/RU/KK cards, deterministic fallback, server-only OpenAI adapter, and abuse budgets are implemented without a key. Live provider verification is not claimed.

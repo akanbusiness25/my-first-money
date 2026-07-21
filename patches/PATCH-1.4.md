@@ -45,3 +45,7 @@ Status: implemented, deployed, and verified
 The public URL remains a synthetic competition demo, not a real-family beta.
 PostgreSQL remains disconnected until parent authentication, consent/deletion,
 ownership, backup/restore, legal, and security gates are approved.
+
+A classic `main` protection rule is configured for pull requests with no bypass,
+force-push, or deletion. GitHub marks it `Not enforced` for this private personal
+repository; enforceable protection requires a Team/Enterprise organization plan.

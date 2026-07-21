@@ -16,7 +16,7 @@ No account, OTP, API key, or private credential is required:
 6. Open Money Moment, add a parent bonus, move money between jars, and inspect the separate append-only events.
 7. Open parent Settings to change EN/RU/KK, sound/motion, or the one Save goal. USD is fixed for this MVP.
 
-The deterministic Money Moment fallback is fully functional without a model credential. A stable HTTPS demo remains pending until deployment verification is complete.
+The deterministic Money Moment fallback is fully functional without a model credential. The stable synthetic demo is available at `https://myfirstmoney.ilmio.space`.
 
 ## Local setup
 

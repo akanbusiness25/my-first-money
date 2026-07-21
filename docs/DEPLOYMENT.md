@@ -30,10 +30,11 @@ browser matrix pass.
 
 Remaining operator steps:
 
-1. The A record `myfirstmoney.ilmio.space -> 95.216.173.242` is published and
-   trusted TLS/health pass. Wait for the local/ISP resolver to finish propagation,
-   repeat the same live suite on the preferred origin, then remove the sslip.io
-   fallback only after the preferred origin is independently stable.
+1. The A record `myfirstmoney.ilmio.space -> 95.216.173.242` resolves locally
+   and through public resolvers; trusted TLS, HSTS, application, and health pass.
+   Run the complete live suite after every deployed release. Keep sslip.io only
+   as a temporary fallback; its Coolify HTTPS warning is expected because a
+   shared public sslip.io hostname can hit Let's Encrypt rate limits.
 2. In Coolify, delete the stopped empty resource
    `unused-empty-postgres-delete-me`; the final destructive confirmation
    requires the owner password. Do not delete `my-first-money-postgres`.

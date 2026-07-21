@@ -34,16 +34,16 @@ Updated: 2026-07-20
 
 - [x] Complete loading/validation/session/offline-limitation/pending/recovery states for the synthetic loop.
 - [x] Browser verification at 320px, 390px, 428px, and desktop; semantic keyboard/focus controls, reduced-motion/safe-area CSS, and automated axe checks.
-- [x] Playwright full judge flow plus PWA/cache/header/storage/CSRF/session-isolation checks (12/12 E2E), plus production-build health/evidence smoke.
+- [x] Playwright full judge flow plus PWA/cache/header/storage/CSRF/session-isolation/expired-session checks (16/16 E2E), plus production-build health/evidence smoke.
 - [x] Scoped security review and remediation; stable HTTPS synthetic deployment is running healthy in isolated Coolify infrastructure.
-- [x] Local and live HTTPS fresh-context judge-path verification pass 12/12 across 320px, 390px, 428px, and desktop.
+- [x] Local fresh-context judge-path verification passes 16/16 across 320px, 390px, 428px, and desktop; the previous live release passes 12/12 and the current live 16/16 rerun is part of release verification.
 - [x] Approved managed product redesign implemented and visually compared at 390x844; long RU/KK copy reflow verified at 320px.
 
 ### BW4 — Submission
 
 - [x] Competition-ready README and maintained `docs/BUILD_WEEK.md` scorecard/evidence.
 - [x] Stable HTTPS synthetic demo deployed and verified without a database or secret dependency.
-- [ ] Public licensed repository or private repository shared with both required Devpost addresses.
+- [ ] Private no-public-license repository shared with both required Devpost addresses immediately before submission.
 - [ ] Live demo, Devpost description, curated screenshots, and repository access verified.
 - [ ] Public narrated YouTube video <=3:00 verified for audio/visibility.
 - [ ] Akan runs `/feedback` in `firstmoney main`; exact Session ID is recorded.

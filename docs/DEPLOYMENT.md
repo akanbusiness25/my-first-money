@@ -23,8 +23,24 @@ Health check: `GET /api/health`. Judge smoke: `GET /`, complete the free flow in
 
 ## External steps still requiring Akan
 
-1. Choose/connect a stable HTTPS host (Coolify/Hetzner or another approved platform), set the final origin, build the container, and record its immutable digest.
-2. Verify `/api/health`, CSP/headers, the full incognito judge path, and deployment logs without secrets or identifiers.
-3. Record the verified URL and timestamp in `docs/BUILD_WEEK.md`.
+The isolated Coolify application is healthy and the full synthetic flow is
+verified at `https://myfirstmoney.95.216.173.242.sslip.io`. HTTP redirects to
+HTTPS; `/api/health`, CSP, HSTS, no-store API responses, and the complete 12-test
+browser matrix pass.
 
-The durable Kazakhstan beta requires PostgreSQL 18, explicit migration/release/backup controls, approved Kazakhstan primary and backup locations, parental authentication/consent, deletion and restore drills, and the complete `docs/launch/BETA_GATE.md`. None is implied by the Build Week container.
+Remaining operator steps:
+
+1. Add DNS A record `myfirstmoney.ilmio.space -> 95.216.173.242`, wait for
+   propagation, then repeat the same live suite on the preferred origin.
+2. In Coolify, delete the stopped empty resource
+   `unused-empty-postgres-delete-me`; the final destructive confirmation
+   requires the owner password. Do not delete `my-first-money-postgres`.
+3. Keep `my-first-money-postgres` private. Do not attach `DATABASE_URL` to the
+   anonymous demo. Before durable traffic, implement parent email OTP, reviewed
+   migrations/ownership, consent/deletion, and backup/restore gates.
+
+The durable Kazakhstan beta has a provisioned private PostgreSQL 18 resource,
+but still requires explicit migration/release/backup controls, approved
+Kazakhstan primary and backup locations, parental authentication/consent,
+deletion and restore drills, and the complete `docs/launch/BETA_GATE.md`. None
+is implied by the Build Week container.

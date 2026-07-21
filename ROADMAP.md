@@ -35,13 +35,14 @@ Updated: 2026-07-20
 - [x] Complete loading/validation/session/offline-limitation/pending/recovery states for the synthetic loop.
 - [x] Browser verification at 320px, 390px, 428px, and desktop; semantic keyboard/focus controls, reduced-motion/safe-area CSS, and automated axe checks.
 - [x] Playwright full judge flow plus PWA/cache/header/storage/CSRF/session-isolation checks (12/12 E2E), plus production-build health/evidence smoke.
-- [x] Scoped security review and remediation; stable HTTPS synthetic deployment remains external.
-- [x] Local fresh-context judge-path verification; stable HTTPS incognito verification remains external.
+- [x] Scoped security review and remediation; stable HTTPS synthetic deployment is running healthy in isolated Coolify infrastructure.
+- [x] Local and live HTTPS fresh-context judge-path verification pass 12/12 across 320px, 390px, 428px, and desktop.
 - [x] Approved managed product redesign implemented and visually compared at 390x844; long RU/KK copy reflow verified at 320px.
 
 ### BW4 — Submission
 
 - [x] Competition-ready README and maintained `docs/BUILD_WEEK.md` scorecard/evidence.
+- [x] Stable HTTPS synthetic demo deployed and verified without a database or secret dependency.
 - [ ] Public licensed repository or private repository shared with both required Devpost addresses.
 - [ ] Live demo, Devpost description, curated screenshots, and repository access verified.
 - [ ] Public narrated YouTube video <=3:00 verified for audio/visibility.
@@ -57,6 +58,7 @@ Updated: 2026-07-20
 
 ### Phase 1 — Contracts, persistence, parent identity
 
+- [x] Provision a private PostgreSQL 18 resource without exposing it publicly or connecting anonymous Test Run traffic.
 - [ ] PostgreSQL schema/migrations, consent foundation, parent email OTP/session, Telegram validation/linking contract, CSRF, and ownership tests.
 
 ### Phase 2 — Child and weekly agreement

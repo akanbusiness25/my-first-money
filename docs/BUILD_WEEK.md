@@ -31,6 +31,7 @@ New during the submission period: this repository, application code, tests, synt
 | 2026-07-20 22:25      | Approved managed product redesign on GPT-5.6 Sol         | EN-default settings, USD, generated/live-fill jars, focused gesture/sound, editable goal, parent bonus/move, append-only history, refreshed evidence | 41 unit; build; Drizzle; secret/client; clean audit; 12 E2E; IAB 390px and RU/KK 320px QA     | `6ae7058`                     |
 | 2026-07-21 13:34      | Judge-flow clarity and supervised jar use on GPT-5.6 Sol | Reversible setup, optional base, interactive agreement, cumulative weeks, jar use, newest-first filters, goal icons, refined motion and evidence     | 45 unit; build; Drizzle; secret/client; 12 E2E including pointer drag; IAB 390px comparison   | `218e3e6`                     |
 | 2026-07-21 15:04      | Product-demo launch contour on GPT-5.6 Sol               | Neutral test-run entry, contextual jar use, allocation-aware History, private GitHub repository, isolated Coolify project                            | 48 unit/component; build; Drizzle; secret/client; 12 E2E; Chrome 390px product-flow QA        | `4316976`                     |
+| 2026-07-21 16:10      | Private HTTPS launch on GPT-5.6 Sol                      | Healthy Coolify Docker deployment, temporary HTTPS origin, private PostgreSQL boundary, remote-testable Playwright configuration                     | Full local check; local 12/12 E2E; live HTTPS 12/12 E2E; health/CSP/HSTS verified             | `b162530`, `0b02f6b`          |
 
 Append new rows; never rewrite prior evidence or invent results.
 
@@ -59,13 +60,13 @@ The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, 
 - Playwright verification: 12/12 production E2E across 320px, 390px, 428px, and desktop, including axe, session isolation, CSP/CSRF/no-store, browser-storage, and static-only PWA cache assertions.
 - Scoped security review: 44/44 changed files covered; two medium abuse-control findings locally remediated and regression-tested before the implementation commit.
 - Private repository: `https://github.com/akanbusiness25/my-first-money`; verified commit is pushed to `main`.
-- Live demo/video/Devpost: pending. The isolated Coolify project exists; application creation is waiting for GitHub App access to the new private repository.
+- Live demo: `https://myfirstmoney.95.216.173.242.sslip.io` is running and verified with synthetic data. Preferred `myfirstmoney.ilmio.space` DNS, video, and Devpost remain pending.
 - Primary `/feedback` Session ID: `PENDING — Akan must run /feedback in firstmoney main`.
 
 ## Links and access
 
 - Repository URL/status: https://github.com/akanbusiness25/my-first-money — private; `main` pushed.
-- Live synthetic demo: pending.
+- Live synthetic demo: https://myfirstmoney.95.216.173.242.sslip.io — verified 2026-07-21 16:10 Asia/Qyzylorda.
 - Public YouTube video: pending.
 - Devpost submission: pending.
 - Repository access option: public with appropriate license, or private shared with `testing@devpost.com` and `build-week-event@openai.com`.
@@ -88,7 +89,7 @@ Use public YouTube visibility, narration/audio, English or English translation, 
 - [ ] One live `gpt-5.6-sol` verification is recorded without exposing a manually supplied server secret.
 - [x] README covers setup/run/test, synthetic data, architecture, security/privacy, before/new disclosure, concrete Codex/GPT-5.6 use, license/dependencies, and demo access status.
 - [ ] Private repository access is granted to the required judging accounts and the license decision is confirmed through judging.
-- [ ] Stable HTTPS demo passes incognito judge flow.
+- [x] Stable HTTPS demo passes the complete fresh-context 12-test judge flow at 320px, 390px, 428px, and desktop.
 - [x] Curated production screenshots contain synthetic data only and no private data or secrets.
 - [ ] Public YouTube video is <=3:00, has audio, shows the working app, and explains Codex/GPT-5.6 use.
 - [ ] Akan runs `/feedback` in `firstmoney main` and copies the exact Session ID here and to Devpost.

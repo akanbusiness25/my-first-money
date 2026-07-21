@@ -74,13 +74,13 @@ The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, 
 - Devpost submission: pending.
 - Repository access: private, with no public source-code license; share only this repository with `testing@devpost.com` and `build-week-event@openai.com` immediately before submission.
 
-## Video storyboard (target 2:35–2:50, hard limit 3:00)
+## Published video outline (exactly 3:00)
 
-1. `0:00–0:20` — Problem and boundary: pocket money becomes learning only through a shared ritual; no bank account, transfer, or child surveillance.
-2. `0:20–1:30` — Synthetic judge flow: child setup, unpaid versus paid mission, agreement, Quick Check, transparent payday, four-bucket allocation.
-3. `1:30–2:05` — Parent-triggered Money Moment, structured safe input, validated GPT-5.6 result, and visible fallback resilience.
-4. `2:05–2:30` — Parent bonus/move review, append-only History, mobile/PWA polish, and security/privacy boundary.
-5. `2:30–2:50` — Exact Codex/GPT-5.6 contribution, repository/demo access, and invitation to try the synthetic path.
+1. `0:00–0:22` — Problem and impact: financial literacy becomes a habit through repeated, safe choices before adulthood.
+2. `0:22–1:10` — Product setup: one supervised family week, an agreed base that is not a penalty tool, unpaid responsibilities, and optional paid jobs.
+3. `1:10–1:37` — Completion review and transparent base-plus-extras payday.
+4. `1:37–2:20` — Spend / Save / Give / Grow allocation, jar actions, Save goal, and append-only History.
+5. `2:20–3:00` — Concrete Codex/GPT-5.6 contribution, product boundary, and final impact statement.
 
 Use public YouTube visibility, narration/audio, English or English translation, clean 1920x1080 capture, readable mobile zooms, and no private/account/secret data.
 

@@ -63,14 +63,14 @@ The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, 
 - Playwright verification: local and preferred-origin live 16/16 production E2E across 320px, 390px, 428px, and desktop, including the lifecycle flow, active product roots, expired-session recovery, next-week transition, axe, session isolation, CSP/CSRF/no-store, browser-storage, and static-only PWA cache assertions.
 - Scoped security review: 44/44 changed files covered; two medium abuse-control findings locally remediated and regression-tested before the implementation commit.
 - Private repository: `https://github.com/akanbusiness25/my-first-money`; verified commit is pushed to `main`.
-- Live demo: `https://myfirstmoney.ilmio.space` resolves locally and publicly with trusted TLS/health and passes the current 16/16 browser suite; `https://myfirstmoney.95.216.173.242.sslip.io` remains a temporary fallback. Video and Devpost remain pending.
+- Live demo: `https://myfirstmoney.ilmio.space` resolves locally and publicly with trusted TLS/health and passes the current 16/16 browser suite; `https://myfirstmoney.95.216.173.242.sslip.io` remains a temporary fallback. The public YouTube upload is externally playable at exactly 180 seconds; Devpost remains pending.
 - Primary `/feedback` Session ID: `PENDING — Akan must run /feedback in firstmoney main`.
 
 ## Links and access
 
 - Repository URL/status: https://github.com/akanbusiness25/my-first-money — private; `main` pushed.
 - Live synthetic demo: https://myfirstmoney.ilmio.space — public DNS and trusted TLS/health verified; temporary tested fallback: https://myfirstmoney.95.216.173.242.sslip.io.
-- Public YouTube video: pending.
+- Public YouTube video: https://www.youtube.com/watch?v=yLQp9UEQinU — public/non-unlisted metadata, playback, audio-stream metadata, title, and exact 180-second duration externally verified; final narration/content confirmation remains Akan-owned.
 - Devpost submission: pending.
 - Repository access: private, with no public source-code license; share only this repository with `testing@devpost.com` and `build-week-event@openai.com` immediately before submission.
 
@@ -94,6 +94,6 @@ Use public YouTube visibility, narration/audio, English or English translation, 
 - [ ] Private repository access is granted to the required judging accounts immediately before submission and removed after judging.
 - [x] Stable HTTPS demo passes the complete fresh-context 16-test judge flow at 320px, 390px, 428px, and desktop.
 - [x] Curated production screenshots contain synthetic data only and no private data or secrets.
-- [ ] Public YouTube video is <=3:00, has audio, shows the working app, and explains Codex/GPT-5.6 use.
+- [ ] Public YouTube video transport is verified public, playable, audio-bearing, and exactly 3:00; Akan still confirms the final narration explicitly covers the working app, Codex, and GPT-5.6 before this item is closed.
 - [ ] Akan runs `/feedback` in `firstmoney main` and copies the exact Session ID here and to Devpost.
 - [ ] Devpost fields/links/video/demo/repository are verified incognito and submitted before internal cutoff.

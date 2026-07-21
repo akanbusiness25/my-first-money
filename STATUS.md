@@ -1,8 +1,8 @@
 # Status
 
-Updated: 2026-07-21 17:24 Asia/Qyzylorda
+Updated: 2026-07-22 04:40 Asia/Qyzylorda
 
-- Current lane: verified local `BW3`; `BW4` private repository and stable HTTPS synthetic launch are complete, while submission assets/access remain.
+- Current lane: Build Week implementation, private repository, stable HTTPS synthetic launch, submission assets, judging invitations, `/feedback`, and Devpost submission are complete; the Devpost dashboard confirms `SUBMITTED`.
 - Workspace/task: `D:\app myfirstmoney`, primary task `firstmoney main`, GPT-5.6 Sol.
 - Data boundary: synthetic/demo data only. No OpenAI key was requested, created, stored, or needed.
 - Real-family beta: blocked by legal, Kazakhstan data-location, consent, deletion, backup/restore, incident, authentication/authorization, and security gates.
@@ -22,4 +22,4 @@ Updated: 2026-07-21 17:24 Asia/Qyzylorda
 - Evidence: accepted concepts, production screenshots including refined 390px Week/Jars captures, same-input comparisons, and the exact QA record live under `docs/design/`.
 - Launch resources: Coolify project `my-first-money` (`vfz3pz4v5heuls7ny276w556`), healthy application `c8s9zfhem3xh0vai0ury64d8`, preferred origin `https://myfirstmoney.ilmio.space`, and fallback `https://myfirstmoney.95.216.173.242.sslip.io`. Local, Cloudflare, and Google DNS resolve the preferred A record to `95.216.173.242`; its trusted HTTPS route, HSTS, and health endpoint pass.
 - Persistence boundary: private PostgreSQL 18 `my-first-money-postgres` (`xxgwwxrdu17e24lky0zuk77i`) is healthy and not publicly exposed, but remains disconnected until parent email OTP, consent/deletion, ownership, migrations, and backup/restore gates are implemented. Test Run remains ephemeral.
-- External blockers: delete the stopped empty `unused-empty-postgres-delete-me` resource with the Coolify owner password; grant the two judging accounts access immediately before submission; complete the public video, `/feedback`, and Devpost submission. The repository is private and intentionally grants no public source-code license. Docker smoke remains unavailable locally, but the Dockerfile was built and health-verified by Coolify.
+- Post-submission operations: keep the demo, public YouTube video, and required private-repository invitations available throughout judging; remove judging access afterward. Deleting the stopped empty `unused-empty-postgres-delete-me` Coolify resource remains optional owner cleanup and does not affect the submitted app. The repository remains private and intentionally grants no public source-code license.

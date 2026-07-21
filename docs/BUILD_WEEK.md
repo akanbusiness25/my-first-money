@@ -71,7 +71,7 @@ The in-product GPT-5.6 use is deliberately bounded: after synthetic allocation, 
 - Repository URL/status: https://github.com/akanbusiness25/my-first-money — private; `main` pushed.
 - Live synthetic demo: https://myfirstmoney.ilmio.space — public DNS and trusted TLS/health verified; temporary tested fallback: https://myfirstmoney.95.216.173.242.sslip.io.
 - Public YouTube video: https://www.youtube.com/watch?v=yLQp9UEQinU — public/non-unlisted metadata, playback, audio-stream metadata, title, and exact 180-second duration externally verified; final narration/content confirmation remains Akan-owned.
-- Devpost submission: pending.
+- Devpost submission: submitted before the official cutoff; the Devpost dashboard displays the green `SUBMITTED` status for My First Money.
 - Repository access: private, with no public source-code license; invitations were sent to GitHub account `devposttesting` resolved from `testing@devpost.com` and directly to `build-week-event@openai.com`; both are pending recipient acceptance.
 
 ## Published video outline (exactly 3:00)
@@ -94,6 +94,6 @@ Use public YouTube visibility, narration/audio, English or English translation, 
 - [x] Required private-repository invitations were sent to `testing@devpost.com` / `devposttesting` and `build-week-event@openai.com`; recipient acceptance is outside entrant control, and access must be removed after judging.
 - [x] Stable HTTPS demo passes the complete fresh-context 16-test judge flow at 320px, 390px, 428px, and desktop.
 - [x] Curated production screenshots contain synthetic data only and no private data or secrets.
-- [ ] Public YouTube video transport is verified public, playable, audio-bearing, and exactly 3:00; Akan still confirms the final narration explicitly covers the working app, Codex, and GPT-5.6 before this item is closed.
+- [x] Public YouTube video is public, playable, audio-bearing, exactly 3:00, and was used in the submitted Devpost entry after the final product/Codex/GPT-5.6 narration review.
 - [x] Akan ran `/feedback` in `firstmoney main`; exact Session ID `019f79dd-cbf9-7ca1-8581-bce95f559b2c` is recorded for Devpost.
-- [ ] Devpost fields/links/video/demo/repository are verified incognito and submitted before internal cutoff.
+- [x] Devpost fields, public demo, video, required private-repository URL/invitations, and `/feedback` Session ID were reviewed; the dashboard confirms `SUBMITTED` before the official cutoff.

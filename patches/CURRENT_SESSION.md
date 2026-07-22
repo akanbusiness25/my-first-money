@@ -8,7 +8,7 @@ Started: 2026-07-19 15:37 Asia/Qyzylorda
 - Model: GPT-5.6 Sol.
 - Workspace: `D:\app myfirstmoney`.
 - Data: synthetic/demo only.
-- Current packet: `PATCH-1.4.md`.
+- Current packet: `PATCH-1.5.md`.
 - Credential protocol: no OpenAI key was requested or created; local fallback/provider work is complete and live verification remains explicitly deferred.
 - Delivered locally: BW1 vertical slice; non-live BW2; PWA/a11y/browser verification surface; deployment/README/submission docs; scoped security scan and local remediation.
 - Multi-agent work: bounded security review/verification only; the primary task owns the core implementation.
@@ -23,3 +23,4 @@ Started: 2026-07-19 15:37 Asia/Qyzylorda
 - Coolify: isolated project `my-first-money` (`vfz3pz4v5heuls7ny276w556`), application `c8s9zfhem3xh0vai0ury64d8`, and production environment `w5hqrglmfl02d8ugbj8qn8g9` are running healthy.
 - Live verification: the preferred `https://myfirstmoney.ilmio.space` resolves locally and through public resolvers to `95.216.173.242`; trusted TLS, HSTS, `/`, `/api/health`, and the current 16/16 Playwright suite pass. The sslip.io origin remains a temporary fallback only.
 - Database boundary: private PostgreSQL 18 `my-first-money-postgres` (`xxgwwxrdu17e24lky0zuk77i`) is healthy but intentionally not connected to the anonymous synthetic demo. One stopped empty setup artifact is marked `unused-empty-postgres-delete-me` and requires the Coolify owner password to delete.
+- Post-submission dependency maintenance: Next.js' optional `sharp` resolution is pinned to patched `0.35.3` without weakening the audit gate. The frozen install, full code gate, high-severity audit, and local 16/16 Playwright suite pass.

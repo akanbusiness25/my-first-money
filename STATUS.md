@@ -1,6 +1,6 @@
 # Status
 
-Updated: 2026-07-22 04:40 Asia/Qyzylorda
+Updated: 2026-07-22 05:04 Asia/Qyzylorda
 
 - Current lane: Build Week implementation, private repository, stable HTTPS synthetic launch, submission assets, judging invitations, `/feedback`, and Devpost submission are complete; the Devpost dashboard confirms `SUBMITTED`.
 - Workspace/task: `D:\app myfirstmoney`, primary task `firstmoney main`, GPT-5.6 Sol.
@@ -23,3 +23,4 @@ Updated: 2026-07-22 04:40 Asia/Qyzylorda
 - Launch resources: Coolify project `my-first-money` (`vfz3pz4v5heuls7ny276w556`), healthy application `c8s9zfhem3xh0vai0ury64d8`, preferred origin `https://myfirstmoney.ilmio.space`, and fallback `https://myfirstmoney.95.216.173.242.sslip.io`. Local, Cloudflare, and Google DNS resolve the preferred A record to `95.216.173.242`; its trusted HTTPS route, HSTS, and health endpoint pass.
 - Persistence boundary: private PostgreSQL 18 `my-first-money-postgres` (`xxgwwxrdu17e24lky0zuk77i`) is healthy and not publicly exposed, but remains disconnected until parent email OTP, consent/deletion, ownership, migrations, and backup/restore gates are implemented. Test Run remains ephemeral.
 - Post-submission operations: keep the demo, public YouTube video, and required private-repository invitations available throughout judging; remove judging access afterward. Deleting the stopped empty `unused-empty-postgres-delete-me` Coolify resource remains optional owner cleanup and does not affect the submitted app. The repository remains private and intentionally grants no public source-code license.
+- Post-submission dependency maintenance: GitHub's high-severity `sharp` advisory is remediated by a targeted `next>sharp: 0.35.3` override. The strict audit remains enabled; frozen install, full code gate, audit, and local 16/16 E2E pass without product or deployment changes.
